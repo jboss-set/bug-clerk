@@ -1,0 +1,33 @@
+/*
+ * Copyright 2010 JBoss Inc
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jboss.jbossset.bugclerk;
+
+import org.jboss.pull.shared.connectors.bugzilla.Bug;
+import org.jboss.pull.shared.connectors.bugzilla.Comment;
+
+import  org.jboss.jbossset.bugclerk.Violation;
+
+global java.util.List list
+
+rule "PostMissingPR"
+    dialect "mvel"
+    when
+        $bug : Candidate( bug.status == "POST", $bug_id : bug.id , $status : bug.status, $summary : bug.summary);       
+        not Comment( bugId == $bug_id, text.contains("github.com"), text.contains("pull/") );
+    then
+		insert( new Violation($bug.bug, "PR appears to missing, but BZ status is" + $status));
+end

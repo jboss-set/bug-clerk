@@ -1,0 +1,8 @@
+# Maven build dir
+target
+dependency-reduced-pom.xml
+# Eclipse files
+.classpath
+.project
+# BugClerk specific
+processor-eap-6.properties
