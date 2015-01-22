@@ -1,7 +1,7 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.net.URL;
-import java.util.Collection;
+import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +43,7 @@ public final class BzUtils {
         return issue;
     }
 
-    private static Collection<Comment> logRetrievedComments(Collection<Comment> comments) {
+    private static SortedSet<Comment> logRetrievedComments(SortedSet<Comment> comments) {
         if (LOGGER.isLoggable(Level.FINE)) {
             for (Comment comment : comments) {
                 LOGGER.fine("Comment ID:" + comment.getId());
@@ -53,7 +53,7 @@ public final class BzUtils {
         return comments;
     }
 
-    public static Collection<Comment> loadCommentForBug(Bug bug) {
+    public static SortedSet<Comment> loadCommentForBug(Bug bug) {
         try {
             return logRetrievedComments(createHelper().loadCommentsFor(bug));
         } catch (Exception e) {
