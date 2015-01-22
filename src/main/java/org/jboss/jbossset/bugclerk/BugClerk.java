@@ -69,6 +69,7 @@ public class BugClerk  {
     }
 
     private static void reportViolations(Collection<Violation> violations) {
+        System.out.println("Found " + violations.size() + " violations:");
         if ( ! violations.isEmpty() ) {
             for ( Violation violation : violations )
                 System.out.println(violation);
@@ -80,20 +81,23 @@ public class BugClerk  {
         Arguments arguments = validateArgs(BugClerk.extractParameters(args));
         LoggingUtils.configureLogger(arguments.isDebug());
 
-
+        System.out.print("Loading information on " + arguments.getIds().size() + " issue entries... ");
         List<Candidate> candidates = new ArrayList<Candidate>(arguments.getIds().size());
         Collection<Comment> comments = new ArrayList<Comment>();
         for ( String id : arguments.getIds() ) {
             Bug issue = BzUtils.loadBzFromUrl(URLUtils.createURLFromString(arguments.getUrlPrefix() + id));
-            candidates.add(new Candidate(issue, BzUtils.loadCommentForBug(issue)));
+            if ( issue != null )
+                candidates.add(new Candidate(issue, BzUtils.loadCommentForBug(issue)));
+            else
+                System.err.println("No BZ retrieved for ID:" + id);
         }
-        SystemUtils.printOnError("Retrieved BZ information took:" + SystemUtils.timeSpentInSecondsSince(startTime) + "s.");
+        System.out.print("Done [" + SystemUtils.timeSpentInSecondsSince(startTime) + "s].");
         startTime = System.nanoTime();
 
         Object[] facts = { comments, candidates };
 
         reportViolations(ruleEngine.processBugEntry(facts));
-        SystemUtils.printOnError("Analysis took:" + SystemUtils.timeSpentInSecondsSince(startTime) + "s.");
+        System.out.println("Analysis took:" + SystemUtils.timeSpentInSecondsSince(startTime) + "s.");
         ruleEngine.shutdownRuleEngine();
     }
 }

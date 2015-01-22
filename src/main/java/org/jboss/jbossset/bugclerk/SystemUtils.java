@@ -8,12 +8,9 @@ public class SystemUtils {
         System.out.println(object);
     }
 
-    public static void printOnError(Object object) {
-        System.err.println(object);
-    }
-
     public static double timeSpentInSecondsSince(long startTime) {
         return ((System.nanoTime() - startTime) / (UNIT_SHIFT * UNIT_SHIFT * UNIT_SHIFT));
     }
+
 
 }
