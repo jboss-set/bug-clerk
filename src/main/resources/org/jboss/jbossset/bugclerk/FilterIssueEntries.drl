@@ -21,13 +21,13 @@ import org.jboss.pull.shared.connectors.bugzilla.Bug;
 
 global java.util.List list
 
-rule "FilterIssueEntries"
+rule "DontCheckDocFeatureRelatedEntry"
     dialect "mvel"
     when
-        $candidate : Candidate( bug.status == "POST", filtered == false);       
+        $candidate : Candidate( bug.summary.contains("[Doc Feature]"), filtered == false);
     then
 		modify ( $candidate ) { 
-			candidate = true,
+			candidate = false,
 			filtered = true
          };
 end

@@ -1,6 +1,8 @@
 package org.jboss.jbossset.bugclerk;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
@@ -8,7 +10,7 @@ import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-public class BugClerk {
+public class BugClerk  {
 
     private static final String PROG_NAME = BugClerk.class.getSimpleName().toLowerCase();
 
@@ -78,14 +80,17 @@ public class BugClerk {
         Arguments arguments = validateArgs(BugClerk.extractParameters(args));
         LoggingUtils.configureLogger(arguments.isDebug());
 
-        Bug issue = BzUtils.loadBzFromUrl(URLUtils.createURLFromString(arguments.getIssueId()));
-        Collection<Comment> comments = BzUtils.loadCommentForBug(issue);
+
+        List<Candidate> candidates = new ArrayList<Candidate>(arguments.getIds().size());
+        Collection<Comment> comments = new ArrayList<Comment>();
+        for ( String id : arguments.getIds() ) {
+            Bug issue = BzUtils.loadBzFromUrl(URLUtils.createURLFromString(arguments.getUrlPrefix() + id));
+            candidates.add(new Candidate(issue, BzUtils.loadCommentForBug(issue)));
+        }
         SystemUtils.printOnError("Retrieved BZ information took:" + SystemUtils.timeSpentInSecondsSince(startTime) + "s.");
         startTime = System.nanoTime();
 
-        Candidate candidate = new Candidate(issue);
-
-        Object[] facts = { comments, candidate };
+        Object[] facts = { comments, candidates };
 
         reportViolations(ruleEngine.processBugEntry(facts));
         SystemUtils.printOnError("Analysis took:" + SystemUtils.timeSpentInSecondsSince(startTime) + "s.");
