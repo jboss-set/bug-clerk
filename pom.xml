@@ -11,7 +11,7 @@
 
 	<groupId>org.jboss.jbossset</groupId>
 	<artifactId>bugclerk</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<packaging>jar</packaging>
 	<name>Bug Clerk</name>
     <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
@@ -105,7 +105,7 @@
 			    <artifactId>slf4j-simple</artifactId>
 			    <version>1.7.10</version>
 			    <scope>runtime</scope>
-			</dependency>    
+			</dependency>
 		<!-- CLI handling -->
 		<dependency>
       			<groupId>com.beust</groupId>
