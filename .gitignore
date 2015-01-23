@@ -6,3 +6,4 @@ dependency-reduced-pom.xml
 .project
 # BugClerk specific
 processor-eap-6.properties
+src/main/resources/org/jboss/jbossset/bugclerk/smtp/config.properties

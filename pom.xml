@@ -100,18 +100,25 @@
 		      <groupId>org.mvel</groupId>
 		      <artifactId>mvel2</artifactId>
 		    </dependency!-->
-			<dependency>
-			    <groupId>org.slf4j</groupId>
-			    <artifactId>slf4j-simple</artifactId>
-			    <version>1.7.10</version>
-			    <scope>runtime</scope>
-			</dependency>
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-simple</artifactId>
+		    <version>1.7.10</version>
+		    <scope>runtime</scope>
+		</dependency>
+
 		<!-- CLI handling -->
 		<dependency>
-      			<groupId>com.beust</groupId>
-      			<artifactId>jcommander</artifactId>
-      			<version>1.23</version>
-    		</dependency>
+      	   <groupId>com.beust</groupId>
+      	   <artifactId>jcommander</artifactId>
+      	   <version>1.23</version>
+    	</dependency>
+
+		<dependency>
+	      <groupId>javax.mail</groupId>
+	      <artifactId>mail</artifactId>
+	      <version>1.4.5-redhat-1</version>
+	    </dependency>
 
 		<!-- Test dependencies -->
 		<dependency>
@@ -120,6 +127,7 @@
 			<version>${testng.version}</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>

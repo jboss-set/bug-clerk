@@ -29,6 +29,12 @@ Of course, if you do find some tools or library that , please feel free to updat
 * [Drools - Drools - Business Rules Management System (Java&trade;, Open Source)](http://www.drools.org/ "http://www.drools.org/")
 * [Java A&zwnj;PI to acess Bugzilla](http://stackoverflow.com/questions/630095/is-there-a-java-api-to-access-bugzilla)
 
+## How to run it ?
+
+You need to have credentials to access BugZilla and file it in the provided example file (remove the .example) extension.
+
+You also need to add the file 'org/jboss/jbossset/bugclerk/smtp/config.properties' to your classpath to configure sending report email. If not the properties are missing, BugClerk will simply NOT send email.
+
 ## **Checks**
 
 _Pretty much like a [Checkstyle]() or [PMD](http://github.com/pmd/pmd) configuration, BugClerk values resides in the number of things it can checks. So, please to do hesitate to post "check request" on the [issue tracker](https://github.com/jboss-set/bug-clerk/issues/).
