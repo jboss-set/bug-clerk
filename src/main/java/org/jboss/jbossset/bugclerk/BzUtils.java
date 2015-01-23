@@ -1,6 +1,9 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.net.URL;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,6 +59,24 @@ public final class BzUtils {
     public static SortedSet<Comment> loadCommentForBug(Bug bug) {
         try {
             return logRetrievedComments(createHelper().loadCommentsFor(bug));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Map<String, SortedSet<Comment>> loadCommentForBug(Collection<String> bugIds) {
+        try {
+            return createHelper().loadCommentsFor(bugIds);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Map<String,Bug> loadBugsById(Set<String> bugIds) {
+        try {
+            return createHelper().loadIssues(bugIds);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

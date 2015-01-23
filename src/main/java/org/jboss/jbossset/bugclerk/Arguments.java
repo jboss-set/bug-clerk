@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.beust.jcommander.IVariableArity;
+import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
 
 public class Arguments implements IVariableArity {
 
@@ -21,6 +23,33 @@ public class Arguments implements IVariableArity {
     @Parameter(names = { "-d", "--debug" }, description = "debug mode", required = false)
     private boolean debug = false;
 
+    private static final String PROG_NAME = BugClerk.class.getSimpleName().toLowerCase();
+
+    private static final int INVALID_COMMAND_INPUT = 1;
+
+    public static Arguments extractParameters(String[] args) {
+        Arguments arguments = new Arguments();
+        JCommander jcommander = null;
+        try {
+            jcommander = new JCommander(arguments, args);
+            jcommander.setProgramName(PROG_NAME);
+            if (arguments.isHelp()) {
+                jcommander.usage();
+                System.exit(0);
+            }
+
+        } catch (ParameterException e) {
+            System.out.println(e.getMessage());
+            System.exit(INVALID_COMMAND_INPUT);
+        }
+        return arguments;
+    }
+
+    public static Arguments validateArgs(Arguments arguments) {
+        return arguments;
+    }
+
+
 	public boolean isDebug() {
         return debug;
     }
@@ -36,8 +65,6 @@ public class Arguments implements IVariableArity {
 	public void setHelp(boolean help) {
 		this.help = help;
 	}
-
-
 
 	public String getUrlPrefix() {
         return urlPrefix;

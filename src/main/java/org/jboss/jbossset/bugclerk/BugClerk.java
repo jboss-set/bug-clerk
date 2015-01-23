@@ -1,103 +1,68 @@
 package org.jboss.jbossset.bugclerk;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
-
 public class BugClerk  {
 
-    private static final String PROG_NAME = BugClerk.class.getSimpleName().toLowerCase();
+    private final PerformanceMonitor monitor = new PerformanceMonitor();
 
-    private static final int INVALID_COMMAND_INPUT = 1;
-    private static final int PROGRAM_THROWN_EXCEPTION = 3;
+    @SuppressWarnings("unchecked")
+    protected List<Candidate> loadCandidates(List<String> ids) {
+        Map<String, SortedSet<Comment>> commentsByBugId = BzUtils.loadCommentForBug(ids);
+        Map<String, Bug> bugsById = BzUtils.loadBugsById(new HashSet<String>(ids));
+        List<Candidate> candidates = new ArrayList<Candidate>(ids.size());
+        for ( Bug bug : bugsById.values() )
+            candidates.add(new Candidate(bug, CollectionUtils.getEntryOrEmptySet(String.valueOf(bug.getId()),commentsByBugId) ));
+        return candidates;
+    }
 
     private static final String KIE_SESSION = "BzCheck";
-    private static final RuleEngine ruleEngine = new RuleEngine(KIE_SESSION);
 
-    private static void consolePrint(String string, boolean printCarriageReturn) {
-        if (printCarriageReturn)
-            System.out.println(string); // NOPMD
-        else
-            System.out.print(string); // NOPMD
+    protected Collection<Violation> processEntriesAndReportViolations(List<Candidate> candidates) {
+        Object[] facts = { candidates };
+        RuleEngine ruleEngine = new RuleEngine(KIE_SESSION);
+        Collection<Violation> violations = ruleEngine.processBugEntry(facts);
+        ruleEngine.shutdownRuleEngine();
+        return violations;
     }
 
-    private static void consolePrint(String string) {
-        consolePrint(string, true);
+    protected String buildReport(Collection<Violation> violations, String urlPrefix) {
+        ReportEngine reportEngine = new ReportEngine(urlPrefix);
+        return reportEngine.createReport(violations);
     }
 
-    public static void main(String[] args) {
-        runWithCatch(args);
+    private static final String TO = "rpelisse@redhat.com";
+    private static final String FROM = "BugClerk <rpelisse@redhat.com>";
+
+    protected void publishReport(String report) {
+        String subject = "BugClerk Report - " + new SimpleDateFormat("yyyy/MM/dd - HH:mm").format(Calendar.getInstance().getTime());
+        new SMTPClient().sendEmail(TO, FROM , subject, report);
     }
 
-    public static void runWithCatch(String[] args) {
-        try {
-            run(args);
-        } catch (Throwable t) {
-            consolePrint(t.getMessage());
-            if (t.getCause() != null)
-                consolePrint(t.getCause().getMessage());
-            System.exit(PROGRAM_THROWN_EXCEPTION);
-        }
-    }
-
-    private static Arguments extractParameters(String[] args) {
-        Arguments arguments = new Arguments();
-        JCommander jcommander = null;
-        try {
-            jcommander = new JCommander(arguments, args);
-            jcommander.setProgramName(PROG_NAME);
-            if (arguments.isHelp()) {
-                jcommander.usage();
-                System.exit(0);
-            }
-
-        } catch (ParameterException e) {
-            System.out.println(e.getMessage());
-            System.exit(INVALID_COMMAND_INPUT);
-        }
-        return arguments;
-    }
-
-    private static Arguments validateArgs(Arguments arguments) {
-        return arguments;
-    }
-
-    private static void reportViolations(Collection<Violation> violations) {
-        System.out.println("Found " + violations.size() + " violations:");
-        if ( ! violations.isEmpty() ) {
-            for ( Violation violation : violations )
-                System.out.println(violation);
-        }
-    }
-
-    public static void run(String[] args) {
-        long startTime = System.nanoTime();
-        Arguments arguments = validateArgs(BugClerk.extractParameters(args));
+    public void run(Arguments arguments) {
         LoggingUtils.configureLogger(arguments.isDebug());
 
-        System.out.print("Loading information on " + arguments.getIds().size() + " issue entries... ");
-        List<Candidate> candidates = new ArrayList<Candidate>(arguments.getIds().size());
-        Collection<Comment> comments = new ArrayList<Comment>();
-        for ( String id : arguments.getIds() ) {
-            Bug issue = BzUtils.loadBzFromUrl(URLUtils.createURLFromString(arguments.getUrlPrefix() + id));
-            if ( issue != null )
-                candidates.add(new Candidate(issue, BzUtils.loadCommentForBug(issue)));
-            else
-                System.err.println("No BZ retrieved for ID:" + id);
-        }
-        System.out.print("Done [" + SystemUtils.timeSpentInSecondsSince(startTime) + "s].");
-        startTime = System.nanoTime();
+        LoggingUtils.getLogger().fine("Massive retrieved took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
+        List<Candidate> candidates = loadCandidates(arguments.getIds());
+        LoggingUtils.getLogger().fine("Rewiring bugs and comments took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
-        Object[] facts = { comments, candidates };
+        Collection<Violation> violations = processEntriesAndReportViolations(candidates);
+        LoggingUtils.getLogger().fine("Found " + violations.size() + " violations:");
+        String report = buildReport(violations, arguments.getUrlPrefix());
 
-        reportViolations(ruleEngine.processBugEntry(facts));
-        System.out.println("Analysis took:" + SystemUtils.timeSpentInSecondsSince(startTime) + "s.");
-        ruleEngine.shutdownRuleEngine();
+        LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
+        LoggingUtils.getLogger().info(report);
+
+        publishReport(report);
     }
 }
