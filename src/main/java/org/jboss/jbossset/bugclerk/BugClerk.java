@@ -1,29 +1,16 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
 
 public class BugClerk  {
 
     private final PerformanceMonitor monitor = new PerformanceMonitor();
 
-    @SuppressWarnings("unchecked")
     protected List<Candidate> loadCandidates(List<String> ids) {
-        Map<String, SortedSet<Comment>> commentsByBugId = BzUtils.loadCommentForBug(ids);
-        Map<String, Bug> bugsById = BzUtils.loadBugsById(new HashSet<String>(ids));
-        List<Candidate> candidates = new ArrayList<Candidate>(ids.size());
-        for ( Bug bug : bugsById.values() )
-            candidates.add(new Candidate(bug, CollectionUtils.getEntryOrEmptySet(String.valueOf(bug.getId()),commentsByBugId) ));
-        return candidates;
+        return new ParallelLoader().loadCandidates(ids);
     }
 
     private static final String KIE_SESSION = "BzCheck";
