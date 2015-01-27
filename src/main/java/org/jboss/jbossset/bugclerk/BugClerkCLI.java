@@ -6,7 +6,7 @@ public class BugClerkCLI {
 
     public static void main(String[] args) {
         try {
-            new BugClerk().run(Arguments.validateArgs(Arguments.extractParameters(args)));
+            new BugClerk().run(BugClerkArguments.validateArgs(BugClerkArguments.extractParameters(args)));
         } catch (Throwable t) {
             System.out.println(t.getMessage());
             if (t.getCause() != null)

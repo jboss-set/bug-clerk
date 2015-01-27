@@ -8,7 +8,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
-public class Arguments implements IVariableArity {
+public class BugClerkArguments implements IVariableArity {
 
 	// TODO make a converter to turn directly into an URL
 	@Parameter(names = { "-u", "--url-prefix" }, description = "URL prefix (before the issue ID)", required = true)
@@ -27,8 +27,8 @@ public class Arguments implements IVariableArity {
 
     private static final int INVALID_COMMAND_INPUT = 1;
 
-    public static Arguments extractParameters(String[] args) {
-        Arguments arguments = new Arguments();
+    public static BugClerkArguments extractParameters(String[] args) {
+        BugClerkArguments arguments = new BugClerkArguments();
         JCommander jcommander = null;
         try {
             jcommander = new JCommander(arguments, args);
@@ -45,7 +45,7 @@ public class Arguments implements IVariableArity {
         return arguments;
     }
 
-    public static Arguments validateArgs(Arguments arguments) {
+    public static BugClerkArguments validateArgs(BugClerkArguments arguments) {
         return arguments;
     }
 
@@ -95,7 +95,7 @@ public class Arguments implements IVariableArity {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Arguments other = (Arguments) obj;
+		BugClerkArguments other = (BugClerkArguments) obj;
 		if (help != other.help)
 			return false;
 		if (urlPrefix == null) {

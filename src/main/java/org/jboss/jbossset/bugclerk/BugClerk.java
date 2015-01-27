@@ -49,7 +49,7 @@ public class BugClerk  {
         new SMTPClient().sendEmail(TO, FROM , subject, report);
     }
 
-    public void run(Arguments arguments) {
+    public void run(BugClerkArguments arguments) {
         LoggingUtils.configureLogger(arguments.isDebug());
 
         LoggingUtils.getLogger().info("Loading data for " + arguments.getIds().size() + " issues.");
