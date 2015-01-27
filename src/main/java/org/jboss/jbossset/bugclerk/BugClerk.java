@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
 import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
 import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
