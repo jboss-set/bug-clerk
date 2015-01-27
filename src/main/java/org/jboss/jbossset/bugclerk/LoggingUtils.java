@@ -1,7 +1,5 @@
 package org.jboss.jbossset.bugclerk;
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,11 +15,7 @@ public final class LoggingUtils {
     }
 
     public static void configureLogger(boolean debug) {
-        Handler consoleHandler = new ConsoleHandler();
-        Level level = getLevel(debug);
-        consoleHandler.setLevel(level);
-        Logger.getLogger(BUG_CLERK_LOGGER_NAME).addHandler(consoleHandler);
-        Logger.getLogger(BUG_CLERK_LOGGER_NAME).setLevel(level);
+        Logger.getLogger(BUG_CLERK_LOGGER_NAME).setLevel(getLevel(debug));
     }
 
     private static Level getLevel(boolean debug) {
