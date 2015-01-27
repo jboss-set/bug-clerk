@@ -11,19 +11,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
 import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 
 public class ParallelLoader {
 
+    private BugzillaClient bugzillaClient = new BugzillaClient();
+
     @SuppressWarnings("unchecked")
     public List<Candidate> loadCandidates(List<String> ids) {
         List<Candidate> candidates = new ArrayList<Candidate>(ids.size());
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        Future<Map<String, SortedSet<Comment>>> loadingComments = executor.submit(new CommentLoader(ids));
-        Future<Map<String, Bug>> loadingBugs = executor.submit(new BugLoader(ids));
+        Future<Map<String, SortedSet<Comment>>> loadingComments = executor.submit(new CommentLoader(ids, bugzillaClient));
+        Future<Map<String, Bug>> loadingBugs = executor.submit(new BugLoader(ids, bugzillaClient));
 
         while (! loadingBugs.isDone() || ! loadingComments.isDone() ) ;
         Map<String,Bug> bugs = getFromFuture(loadingBugs);
@@ -43,34 +46,37 @@ public class ParallelLoader {
             throw new IllegalStateException(e);
         }
     }
+
     private abstract class AbstractIssueLoader<T> implements Callable<Map<String, T>>{
         protected final List<String> ids;
-        public AbstractIssueLoader(final List<String> ids) {
+        protected final BugzillaClient bugzillaClient;
+        public AbstractIssueLoader(final List<String> ids, final BugzillaClient bugzillaClient) {
             this.ids = ids;
+            this.bugzillaClient = bugzillaClient;
         }
     }
 
     private class CommentLoader extends AbstractIssueLoader<SortedSet<Comment>> {
 
-        public CommentLoader(List<String> ids) {
-            super(ids);
+        public CommentLoader(List<String> ids, BugzillaClient bugzillaClient) {
+            super(ids, bugzillaClient);
         }
 
         @Override
         public Map<String, SortedSet<Comment>> call() throws Exception {
-            return BzUtils.loadCommentForBug(ids);
+            return bugzillaClient.loadCommentForBug(ids);
         }
     }
 
     private class BugLoader extends AbstractIssueLoader<Bug> {
 
-        public BugLoader(List<String> ids) {
-            super(ids);
+        public BugLoader(List<String> ids, BugzillaClient bugzillaClient) {
+            super(ids, bugzillaClient);
         }
 
         @Override
         public Map<String, Bug> call() throws Exception {
-            return BzUtils.loadBugsById(new HashSet<String>(ids));
+            return bugzillaClient.loadBugsById(new HashSet<String>(ids));
         }
     }
 }

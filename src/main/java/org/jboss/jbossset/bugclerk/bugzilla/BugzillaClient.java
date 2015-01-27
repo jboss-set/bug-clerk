@@ -1,4 +1,4 @@
-package org.jboss.jbossset.bugclerk;
+package org.jboss.jbossset.bugclerk.bugzilla;
 
 import java.net.URL;
 import java.util.Collection;
@@ -14,26 +14,27 @@ import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.jboss.pull.shared.connectors.common.Flag;
 
-public final class BzUtils {
+public class BugzillaClient {
 
-    private BzUtils() {
+    private final BZHelper bugzillaHelper;
+
+    public BugzillaClient() {
+        bugzillaHelper = createHelper();
     }
 
     private static final String CONFIGURATION_FILENAME = "processor-eap-6.properties";
     private static final Logger LOGGER = LoggingUtils.getLogger();
 
-    private static BZHelper createHelper() throws Exception {
-        return new BZHelper(CONFIGURATION_FILENAME,CONFIGURATION_FILENAME);
+    private static BZHelper createHelper() {
+        try {
+            return new BZHelper(CONFIGURATION_FILENAME,CONFIGURATION_FILENAME);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    public static Bug loadBzFromUrl(URL url) {
-        try {
-            return logBugRetrieved((Bug) createHelper().findIssue(url));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
+    public Bug loadBzFromUrl(URL url) {
+        return logBugRetrieved((Bug)this.bugzillaHelper.findIssue(url));
     }
 
     private static Bug logBugRetrieved(Bug issue) {
@@ -57,30 +58,15 @@ public final class BzUtils {
         return comments;
     }
 
-    public static SortedSet<Comment> loadCommentForBug(Bug bug) {
-        try {
-            return logRetrievedComments(createHelper().loadCommentsFor(bug));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public  SortedSet<Comment> loadCommentForBug(Bug bug) {
+        return logRetrievedComments(this.bugzillaHelper.loadCommentsFor(bug));
     }
 
-    public static Map<String, SortedSet<Comment>> loadCommentForBug(Collection<String> bugIds) {
-        try {
-            return createHelper().loadCommentsFor(bugIds);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Map<String, SortedSet<Comment>> loadCommentForBug(Collection<String> bugIds) {
+        return this.bugzillaHelper.loadCommentsFor(bugIds);
     }
 
-    public static Map<String,Bug> loadBugsById(Set<String> bugIds) {
-        try {
-            return createHelper().loadIssues(bugIds);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Map<String,Bug> loadBugsById(Set<String> bugIds) {
+            return this.bugzillaHelper.loadIssues(bugIds);
     }
 }
