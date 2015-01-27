@@ -1,5 +1,8 @@
 package org.jboss.jbossset.bugclerk;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -46,7 +49,18 @@ public final class SMTPClient {
     }
 
     private boolean emailConfigured() {
-        return ! SMTP_HOST_NAME.equals(NO_EMAIL_CONFIGURATION_FOUND);
+        return ! SMTP_HOST_NAME.equals(NO_EMAIL_CONFIGURATION_FOUND) && canConnectToHost();
+    }
+
+    private boolean canConnectToHost() {
+        try {
+            new URL(SMTP_HOST_NAME).openConnection().connect();
+        } catch (MalformedURLException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 
     public static void main(String[] args) {
