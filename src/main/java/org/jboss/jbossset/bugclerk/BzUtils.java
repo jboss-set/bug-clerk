@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.pull.shared.connectors.bugzilla.BZHelper;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;

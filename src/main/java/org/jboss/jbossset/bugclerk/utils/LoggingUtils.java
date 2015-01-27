@@ -1,7 +1,9 @@
-package org.jboss.jbossset.bugclerk;
+package org.jboss.jbossset.bugclerk.utils;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.jboss.jbossset.bugclerk.BugClerk;
 
 public final class LoggingUtils {
 

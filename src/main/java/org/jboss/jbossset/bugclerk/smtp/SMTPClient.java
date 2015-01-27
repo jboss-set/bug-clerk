@@ -1,4 +1,4 @@
-package org.jboss.jbossset.bugclerk;
+package org.jboss.jbossset.bugclerk.smtp;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

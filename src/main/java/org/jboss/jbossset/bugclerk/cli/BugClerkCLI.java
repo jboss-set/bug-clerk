@@ -1,4 +1,6 @@
-package org.jboss.jbossset.bugclerk;
+package org.jboss.jbossset.bugclerk.cli;
+
+import org.jboss.jbossset.bugclerk.BugClerk;
 
 public class BugClerkCLI {
 

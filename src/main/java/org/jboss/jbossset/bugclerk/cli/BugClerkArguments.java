@@ -1,7 +1,9 @@
-package org.jboss.jbossset.bugclerk;
+package org.jboss.jbossset.bugclerk.cli;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.jbossset.bugclerk.BugClerk;
 
 import com.beust.jcommander.IVariableArity;
 import com.beust.jcommander.JCommander;

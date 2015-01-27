@@ -1,4 +1,4 @@
-package org.jboss.jbossset.bugclerk;
+package org.jboss.jbossset.bugclerk.utils;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -1,4 +1,4 @@
-package org.jboss.jbossset.bugclerk;
+package org.jboss.jbossset.bugclerk.cli;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
+import org.jboss.jbossset.bugclerk.BugClerk;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
