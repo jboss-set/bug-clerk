@@ -148,7 +148,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.jboss.jbossset.bugclerk.BugClerk</mainClass>
+							<mainClass>org.jboss.jbossset.bugclerk.BugClerkCLI</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
