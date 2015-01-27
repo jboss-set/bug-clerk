@@ -52,12 +52,12 @@ public class BugClerk  {
     public void run(Arguments arguments) {
         LoggingUtils.configureLogger(arguments.isDebug());
 
-        LoggingUtils.getLogger().fine("Massive retrieved took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
+        LoggingUtils.getLogger().info("Loading data for " + arguments.getIds().size() + " issues.");
         List<Candidate> candidates = loadCandidates(arguments.getIds());
-        LoggingUtils.getLogger().fine("Rewiring bugs and comments took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
+        LoggingUtils.getLogger().info("Loading data from tracker took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
         Collection<Violation> violations = processEntriesAndReportViolations(candidates);
-        LoggingUtils.getLogger().fine("Found " + violations.size() + " violations:");
+        LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
         String report = buildReport(violations, arguments.getUrlPrefix());
 
         LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
