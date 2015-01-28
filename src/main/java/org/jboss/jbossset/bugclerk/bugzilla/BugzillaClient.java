@@ -22,7 +22,7 @@ public class BugzillaClient {
         bugzillaHelper = createHelper();
     }
 
-    private static final String CONFIGURATION_FILENAME = "processor-eap-6.properties";
+    public static final String CONFIGURATION_FILENAME = "bugclerk.properties";
     private static final Logger LOGGER = LoggingUtils.getLogger();
 
     private static BZHelper createHelper() {

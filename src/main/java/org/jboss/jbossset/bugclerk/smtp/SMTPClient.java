@@ -1,8 +1,8 @@
 package org.jboss.jbossset.bugclerk.smtp;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.ConnectException;
+import java.net.InetAddress;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -13,21 +13,38 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
+import org.jboss.pull.shared.Util;
+
 public final class SMTPClient {
 
     public static final String NO_EMAIL_CONFIGURATION_FOUND = "email-disabled";
 
-    private static final String SMTP_HOST_FIELD = "mail.smtp.host"; //$NON-NLS-1$
-    private static final String SMTP_HOST_NAME = SMTPClientConfiguration.getString("smtp.hostname");
+    private static final String SMTP_HOST_FIELD = "mail.smtp.host";
 
-    public static Session getSession() {
+    private String smtpHostname;
+
+    public SMTPClient() {
+        Properties smtpProperties = loadSMTPProperties();
+        smtpHostname = smtpProperties.getProperty(SMTP_HOST_FIELD);
+    }
+
+    public Session getSession() {
         Properties properties = System.getProperties();
-        properties.setProperty(SMTP_HOST_FIELD, SMTP_HOST_NAME);
+        properties.setProperty(SMTP_HOST_FIELD, smtpHostname);
         return Session.getDefaultInstance(properties);
     }
 
+    private static Properties loadSMTPProperties() {
+        try {
+            return Util.loadProperties(BugzillaClient.CONFIGURATION_FILENAME, BugzillaClient.CONFIGURATION_FILENAME);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private void createAndSendEMail(String to, String from, String subject, String text) throws AddressException, MessagingException {
-        MimeMessage message = new MimeMessage(SMTPClient.getSession());
+        MimeMessage message = new MimeMessage(getSession());
         message.setFrom(new InternetAddress(from));
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
         message.setSubject(subject);
@@ -49,21 +66,21 @@ public final class SMTPClient {
     }
 
     private boolean emailConfigured() {
-        return ! SMTP_HOST_NAME.equals(NO_EMAIL_CONFIGURATION_FOUND) && canConnectToHost();
+        return ! NO_EMAIL_CONFIGURATION_FOUND.equals(smtpHostname) && canConnectToHost();
     }
 
     private boolean canConnectToHost() {
         try {
-            new URL(SMTP_HOST_NAME).openConnection().connect();
-        } catch (MalformedURLException e) {
+            return InetAddress.getByName(smtpHostname).isReachable(5000);
+        } catch (ConnectException e) {
             return false;
         } catch (IOException e) {
             return false;
         }
-        return true;
     }
 
     public static void main(String[] args) {
-        new SMTPClient().sendEmail(SMTPClientConfiguration.getString("smtp.recipient.email"), SMTPClientConfiguration.getString("smtp.sender.email"), "subject", "text"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        Properties smtpProperties = SMTPClient.loadSMTPProperties();
+        new SMTPClient().sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"), "subject", "text");
     }
 }

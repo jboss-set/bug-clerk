@@ -1,7 +1,7 @@
 #!/bin/bash
-readonly BUG_CLERK_HOME=${BUG_CLERK_HOME:-'.'}
+readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'.'}
 readonly JAR_NAME=${JAR_NAME:-'bugclerk'}
-readonly VERSION=${VERSION:-'0.2-SNAPSHOT'}
+readonly VERSION=${project.version}
 readonly BZ_SERVER_URL=${BZ_SERVER_URL:-'https://bugzilla.redhat.com/show_bug.cgi?id='}
 
 checkScriptDependency() {
@@ -16,9 +16,9 @@ checkScriptDependency() {
 
 checkScriptDependency java
 
-if [ ! -e "${BUG_CLERK_HOME}" ]; then
-  echo "The BUG_CLERK_HOME '${BUG_CLERK_HOME}' provided does not exist."
+if [ ! -e "${BUGCLERK_HOME}" ]; then
+  echo "The BUGCLERK_HOME '${BUGCLERK_HOME}' provided does not exist."
   exit 2
 fi
 
-java -jar "${BUG_CLERK_HOME}/${JAR_NAME}-${VERSION}.jar" -u "${BZ_SERVER_URL}" "${@}"
+java -jar "${BUGCLERK_HOME}/${JAR_NAME}-${VERSION}.jar" -u "${BZ_SERVER_URL}" "${@}"

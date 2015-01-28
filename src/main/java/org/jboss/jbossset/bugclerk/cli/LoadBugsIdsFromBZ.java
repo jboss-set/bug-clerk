@@ -6,8 +6,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
+import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
+import org.jboss.pull.shared.Util;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -39,7 +42,6 @@ public class LoadBugsIdsFromBZ {
             this.filterURL = filterURL;
         }
 
-        @Parameter(names={ "-u", "--username"}, description= "Bugzilla username")
         private String username;
         public String getUsername() {
             return username;
@@ -48,7 +50,6 @@ public class LoadBugsIdsFromBZ {
             this.username = username;
         }
 
-        @Parameter(names={ "-p", "--password"}, description = "Bugzilla password")
         private String password;
         public String getPassword() {
             return password;
@@ -71,8 +72,21 @@ public class LoadBugsIdsFromBZ {
         return arguments;
     }
 
+    private static Arguments loadUsernamePassword(Arguments arguments) {
+
+        Properties prop;
+        try {
+            prop = Util.loadProperties(BugzillaClient.CONFIGURATION_FILENAME, BugzillaClient.CONFIGURATION_FILENAME);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        arguments.setUsername(prop.getProperty("bugzilla.login"));
+        arguments.setPassword(prop.getProperty("bugzilla.password"));
+        return arguments;
+    }
+
     public static void main(String[] args) throws ElementNotFoundException, FailingHttpStatusCodeException, MalformedURLException, IOException {
-        Arguments arguments = extractParameters(args);
+        Arguments arguments = loadUsernamePassword(extractParameters(args));
         System.out.print("Connection to BZ with URL " + arguments.getAuthURL() + " with username:" + arguments.getUsername() + " ... ");
         /* turn off annoying htmlunit warnings */
         java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(java.util.logging.Level.OFF);
