@@ -11,7 +11,7 @@
 
 	<groupId>org.jboss.jbossset</groupId>
 	<artifactId>bugclerk</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.2</version>
 	<packaging>jar</packaging>
 	<name>Bug Clerk</name>
     <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
@@ -143,7 +143,20 @@
 	</dependencies>
 
 	<build>
-		<plugins>
+        <resources>
+          <resource>
+            <directory>src/main/resources/</directory>
+          </resource>
+          <resource>
+            <directory>src/main/bash/</directory>
+            <filtering>true</filtering>
+            <excludes>
+              <exclude>deploy-bugclerk.sh</exclude>
+              <exclude>load-bugs.sh</exclude>
+            </excludes>
+        </resource>
+        </resources>
+        <plugins>
 			<!--plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -154,7 +167,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.jboss.jbossset.bugclerk.BugClerkCLI</mainClass>
+							<mainClass>org.jboss.jbossset.bugclerk.cli.BugClerkCLI</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
