@@ -54,15 +54,19 @@ public final class SMTPClient {
 
     public void sendEmail(String to, String from, String subject, String text) {
         try {
-            if ( emailConfigured() )
+            if ( emailConfigured() && ! isEmailEmpty(text))
                 createAndSendEMail(to, from, subject, text);
             else
-                System.err.println("No configuration for email found - skipping email report.");
+                System.err.println("No configuration for email found or empty mail - skipping email.");
         } catch (AddressException aex ) {
             throw new IllegalStateException(aex);
         } catch (MessagingException mex) {
             throw new IllegalStateException(mex);
         }
+    }
+
+    private boolean isEmailEmpty(String text) {
+        return (text == null || "".equals(text) );
     }
 
     private boolean emailConfigured() {
@@ -81,6 +85,9 @@ public final class SMTPClient {
 
     public static void main(String[] args) {
         Properties smtpProperties = SMTPClient.loadSMTPProperties();
-        new SMTPClient().sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"), "subject", "text");
+        SMTPClient cl = new SMTPClient();
+        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"), "subject", "");
+        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"), "subject", null);
+        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"), "subject", "text");
     }
 }
