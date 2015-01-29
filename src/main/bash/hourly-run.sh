@@ -21,6 +21,8 @@ if [ ! -e "${BUGCLERK_HOME}"/bugclerk*.jar ]; then
   exit 4
 fi
 
-java -cp ${BUGCLERK_HOME}/bugclerk-${project.version}.jar "${MAIN_CLASS}" \
+cd "${BUGCLERK_HOME}"
+java -cp ./bugclerk-${project.version}.jar "${MAIN_CLASS}" \
      -h "${AUTH_URL}" \
      -f "${FILTER_URL}"
+cd -
