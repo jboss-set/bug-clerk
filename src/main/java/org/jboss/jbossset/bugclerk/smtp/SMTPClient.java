@@ -9,7 +9,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -43,7 +42,7 @@ public final class SMTPClient {
         }
     }
 
-    private void createAndSendEMail(String to, String from, String subject, String text) throws AddressException, MessagingException {
+    private void createAndSendEMail(String to, String from, String subject, String text) throws MessagingException {
         MimeMessage message = new MimeMessage(getSession());
         message.setFrom(new InternetAddress(from));
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
@@ -54,23 +53,21 @@ public final class SMTPClient {
 
     public void sendEmail(String to, String from, String subject, String text) {
         try {
-            if ( emailConfigured() && ! isEmailEmpty(text))
+            if (emailConfigured() && !isEmailEmpty(text))
                 createAndSendEMail(to, from, subject, text);
             else
                 System.err.println("No configuration for email found or empty mail - skipping email.");
-        } catch (AddressException aex ) {
-            throw new IllegalStateException(aex);
         } catch (MessagingException mex) {
             throw new IllegalStateException(mex);
         }
     }
 
     private boolean isEmailEmpty(String text) {
-        return (text == null || "".equals(text) );
+        return (text == null || "".equals(text));
     }
 
     private boolean emailConfigured() {
-        return ! NO_EMAIL_CONFIGURATION_FOUND.equals(smtpHostname) && canConnectToHost();
+        return !NO_EMAIL_CONFIGURATION_FOUND.equals(smtpHostname) && canConnectToHost();
     }
 
     private boolean canConnectToHost() {
@@ -86,8 +83,11 @@ public final class SMTPClient {
     public static void main(String[] args) {
         Properties smtpProperties = SMTPClient.loadSMTPProperties();
         SMTPClient cl = new SMTPClient();
-        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"), "subject", "");
-        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"), "subject", null);
-        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"), "subject", "text");
+        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"),
+                "subject", "");
+        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"),
+                "subject", null);
+        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"),
+                "subject", "text");
     }
 }

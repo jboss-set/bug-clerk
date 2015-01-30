@@ -14,8 +14,9 @@ public class Candidate {
     private boolean filtered = false;
 
     private static void checkIfNotNull(Object ref, String fieldName) {
-        if ( ref == null ) {
-            throw new IllegalArgumentException("Can't build instance of " + Candidate.class.getCanonicalName() + " with 'null' value for field:" + fieldName);
+        if (ref == null) {
+            throw new IllegalArgumentException("Can't build instance of " + Candidate.class.getCanonicalName()
+                    + " with 'null' value for field:" + fieldName);
         }
     }
 
@@ -52,8 +53,8 @@ public class Candidate {
 
     @Override
     public String toString() {
-        return "Candidate [bug=" + bug.getId() + ", comments=" + comments.size() + ", isCandidate=" + isCandidate + ", filtered=" + filtered
-                + "]";
+        return "Candidate [bug=" + bug.getId() + ", comments=" + comments.size() + ", isCandidate=" + isCandidate
+                + ", filtered=" + filtered + "]";
     }
 
 }

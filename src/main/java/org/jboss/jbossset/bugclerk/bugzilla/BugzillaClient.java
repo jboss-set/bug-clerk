@@ -27,14 +27,14 @@ public class BugzillaClient {
 
     private static BZHelper createHelper() {
         try {
-            return new BZHelper(CONFIGURATION_FILENAME,CONFIGURATION_FILENAME);
+            return new BZHelper(CONFIGURATION_FILENAME, CONFIGURATION_FILENAME);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
     public Bug loadBzFromUrl(URL url) {
-        return logBugRetrieved((Bug)this.bugzillaHelper.findIssue(url));
+        return logBugRetrieved((Bug) this.bugzillaHelper.findIssue(url));
     }
 
     private static Bug logBugRetrieved(Bug issue) {
@@ -58,7 +58,7 @@ public class BugzillaClient {
         return comments;
     }
 
-    public  SortedSet<Comment> loadCommentForBug(Bug bug) {
+    public SortedSet<Comment> loadCommentForBug(Bug bug) {
         return logRetrievedComments(this.bugzillaHelper.loadCommentsFor(bug));
     }
 
@@ -66,7 +66,7 @@ public class BugzillaClient {
         return this.bugzillaHelper.loadCommentsFor(bugIds);
     }
 
-    public Map<String,Bug> loadBugsById(Set<String> bugIds) {
-            return this.bugzillaHelper.loadIssues(bugIds);
+    public Map<String, Bug> loadBugsById(Set<String> bugIds) {
+        return this.bugzillaHelper.loadIssues(bugIds);
     }
 }
