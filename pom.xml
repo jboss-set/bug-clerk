@@ -26,8 +26,7 @@
 		<mockito.version>1.9.5</mockito.version>
 		<org.jboss.jbossset.pull-shared.version>0.4-SNAPSHOT</org.jboss.jbossset.pull-shared.version>
 		<org.wildfly.wildfly.build.config.version>8.0.0.Final</org.wildfly.wildfly.build.config.version>
-		<testng.version>6.8.7</testng.version>
-		<xmlrpc-client.version>3.1.3</xmlrpc-client.version>
+        <xmlrpc-client.version>3.1.3</xmlrpc-client.version>
 
         <version.org.drools>6.1.0.Final</version.org.drools>
         <version.org.kie>6.1.0.Final</version.org.kie>
@@ -126,19 +125,18 @@
           <version>2.15</version>
         </dependency>
 
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>${testng.version}</version>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
 
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
+		  <groupId>org.mockito</groupId>
+		  <artifactId>mockito-core</artifactId>
+		  <version>${mockito.version}</version>
+		  <scope>test</scope>
 		</dependency>
 	</dependencies>
 
