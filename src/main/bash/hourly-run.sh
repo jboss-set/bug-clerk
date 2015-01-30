@@ -25,4 +25,4 @@ cd "${BUGCLERK_HOME}"
 java -cp ./bugclerk-${project.version}.jar "${MAIN_CLASS}" \
      -h "${AUTH_URL}" \
      -f "${FILTER_URL}"
-cd -
+cd - > /dev/null
