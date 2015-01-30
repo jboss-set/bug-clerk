@@ -27,7 +27,7 @@ global java.util.List list
 rule "TargetRelease"
     dialect "mvel"
     when
-       $candidate : Candidate($summary: bug.summary, $flags : bug.flags);
+       $candidate : Candidate($summary: bug.summary, $flags : bug.flags, filtered == false);
 	   $numberOfReleasesFlag : Number() from accumulate(i: Flag(name.contains("jboss-eap"), status == Status.UNKNOWN || status == Status.POSITIVE ) from $flags , count(i) );
 	   eval( $numberOfReleasesFlag > 1 )
     then

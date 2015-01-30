@@ -26,7 +26,7 @@ global java.util.List list
 rule "PostMissingPR"
     dialect "mvel"
     when
-		  $bug : Candidate( bug.status == "POST", $status : bug.status, $comments : comments);
+		  $bug : Candidate( bug.status == "POST", $status : bug.status, $comments : comments, filtered == false);
 		  not Comment( text.contains("github.com"), text.contains("/pull/") ) from $comments;
     then
 		insert( new Violation($bug.bug,drools.getRule().getName(), "PR appears to missing, but BZ status is " + $status) );
