@@ -29,6 +29,6 @@ rule "ComponentUpgradeMissingFixList"
     when
       $candidate : Candidate( bug.type == "Component Upgrade", bug.DependsOn.size == 0);
     then
-	  insert( new Violation($candidate.bug, "Component Upgrade BZ does not have any fixes it depends on !"));
+	  insert( new Violation($candidate.bug,drools.getRule().getName(),  "Component Upgrade BZ does not have any fixes it depends on !"));
 		
 end

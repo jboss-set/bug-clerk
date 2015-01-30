@@ -31,5 +31,5 @@ rule "TargetRelease"
 	   $numberOfReleasesFlag : Number() from accumulate(i: Flag(name.contains("jboss-eap"), status == Status.UNKNOWN || status == Status.POSITIVE ) from $flags , count(i) );
 	   eval( $numberOfReleasesFlag > 1 )
     then
-	   insert( new Violation($candidate.bug, "Invalid number of flag Release:" + $numberOfReleasesFlag + " - only is one should be set."));
+	   insert( new Violation($candidate.bug, drools.getRule().getName(), "Invalid number of flag Release:" + $numberOfReleasesFlag + " - only is one should be set."));
 end
