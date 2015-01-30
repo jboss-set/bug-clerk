@@ -10,7 +10,7 @@ import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
 import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 
-public class BugClerk  {
+public class BugClerk {
 
     private final PerformanceMonitor monitor = new PerformanceMonitor();
 
@@ -18,12 +18,11 @@ public class BugClerk  {
         return new ParallelLoader().loadCandidates(ids);
     }
 
-    private static final String KIE_SESSION = "BzCheck";
+    static final String KIE_SESSION = "BzCheck";
 
     protected Collection<Violation> processEntriesAndReportViolations(List<Candidate> candidates) {
-        Object[] facts = { candidates };
         RuleEngine ruleEngine = new RuleEngine(KIE_SESSION);
-        Collection<Violation> violations = ruleEngine.processBugEntry(facts);
+        Collection<Violation> violations = ruleEngine.processBugEntry(candidates);
         ruleEngine.shutdownRuleEngine();
         return violations;
     }
