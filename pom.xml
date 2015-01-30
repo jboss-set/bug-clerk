@@ -33,12 +33,12 @@
         <version.org.kie>6.1.0.Final</version.org.kie>
 	</properties>
 
-	<!--scm> TODO
-		<connection>scm:git:git://github.com/jboss-set/pull-request-processor.git</connection>
-		<developerConnection>scm:git:git@github.com:jboss-set/pull-request-processor.git</developerConnection>
+	<scm>
+        <connection>scm:git:github.com/jboss-set/bug-clerk</connection>
+        <developerConnection>scm:git:git@github.com:jboss-set/bug-clerk</developerConnection>
 		<url>https://github.com/jboss-set/pull-request-processor</url>
 		<tag>HEAD</tag>
-	</scm -->
+	</scm>
 
 	<dependencies>
 		<!-- BugZilla deps -->
