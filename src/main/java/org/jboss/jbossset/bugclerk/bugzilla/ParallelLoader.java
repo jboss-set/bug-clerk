@@ -1,6 +1,5 @@
 package org.jboss.jbossset.bugclerk.bugzilla;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,21 +19,16 @@ public class ParallelLoader {
 
     private BugzillaClient bugzillaClient = new BugzillaClient();
 
-    @SuppressWarnings("unchecked")
     public List<Candidate> loadCandidates(List<String> ids) {
-        List<Candidate> candidates = new ArrayList<Candidate>(ids.size());
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
         Future<Map<String, SortedSet<Comment>>> loadingComments = executor.submit(new CommentLoader(ids, bugzillaClient));
         Future<Map<String, Bug>> loadingBugs = executor.submit(new BugLoader(ids, bugzillaClient));
 
-        while (! loadingBugs.isDone() || ! loadingComments.isDone() ) ;
-        Map<String,Bug> bugs = getFromFuture(loadingBugs);
+        Map<String, Bug> bugs = getFromFuture(loadingBugs);
         Map<String, SortedSet<Comment>> comments = getFromFuture(loadingComments);
         executor.shutdown();
-        for ( Bug bug : bugs.values() )
-            candidates.add(new Candidate(bug, CollectionUtils.getEntryOrEmptySet(String.valueOf(bug.getId()),comments) ));
-        return candidates;
+        return CollectionUtils.createCandidateList(bugs, comments);
     }
 
     private static <T> T getFromFuture(Future<T> future) {
@@ -47,9 +41,10 @@ public class ParallelLoader {
         }
     }
 
-    private abstract class AbstractIssueLoader<T> implements Callable<Map<String, T>>{
+    private abstract class AbstractIssueLoader<T> implements Callable<Map<String, T>> {
         protected final List<String> ids;
         protected final BugzillaClient bugzillaClient;
+
         public AbstractIssueLoader(final List<String> ids, final BugzillaClient bugzillaClient) {
             this.ids = ids;
             this.bugzillaClient = bugzillaClient;
