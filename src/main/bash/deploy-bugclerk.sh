@@ -1,6 +1,7 @@
 #!/bin/bash
 readonly TARGET_DIR=${1:-$(mktemp -d)}
 readonly PROJECT_DIR=${2:-'.'}
+readonly BUGCLERK_VERSION=$(grep -e version ${PROJECT_DIR}/pom.xml | head -3 | tail -1 | sed -e 's;</*version>;;g' -e 's;[\t ]*;;g')
 
 copyFileToTargetDir() {
   local file=${1}
@@ -10,7 +11,7 @@ copyFileToTargetDir() {
 
 declare -A files
 files['properties']='./bugclerk.properties'
-files['jar']='target/bugclerk-0.2.jar'
+files['jar']="target/bugclerk-${BUGCLERK_VERSION}.jar"
 files['cron_script']='target/classes/hourly-run.sh'
 files['run_script']='target/classes/run.sh'
 
