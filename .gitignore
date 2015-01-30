@@ -4,5 +4,6 @@ dependency-reduced-pom.xml
 # Eclipse files
 .classpath
 .project
+.settings
 # BugClerk specific
 bugclerk.properties
