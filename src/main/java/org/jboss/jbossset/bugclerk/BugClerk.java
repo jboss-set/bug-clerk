@@ -32,12 +32,13 @@ public class BugClerk {
         return reportEngine.createReport(violations);
     }
 
-    private static final String TO = "rpelisse@redhat.com";
+    private static final String TO = "Romain Pelisse <rpelisse@redhat.com>";
     private static final String FROM = "BugClerk <rpelisse@redhat.com>";
 
     protected void publishReport(String report) {
-        String subject = "BugClerk Report - " + new SimpleDateFormat("yyyy/MM/dd - HH:mm").format(Calendar.getInstance().getTime());
-        new SMTPClient().sendEmail(TO, FROM , subject, report);
+        String subject = "BugClerk Report - "
+                + new SimpleDateFormat("yyyy/MM/dd - HH:mm").format(Calendar.getInstance().getTime());
+        new SMTPClient().sendEmail(TO, FROM, subject, report);
     }
 
     public void run(BugClerkArguments arguments) {
