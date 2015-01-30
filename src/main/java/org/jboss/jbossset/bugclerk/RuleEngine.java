@@ -1,65 +1,74 @@
 package org.jboss.jbossset.bugclerk;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.drools.core.ClassObjectFilter;
 import org.kie.api.KieServices;
-import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.AgendaFilter;
+import org.kie.api.runtime.rule.Match;
 
 public class RuleEngine {
 
-	private final KieSession ksession;
+    private final KieSession ksession;
 
-	private final List<Object> contextItems = new ArrayList<Object>();
+    public RuleEngine(String sessionName) {
+        ksession = createKSession(sessionName);
+    }
 
-	public RuleEngine(String sessionName) {
-		try {
-	        KieServices ks = KieServices.Factory.get();
-	        KieContainer kc = ks.getKieClasspathContainer();
-        	// its definition and configuration in the META-INF/kmodule.xml file
-	        ksession = kc.newKieSession(sessionName);
-	        contextItems.add("ContextItemString");
-	        ksession.setGlobal("list", contextItems );
+    public static KieSession createKSession(final String sessionName) {
+        try {
+            return KieServices.Factory.get().getKieClasspathContainer().newKieSession(sessionName);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
-	        // To setup a file based audit logger, uncomment the next line
-	        // KieRuntimeLogger logger = ks.getLoggers().newFileLogger( ksession, "./helloworld" );
-
-	        // To setup a ThreadedFileLogger, so that the audit view reflects events whilst debugging,
-	        // uncomment the next line
-	        // KieRuntimeLogger logger = ks.getLoggers().newThreadedFileLogger( ksession, "./helloworld", 1000 );
-
-		} catch ( Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-    public Collection<Violation> processBugEntry(Object[] facts) {
-	    for ( Object fact : facts ) {
-	        if ( fact instanceof Collection ) {
-	            @SuppressWarnings("rawtypes")
-                Collection collection = (Collection)fact;
-	            for ( Object o : collection )
-	                ksession.insert( o );
-	        } else
-	            ksession.insert( fact );
-	    }
-	     // and fire the rules
+    public Collection<Violation> processBugEntry(Collection<Candidate> candidates) {
+        addCandidatesToFacts(candidates);
         ksession.fireAllRules();
+        return retrieveViolationsFromKSession(ksession);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Collection<Violation> retrieveViolationsFromKSession(final KieSession ksession) {
         return (Collection<Violation>) ksession.getObjects(new ClassObjectFilter(Violation.class));
-	}
+    }
 
-	public void shutdownRuleEngine() {
-		if ( ksession != null )
-			ksession.dispose();
-		else
-			throw new IllegalStateException("Instance of " + this.getClass() + " was not properly initiated, or is dirty: KSession pointer is 'null'.");
+    private void addCandidatesToFacts(Collection<Candidate> candidates) {
+        for (Candidate fact : candidates)
+            ksession.insert(fact);
 
-        // Remove comment if using logging
-        // logger.close();
+    }
 
-	}
+    private AgendaFilter createAgendaForCheck(final String checkname) {
+        return new AgendaFilter() {
+            @Override
+            public boolean accept(Match match) {
+                return match.getRule().getName().equals(checkname);
+            }
+        };
+
+    }
+
+    public Collection<Violation> runCheckOnBugs(final String checkname, Collection<Candidate> candidates) {
+        addCandidatesToFacts(candidates);
+        ksession.fireAllRules(createAgendaForCheck(checkname));
+        return retrieveViolationsFromKSession(ksession);
+
+    }
+
+    @Deprecated
+    public Collection<Violation> processBugEntry(Object[] facts) {
+        throw new UnsupportedOperationException("This method is deprecated - use the typed method.");
+    }
+
+    public void shutdownRuleEngine() {
+        if (ksession != null)
+            ksession.dispose();
+        else
+            throw new IllegalStateException("Instance of " + this.getClass()
+                    + " was not properly initiated, or is dirty: KSession pointer is 'null'.");
+    }
 }
