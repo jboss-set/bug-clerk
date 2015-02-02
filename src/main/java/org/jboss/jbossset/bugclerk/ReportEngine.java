@@ -1,8 +1,9 @@
 package org.jboss.jbossset.bugclerk;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import static org.jboss.jbossset.bugclerk.utils.StringUtils.EOL;
+import static org.jboss.jbossset.bugclerk.utils.StringUtils.ITEM_ID_SEPARATOR;
+import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +15,9 @@ public class ReportEngine {
         this.urlPrefix = urlPrefix;
     }
 
-    public String createReport(Collection<Violation> violations) {
+    public String createReport(Map<Integer, List<Violation>> violationByBugId) {
         String reportString = "";
-        if (!violations.isEmpty()) {
-            Map<Integer, List<Violation>> violationByBugId = indexedViolationsByBugId(violations);
+        if (!violationByBugId.isEmpty()) {
             StringBuffer report = new StringBuffer();
             for (List<Violation> violationBug : violationByBugId.values()) {
                 report = format(violationBug, report);
@@ -27,31 +27,13 @@ public class ReportEngine {
         return reportString;
     }
 
-    private Map<Integer, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
-        Map<Integer, List<Violation>> violationIndexedByBugId = new HashMap<Integer, List<Violation>>(violations.size());
-        for (Violation violation : violations) {
-            int id = violation.getBug().getId();
-            if (!violationIndexedByBugId.containsKey(id)) {
-                List<Violation> violationsForBug = new ArrayList<Violation>();
-                violationsForBug.add(violation);
-                violationIndexedByBugId.put(id, violationsForBug);
-            } else
-                violationIndexedByBugId.get(id).add(violation);
-        }
-        return violationIndexedByBugId;
-    }
-
-    private static final String EOL = "\n";
-
     private StringBuffer format(List<Violation> violations, StringBuffer report) {
         int bugId = violations.get(0).getBug().getId();
         report.append("BZ").append(bugId).append(" - ").append(this.urlPrefix + bugId).append(EOL)
                 .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
         int violationId = 1;
-        for (Violation violation : violations) {
-            report.append(violationId++).append(") ").append(violation.getMessage()).append(EOL);
-        }
-        return report.append(EOL).append(EOL);
+        for (Violation violation : violations)
+            report.append(violationId++).append(ITEM_ID_SEPARATOR).append(violation.getMessage()).append(EOL);
+        return report.append(twoEOLs());
     }
-
 }

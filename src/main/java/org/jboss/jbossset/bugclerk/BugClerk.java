@@ -4,10 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
 import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
 import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
+import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 
 public class BugClerk {
@@ -27,9 +29,9 @@ public class BugClerk {
         return violations;
     }
 
-    protected String buildReport(Collection<Violation> violations, String urlPrefix) {
+    protected String buildReport(Map<Integer, List<Violation>> violationByBugId, String urlPrefix) {
         ReportEngine reportEngine = new ReportEngine(urlPrefix);
-        return reportEngine.createReport(violations);
+        return reportEngine.createReport(violationByBugId);
     }
 
     private static final String TO = "Romain Pelisse <rpelisse@redhat.com>";
@@ -49,8 +51,9 @@ public class BugClerk {
         LoggingUtils.getLogger().info("Loading data from tracker took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
         Collection<Violation> violations = processEntriesAndReportViolations(candidates);
+        Map<Integer, List<Violation>> violationByBugId = CollectionUtils.indexedViolationsByBugId(violations);
         LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
-        String report = buildReport(violations, arguments.getUrlPrefix());
+        String report = buildReport(violationByBugId, arguments.getUrlPrefix());
 
         LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         LoggingUtils.getLogger().info(report);
