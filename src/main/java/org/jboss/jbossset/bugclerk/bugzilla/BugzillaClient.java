@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.pull.shared.connectors.bugzilla.BZHelper;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
+import org.jboss.pull.shared.connectors.bugzilla.Bugzilla.CommentVisibility;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.jboss.pull.shared.connectors.common.Flag;
 
@@ -68,5 +69,9 @@ public class BugzillaClient {
 
     public Map<String, Bug> loadBugsById(Set<String> bugIds) {
         return this.bugzillaHelper.loadIssues(bugIds);
+    }
+
+    public boolean addPrivateCommentTo(final int id, final String text) {
+        return this.bugzillaHelper.addComment(id, text, CommentVisibility.PRIVATE, 0);
     }
 }
