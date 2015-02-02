@@ -12,7 +12,6 @@ import com.beust.jcommander.ParameterException;
 
 public class BugClerkArguments implements IVariableArity {
 
-    // TODO make a converter to turn directly into an URL
     @Parameter(names = { "-u", "--url-prefix" }, description = "URL prefix (before the issue ID)", required = true)
     private String urlPrefix;
 
@@ -21,6 +20,9 @@ public class BugClerkArguments implements IVariableArity {
 
     @Parameter(names = { "-h", "--help" }, description = "print help text", required = false)
     private boolean help = false;
+
+    @Parameter(names = { "-c", "--comment-on-bz"}, description = "add a comment to a BZ featuring violations, default is false",required = false)
+    private boolean reportToBz = false;
 
     @Parameter(names = { "-d", "--debug" }, description = "debug mode", required = false)
     private boolean debug = false;
@@ -77,6 +79,14 @@ public class BugClerkArguments implements IVariableArity {
 
     public List<String> getIds() {
         return ids;
+    }
+
+    public boolean isReportToBz() {
+        return reportToBz;
+    }
+
+    public void setReportToBz(boolean reportToBz) {
+        this.reportToBz = reportToBz;
     }
 
     @Override
