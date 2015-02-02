@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
+import org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngine;
 import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
 import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
 import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
+import org.jboss.jbossset.bugclerk.utils.StringUtils;
 
 public class BugClerk {
 
@@ -44,6 +46,19 @@ public class BugClerk {
         new SMTPClient().sendEmail(TO, FROM, subject, report);
     }
 
+    private static final String BUGCLERK_ISSUES_TRACKER = "https://github.com/jboss-set/bug-clerk/issues";
+
+    private static final String COMMENT_MESSSAGE_HEADER = BugClerk.class.getSimpleName() + " (automated tool) noticed on "
+            + NOW + " the following" + " discrepencies in this entry:" + StringUtils.twoEOLs();
+
+    private static final String COMMENT_MESSAGE_FOOTER = "If the issues reported are erronous "
+            + "or if you wish to ask for enhancement or new checks for " + BugClerk.class.getSimpleName()
+            + " please, fill an issue on BugClerk issue tracker: " + BUGCLERK_ISSUES_TRACKER;
+
+    protected void updateBZwithViolations(Map<Integer, List<Violation>> violationByBugId) {
+        new ReportViolationToBzEngine(COMMENT_MESSSAGE_HEADER, COMMENT_MESSAGE_FOOTER).reportViolationToBZ(violationByBugId);
+    }
+
     public void run(BugClerkArguments arguments) {
         LoggingUtils.configureLogger(arguments.isDebug());
 
@@ -60,5 +75,8 @@ public class BugClerk {
         LoggingUtils.getLogger().info(report);
 
         publishReport(report);
+
+        if (arguments.isReportToBz())
+            updateBZwithViolations(violationByBugId);
     }
 }
