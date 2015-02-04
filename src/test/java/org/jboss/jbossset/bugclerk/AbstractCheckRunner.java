@@ -84,14 +84,20 @@ public abstract class AbstractCheckRunner {
         return testSpecificStubbingForComment(mock);
     }
 
-    protected Collection<Candidate> buildTestSubject(int bugId, String payload) {
+    protected Collection<Candidate> buildTestSubjectWithComment(int bugId, String comment) {
         SortedSet<Comment> comments = new TreeSet<Comment>();
-        comments.add(createMockedComment(0, payload, bugId));
-        final Candidate candidate = new Candidate(createMockedBug(bugId), comments);
+        comments.add(createMockedComment(0, comment, bugId));
+        return createListForOneCandidate(new Candidate(createMockedBug(bugId), comments));
+    }
 
+    protected Collection<Candidate> createListForOneCandidate(Candidate candidate) {
         Collection<Candidate> candidates = new ArrayList<Candidate>(1);
         candidates.add(candidate);
         return candidates;
+    }
+
+    protected Collection<Candidate> buildTestSubject(int bugId) {
+        return createListForOneCandidate ( new Candidate(createMockedBug(bugId), new TreeSet<Comment>() ));
     }
 
     protected Collection<Candidate> filterCandidateOut(Collection<Candidate> candidates) {
@@ -101,12 +107,21 @@ public abstract class AbstractCheckRunner {
         return candidates;
     }
 
+    protected void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId) {
+        assertThat(violations.size(), is(1));
+        for ( Violation v : violations ) {
+            assertThat(v.getBug().getId(), is(bugId));
+            assertThat(v.getCheckName(), is(checkname));
+        }
+    }
+
+
     @Test
     public void filteredCandidateShouldBeIgnored() {
         final String payload = "Well; it does seems like one forgot the PR here.";
         final int bugId = 143794;
 
-        assertThat( engine.runCheckOnBugs(checkName, filterCandidateOut(buildTestSubject(bugId, payload))).size(), is(0) );
+        assertThat( engine.runCheckOnBugs(checkName, filterCandidateOut(buildTestSubjectWithComment(bugId, payload))).size(), is(0) );
     }
 
 }
