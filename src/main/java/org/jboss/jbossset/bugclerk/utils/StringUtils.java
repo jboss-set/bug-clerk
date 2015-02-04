@@ -24,15 +24,21 @@ package org.jboss.jbossset.bugclerk.utils;
 
 public final class StringUtils {
 
-    private StringUtils() {}
+    private StringUtils() {
+    }
 
     public static final String EOL = "\n";
     public static final String ITEM_ID_SEPARATOR = ") ";
 
+    public static final String OPEN_ID_SEPARATOR = "[";
+    public static final String CLOSE_ID_SEPARATOR = "]";
+
+    public static String formatCheckname(String checkname) {
+        return OPEN_ID_SEPARATOR + checkname + CLOSE_ID_SEPARATOR;
+    }
 
     public static StringBuffer twoEOLs() {
         return new StringBuffer(EOL).append(EOL);
     }
 
 }
-
