@@ -22,14 +22,21 @@
 
 package org.jboss.jbossset.bugclerk.bugzilla;
 
+import static org.jboss.jbossset.bugclerk.utils.CollectionUtils.bugSetToIdStringSet;
+import static org.jboss.jbossset.bugclerk.utils.CollectionUtils.indexViolationByCheckname;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.ITEM_ID_SEPARATOR;
+import static org.jboss.jbossset.bugclerk.utils.StringUtils.formatCheckname;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedSet;
 
 import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.pull.shared.connectors.bugzilla.Comment;
+
 public class ReportViolationToBzEngine {
 
     private final String header;
@@ -42,15 +49,36 @@ public class ReportViolationToBzEngine {
 
     public void reportViolationToBZ(Map<Integer, List<Violation>> violationByBugId) {
         BugzillaClient bugzillaClient = new BugzillaClient();
-        for (Entry<Integer, List<Violation>> bugViolation : violationByBugId.entrySet())
-            bugzillaClient.addPrivateCommentTo(bugViolation.getKey(),
-                    messageBody(bugViolation.getValue(), new StringBuffer(header)).append(footer).toString());
+        Map<String, SortedSet<Comment>> commentsByBugId = bugzillaClient.loadCommentForBug(bugSetToIdStringSet(violationByBugId
+                .keySet()));
+
+        for (Entry<Integer, List<Violation>> bugViolation : violationByBugId.entrySet()) {
+            List<Violation> newViolationToReport = filterViolationsAlreadyReported(bugViolation.getValue(),
+                    commentsByBugId.get(bugViolation.getKey().toString()));
+            if (!newViolationToReport.isEmpty())
+                bugzillaClient.addPrivateCommentTo(bugViolation.getKey(),
+                        messageBody(newViolationToReport, new StringBuffer(header)).append(footer).toString());
+        }
+    }
+
+    private List<Violation> filterViolationsAlreadyReported(List<Violation> violations, SortedSet<Comment> comments) {
+        List<Violation> violationsToReport = new ArrayList<>(violations.size());
+        for (Entry<String, Violation> entry : indexViolationByCheckname(violations).entrySet()) {
+            CommentPatternMatcher matcher = new CommentPatternMatcher(formatCheckname(entry.getKey()));
+            if (!matcher.containsPattern(comments))
+                violationsToReport.add(entry.getValue());
+        }
+        return violationsToReport;
     }
 
     private StringBuffer messageBody(List<Violation> violations, StringBuffer text) {
+        if (violations == null || violations.isEmpty() || "".equals(text))
+            throw new IllegalArgumentException("No violations or text empty");
+
         int violationId = 1;
         for (Violation violation : violations)
-            text.append(violationId++).append(ITEM_ID_SEPARATOR).append(violation.getMessage()).append(twoEOLs());
+            text.append(violationId++).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
+                    .append(violation.getMessage()).append(twoEOLs());
         return text;
     }
 }

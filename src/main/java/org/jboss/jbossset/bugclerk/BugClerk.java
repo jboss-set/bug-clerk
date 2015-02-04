@@ -63,8 +63,7 @@ public class BugClerk {
     private static final String FROM = "BugClerk <rpelisse@redhat.com>";
 
     protected void publishReport(String report) {
-        String subject = "BugClerk Report - " + NOW;
-        new SMTPClient().sendEmail(TO, FROM, subject, report);
+        new SMTPClient().sendEmail(TO, FROM, "BugClerk Report - " + NOW, report);
     }
 
     private static final String BUGCLERK_ISSUES_TRACKER = "https://github.com/jboss-set/bug-clerk/issues";
