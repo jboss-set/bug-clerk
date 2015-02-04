@@ -24,8 +24,10 @@ package org.jboss.jbossset.bugclerk.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -72,4 +74,21 @@ public final class CollectionUtils {
         return violationIndexedByBugId;
     }
 
+    public static Set<String> bugSetToIdStringSet(Set<Integer> intSet) {
+        if ( intSet == null )
+            throw new IllegalArgumentException("provided set can't be null.");
+
+        Set<String> stringSet = new HashSet<>(intSet.size());
+        if ( ! intSet.isEmpty() )
+            for ( Integer integer : intSet )
+                stringSet.add(String.valueOf(integer));
+        return stringSet;
+    }
+
+    public static Map<String, Violation> indexViolationByCheckname(Collection<Violation> violations) {
+        Map<String, Violation> violationIndexedByCheckname = new HashMap<String,Violation>(violations.size());
+        for ( Violation violation : violations )
+            violationIndexedByCheckname.put(violation.getCheckName(),violation);
+        return violationIndexedByCheckname;
+    }
 }
