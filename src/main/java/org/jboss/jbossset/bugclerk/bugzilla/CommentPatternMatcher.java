@@ -1,5 +1,8 @@
 package org.jboss.jbossset.bugclerk.bugzilla;
 
+import static org.jboss.jbossset.bugclerk.utils.StringUtils.CLOSE_ID_SEPARATOR;
+import static org.jboss.jbossset.bugclerk.utils.StringUtils.OPEN_ID_SEPARATOR;
+
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,19 +13,16 @@ public class CommentPatternMatcher {
 
     final Pattern pattern;
 
-    final static String OPEN_LIST_OF_ITEMS = "(";
-    final static String CLOSE_LIST_OF_ITEMS = "(";
-    final static String ITEM_SEPARATOR = "|";
+    static final String OPEN_LIST_OF_ITEMS = "(";
+    static final String CLOSE_LIST_OF_ITEMS = "(";
+    static final String ITEM_SEPARATOR = "|";
 
-    public CommentPatternMatcher(String string) {
-        pattern = Pattern.compile(string);
+    public CommentPatternMatcher(String patternToFind) {
+        pattern = Pattern.compile(escapeSpecialCharacter(patternToFind));
     }
 
-    private String buildRegexPattern(Collection<String> items) {
-        StringBuffer pattern = new StringBuffer(OPEN_LIST_OF_ITEMS);
-        for (String string : items)
-            pattern.append(string).append(ITEM_SEPARATOR);
-        return pattern.replace(0, pattern.length() - 1, CLOSE_LIST_OF_ITEMS).toString();
+    private String escapeSpecialCharacter(String content) {
+        return content.replace(OPEN_ID_SEPARATOR, "\\" + OPEN_ID_SEPARATOR).replace(CLOSE_ID_SEPARATOR, "\\" + CLOSE_ID_SEPARATOR);
     }
 
     public boolean containsPattern(Collection<Comment> comments) {
