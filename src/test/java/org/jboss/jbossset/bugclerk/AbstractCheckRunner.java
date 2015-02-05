@@ -77,11 +77,7 @@ public abstract class AbstractCheckRunner {
     }
 
     protected Comment createMockedComment(int id, String text, int bugId) {
-        Comment mock = Mockito.mock(Comment.class);
-        Mockito.when(mock.getId()).thenReturn(id);
-        Mockito.when(mock.getBugId()).thenReturn(bugId);
-        Mockito.when(mock.getText()).thenReturn(text);
-        return testSpecificStubbingForComment(mock);
+        return testSpecificStubbingForComment(MockUtils.mockComment(id, text, bugId));
     }
 
     protected Collection<Candidate> buildTestSubjectWithComment(int bugId, String comment) {
