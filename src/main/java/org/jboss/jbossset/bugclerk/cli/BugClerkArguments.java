@@ -46,6 +46,9 @@ public class BugClerkArguments implements IVariableArity {
     @Parameter(names = { "-c", "--comment-on-bz"}, description = "add a comment to a BZ featuring violations, default is false",required = false)
     private boolean reportToBz = false;
 
+    @Parameter(names = { "-m", "--mail-report"}, description = "sent a report by mail, default is false",required = false)
+    private boolean mailReport = false;
+
     @Parameter(names = { "-d", "--debug" }, description = "debug mode", required = false)
     private boolean debug = false;
 
@@ -109,6 +112,14 @@ public class BugClerkArguments implements IVariableArity {
 
     public void setReportToBz(boolean reportToBz) {
         this.reportToBz = reportToBz;
+    }
+
+    public boolean isMailReport() {
+        return mailReport;
+    }
+
+    public void setMailReport(boolean mailReport) {
+        this.mailReport = mailReport;
     }
 
     @Override

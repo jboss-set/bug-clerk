@@ -94,7 +94,8 @@ public class BugClerk {
         LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         LoggingUtils.getLogger().info(report);
 
-        publishReport(report);
+        if (arguments.isMailReport() )
+            publishReport(report);
 
         if (arguments.isReportToBz())
             updateBZwithViolations(violationByBugId);
