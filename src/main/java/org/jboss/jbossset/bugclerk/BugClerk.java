@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
 import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
 import org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngine;
 import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
@@ -76,7 +77,7 @@ public class BugClerk {
             + " please, fill an issue on BugClerk issue tracker: " + BUGCLERK_ISSUES_TRACKER;
 
     protected void updateBZwithViolations(Map<Integer, List<Violation>> violationByBugId) {
-        new ReportViolationToBzEngine(COMMENT_MESSSAGE_HEADER, COMMENT_MESSAGE_FOOTER).reportViolationToBZ(violationByBugId);
+        new ReportViolationToBzEngine(COMMENT_MESSSAGE_HEADER, COMMENT_MESSAGE_FOOTER, new BugzillaClient()).reportViolationToBZ(violationByBugId);
     }
 
     public void run(BugClerkArguments arguments) {

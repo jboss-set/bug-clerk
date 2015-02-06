@@ -41,24 +41,31 @@ public class ReportViolationToBzEngine {
 
     private final String header;
     private final String footer;
+    private final BugzillaClient bugzillaClient;
 
-    public ReportViolationToBzEngine(String header, String footer) {
+
+    public ReportViolationToBzEngine(String header, String footer, BugzillaClient bugzillaClient) {
         this.header = header;
         this.footer = footer;
+        this.bugzillaClient = bugzillaClient;
     }
 
-    public void reportViolationToBZ(Map<Integer, List<Violation>> violationByBugId) {
-        BugzillaClient bugzillaClient = new BugzillaClient();
-        Map<String, SortedSet<Comment>> commentsByBugId = bugzillaClient.loadCommentForBug(bugSetToIdStringSet(violationByBugId
-                .keySet()));
+    public boolean reportViolationToBZ(Map<Integer, List<Violation>> violationByBugId) {
 
+        return reportViolationToBugTracker(violationByBugId,
+                bugzillaClient.loadCommentForBug(bugSetToIdStringSet(violationByBugId
+                        .keySet())));
+    }
+
+    boolean reportViolationToBugTracker(Map<Integer, List<Violation>> violationByBugId, Map<String, SortedSet<Comment>> commentsByBugId) {
         for (Entry<Integer, List<Violation>> bugViolation : violationByBugId.entrySet()) {
             List<Violation> newViolationToReport = filterViolationsAlreadyReported(bugViolation.getValue(),
                     commentsByBugId.get(bugViolation.getKey().toString()));
             if (!newViolationToReport.isEmpty())
-                bugzillaClient.addPrivateCommentTo(bugViolation.getKey(),
+                return bugzillaClient.addPrivateCommentTo(bugViolation.getKey(),
                         messageBody(newViolationToReport, new StringBuffer(header)).append(footer).toString());
         }
+        return false; // no violation reported
     }
 
     private List<Violation> filterViolationsAlreadyReported(List<Violation> violations, SortedSet<Comment> comments) {
