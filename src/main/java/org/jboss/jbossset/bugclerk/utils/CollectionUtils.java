@@ -41,18 +41,17 @@ public final class CollectionUtils {
     private CollectionUtils() {
     }
 
-    @SuppressWarnings("rawtypes")
-    public static <K, V> SortedSet getEntryOrEmptySet(K key, Map<K, SortedSet<V>> map) {
+    public static <K, V> SortedSet<V> getEntryOrEmptySet(K key, Map<K, SortedSet<V>> map) {
         return (map.containsKey(key) ? map.get(key) : new TreeSet<V>());
     }
 
     @SafeVarargs
     public static <T> Object[] objectsToArray(T... objects) {
-        Object[] facts = { objects };
-        return facts;
+        return objects;
+//        Object[] facts = { objects };
+  //      return facts;
     }
 
-    @SuppressWarnings("unchecked")
     public static List<Candidate> createCandidateList(Map<String, Bug> bugs, Map<String, SortedSet<Comment>> comments) {
         List<Candidate> candidates = new ArrayList<Candidate>(bugs.size());
         for (Bug bug : bugs.values())
