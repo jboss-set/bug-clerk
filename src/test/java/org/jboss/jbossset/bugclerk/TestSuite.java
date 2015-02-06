@@ -7,7 +7,12 @@ import org.junit.runners.Suite;
     org.jboss.jbossset.bugclerk.checks.ComponentUpgradeMissingFixList.class,
     org.jboss.jbossset.bugclerk.checks.PostMissingPR.class,
     org.jboss.jbossset.bugclerk.checks.ReleaseVersionMismatch.class,
-    org.jboss.jbossset.bugclerk.checks.TargetRelease.class
+    org.jboss.jbossset.bugclerk.checks.TargetRelease.class,
+
+    org.jboss.jbossset.bugclerk.utils.CollectionsUtilsTests.class,
+    org.jboss.jbossset.bugclerk.utils.URLUtilsTest.class,
+    org.jboss.jbossset.bugclerk.utils.StringUtilsTests.class,
+    org.jboss.jbossset.bugclerk.ReportEngineTest.class
 })
 public class TestSuite {
 

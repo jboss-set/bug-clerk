@@ -165,8 +165,67 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-		</plugins>
+            </plugin>
+            <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>0.7.2.201409121644</version>
+              <configuration>
+                <excludes>
+                  <!-- can't really unit test CLI behavior -->
+                  <exclude>org/jboss/jbossset/bugclerk/cli/*.class</exclude>
+                  <!-- same with logging function -->
+                  <exclude>org/jboss/jbossset/bugclerk/utils/LoggingUtils.class</exclude>
+                  <!-- bugzilla client layer is just a wrapper -->
+                  <exclude>org/jboss/jbossset/bugclerk/bugzilla/BugzillaClient.class</exclude>
+                  <!-- loaders are pointless to test without a proper backend -->
+                  <exclude>org/jboss/jbossset/bugclerk/bugzilla/*Loader*.class</exclude>
+                  <!-- not really worth covering -->
+                  <exclude>org/jboss/jbossset/bugclerk/PerformanceMonitor.class</exclude>
+                  <!-- testing POJO is really pointless -->
+                  <exclude>org/jboss/jbossset/bugclerk/Candidate.class</exclude>
+                  <exclude>org/jboss/jbossset/bugclerk/Violation.class</exclude>
+                </excludes>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>pre-unit-test</id>
+                  <goals>
+                    <goal>prepare-agent</goal>
+                  </goals>
+              </execution>
+              <execution>
+                <id>post-unit-test</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-failsafe-plugin</artifactId>
+    <version>2.14</version>
+    <configuration>
+        <argLine>${failsafe.argLine}</argLine>
+    </configuration>
+    <executions>
+        <execution>
+            <id>integration-test</id>
+            <goals>
+                <goal>integration-test</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>verify</id>
+            <goals>
+                <goal>verify</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+          </plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
