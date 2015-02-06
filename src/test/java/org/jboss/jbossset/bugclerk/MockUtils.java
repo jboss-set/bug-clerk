@@ -2,6 +2,8 @@ package org.jboss.jbossset.bugclerk;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
@@ -18,6 +20,12 @@ public final class MockUtils {
         Mockito.when(mock.getBugId()).thenReturn(bugId);
         Mockito.when(mock.getText()).thenReturn(text);
         return mock;
+    }
+
+    public static SortedSet<Comment> mockCommentsWithOneItem(int id, String text, int bugId) {
+        SortedSet<Comment> comments = new TreeSet<Comment>();
+        comments.add(mockComment(id, text, bugId));
+        return comments;
     }
 
     public static Bug mockBug(int bugId, String summary) {
