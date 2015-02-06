@@ -32,8 +32,8 @@ import java.util.logging.Logger;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.pull.shared.connectors.bugzilla.BZHelper;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Bugzilla.CommentVisibility;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.pull.shared.connectors.bugzilla.CommentVisibility;
 import org.jboss.pull.shared.connectors.common.Flag;
 
 public class BugzillaClient {
