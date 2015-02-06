@@ -34,7 +34,6 @@ import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractCheckRunner {
@@ -62,10 +61,7 @@ public abstract class AbstractCheckRunner {
     }
 
     protected Bug createMockedBug(int bugId) {
-        Bug mock = Mockito.mock(Bug.class);
-        Mockito.when(mock.getId()).thenReturn(bugId);
-        Mockito.when(mock.getSummary()).thenReturn("summary");
-        return testSpecificStubbingForBug(mock);
+        return testSpecificStubbingForBug(MockUtils.mockBug(bugId, "summary"));
     }
 
     protected Bug testSpecificStubbingForBug(Bug bug) {
