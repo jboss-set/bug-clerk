@@ -55,7 +55,7 @@ public final class SMTPClient {
         return Session.getDefaultInstance(properties);
     }
 
-    private static Properties loadSMTPProperties() {
+    static Properties loadSMTPProperties() {
         try {
             return Util.loadProperties(BugzillaClient.CONFIGURATION_FILENAME, BugzillaClient.CONFIGURATION_FILENAME);
         } catch (IOException e) {
@@ -101,14 +101,4 @@ public final class SMTPClient {
         }
     }
 
-    public static void main(String[] args) {
-        Properties smtpProperties = SMTPClient.loadSMTPProperties();
-        SMTPClient cl = new SMTPClient();
-        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"),
-                "subject", "");
-        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"),
-                "subject", null);
-        cl.sendEmail(smtpProperties.getProperty("smtp.recipient.email"), smtpProperties.getProperty("smtp.sender.email"),
-                "subject", "text");
-    }
 }
