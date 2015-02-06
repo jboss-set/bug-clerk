@@ -12,7 +12,8 @@ import org.junit.runners.Suite;
     org.jboss.jbossset.bugclerk.utils.CollectionsUtilsTests.class,
     org.jboss.jbossset.bugclerk.utils.URLUtilsTest.class,
     org.jboss.jbossset.bugclerk.utils.StringUtilsTests.class,
-    org.jboss.jbossset.bugclerk.ReportEngineTest.class
+    org.jboss.jbossset.bugclerk.ReportEngineTest.class,
+    org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngineTest.class
 })
 public class TestSuite {
 
