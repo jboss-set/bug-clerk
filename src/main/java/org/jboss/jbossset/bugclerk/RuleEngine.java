@@ -80,11 +80,6 @@ public class RuleEngine {
 
     }
 
-    @Deprecated
-    public Collection<Violation> processBugEntry(Object[] facts) {
-        throw new UnsupportedOperationException("This method is deprecated - use the typed method.");
-    }
-
     public void shutdownRuleEngine() {
         if (ksession != null)
             ksession.dispose();
