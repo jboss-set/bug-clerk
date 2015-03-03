@@ -6,7 +6,7 @@ export BUGCLERK_JAR=${BUGCLERK_JAR:-"bugclerk-${BUGCLERK_VERSION}.jar"}
 export BUGCLERK_RELEASE_URL=${BUGCLERK_RELEASE_URL:-"https://github.com/jboss-set/bug-clerk/releases/download/bugclerk-${BUGCLERK_VERSION}/${BUGCLERK_JAR}"}
 
 readonly BUGCLERK_SCRIPT=${BUGCLERK_SCRIPT:-'filter-based-run.sh'}
-readonly BUGCLERK_PROPS_FILE=${BUGCLERK_PROPS_FILE:-"${HOME}/bugclerk.properties"}
+readonly BUGCLERK_PROPS_FILE=${BUGCLERK_PROPS_FILE:-"/home/jboss/docker/workspace/bugclerk-report/bugclerk.properties"}
 
 
 echo -n "Download BugClerk release from ${BUGCLERK_RELEASE_URL}... "
