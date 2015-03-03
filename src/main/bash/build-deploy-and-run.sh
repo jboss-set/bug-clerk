@@ -12,14 +12,14 @@ export MAVEN_HOME="$(pwd)/apache-maven-3.2.5"
 echo 'Done'.
 echo "Maven Home is : ${MAVEN_HOME}."
 
-${MAVEN_HOME}/bin/mvn clean package
-
 readonly PULL_SHARED_DIR=$(mktemp -d)
 
 git clone https://github.com/jboss-set/pull-shared "${PULL_SHARED_DIR}"
 cd "${PULL_SHARED_DIR}"
 ${MAVEN_HOME}/bin/mvn clean install
 cd - 2> /dev/null
+
+${MAVEN_HOME}/bin/mvn clean package
 
 export BUGCLERK_HOME=$(./src/main/bash/deploy-bugclerk.sh)
 export BUGCLERK_VERSION=$(grep -e '^  <version' pom.xml | sed -e 's/^ *<version>//' -e 's;</version>;;')
