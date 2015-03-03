@@ -19,6 +19,10 @@ cd "${PULL_SHARED_DIR}"
 ${MAVEN_HOME}/bin/mvn clean install
 cd - 2> /dev/null
 
+readonly BUGCLERK_PROPS_FILE=${BUGCLERK_PROPS_FILE:-"/home/jboss/docker/workspace/bugclerk-report/bugclerk.properties"}
+mv "${BUGCLERK_PROPS_FILE}" .
+
+
 ${MAVEN_HOME}/bin/mvn clean package
 
 export BUGCLERK_HOME=$(./src/main/bash/deploy-bugclerk.sh)
