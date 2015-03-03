@@ -18,7 +18,6 @@ export BUGCLERK_HOME=$(pwd)
 readonly UNZIP_DIR=$(mktemp -d)
 unzip "${BUGCLERK_JAR}" -d "${UNZIP_DIR}"
 cp --preserve "${UNZIP_DIR}/${BUGCLERK_SCRIPT}" .
-mv "${BUGCLERK_PROPS_FILE}" .
 
 export FILTER_URL='https://bugzilla.redhat.com/buglist.cgi?cmdtype=dorem&remaction=run&namedcmd=jboss-eap-6.4.z-superset&sharer_id=213224&ctype=csv'
 
