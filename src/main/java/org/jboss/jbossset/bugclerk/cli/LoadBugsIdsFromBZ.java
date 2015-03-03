@@ -62,6 +62,9 @@ public class LoadBugsIdsFromBZ {
         @Parameter(names = { "-f", "--filter-url" }, description = "URL to search filter")
         private String filterURL;
 
+        @Parameter(names = { "-c", "--add-comment-on-bz"} , description = "add a comment to a BZ featuring violations, default is false", required = false)
+        private boolean isCommentOnBZEnabled = false;
+
         public String getFilterURL() {
             return filterURL;
         }
@@ -89,6 +92,15 @@ public class LoadBugsIdsFromBZ {
         public void setPassword(String password) {
             this.password = password;
         }
+
+        public boolean isCommentOnBZEnabled() {
+            return isCommentOnBZEnabled;
+        }
+
+        public void setCommentOnBZEnabled(boolean isCommentOnBZEnabled) {
+            this.isCommentOnBZEnabled = isCommentOnBZEnabled;
+        }
+
     }
 
     private static Arguments extractParameters(String[] args) {
