@@ -6,7 +6,7 @@
     <artifactId>jboss-parent</artifactId>
     <groupId>org.jboss</groupId>
     <version>11-redhat-1</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>org.jboss.jbossset</groupId>
@@ -14,7 +14,7 @@
   <version>0.4.1.Final</version>
   <packaging>jar</packaging>
   <name>Bug Clerk</name>
-    <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
+  <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
