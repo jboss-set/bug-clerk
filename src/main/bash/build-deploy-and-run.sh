@@ -7,14 +7,21 @@ export MVN_URL=${MVN_URL:-"http://mirror.netcologne.de/apache.org/maven/maven-3/
 echo -n "Installing mvn from ${MVN_URL}..."
 readonly MVN_ARCHIVE=$(echo ${MVN_URL} | sed -e 's;^.*/;;')
 wget "${MVN_URL}" -O "${MVN_ARCHIVE}" 2> /dev/null
-tar xvzf "${MVN_ARCHIVE}" > /dev/null
+tar xvzf "${MVN_ARCHIVE}" 2> /dev/null
 export MAVEN_HOME="$(pwd)/apache-maven-3.2.5"
 echo 'Done'.
 echo "Maven Home is : ${MAVEN_HOME}."
 
 ${MAVEN_HOME}/bin/mvn clean package
 
-export BUGCLERK_HOME=$(src/main/bash/deploy-bugclerk.sh)
+readonly PULL_SHARED_DIR=$(mktemp -d)
+
+git clone https://github.com/jboss-set/pull-shared "${PULL_SHARED_DIR}"
+cd "${PULL_SHARED_DIR}"
+${MAVEN_HOME}/bin/mvn clean install
+cd - 2> /dev/null
+
+export BUGCLERK_HOME=$(./src/main/bash/deploy-bugclerk.sh)
 export BUGCLERK_VERSION=$(grep -e '^  <version' pom.xml | sed -e 's/^ *<version>//' -e 's;</version>;;')
 export FILTER_URL='https://bugzilla.redhat.com/buglist.cgi?cmdtype=dorem&remaction=run&namedcmd=jboss-eap-6.4.z-superset&sharer_id=213224&ctype=csv'
 
