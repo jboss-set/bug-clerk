@@ -1,7 +1,7 @@
 #!/bin/bash
 readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'.'}
 readonly JAR_NAME=${JAR_NAME:-'bugclerk'}
-readonly VERSION=${project.version}
+readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-${project.version}}
 readonly BZ_SERVER_URL=${BZ_SERVER_URL:-'https://bugzilla.redhat.com/show_bug.cgi?id='}
 
 checkScriptDependency() {
@@ -21,4 +21,4 @@ if [ ! -e "${BUGCLERK_HOME}" ]; then
   exit 2
 fi
 
-java -jar "${BUGCLERK_HOME}/${JAR_NAME}-${VERSION}.jar" -u "${BZ_SERVER_URL}" "${@}"
+java -jar "${BUGCLERK_HOME}/${JAR_NAME}-${BUGCLERK_VERSION}.jar" -u "${BZ_SERVER_URL}" "${@}"

@@ -1,10 +1,13 @@
 #!/bin/bash
 
 readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'.'}
+readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-${project.version}}
+
 readonly MAIN_CLASS='org.jboss.jbossset.bugclerk.cli.LoadBugsIdsFromBZ'
 
-readonly AUTH_URL="https://bugzilla.redhat.com/index.cgi"
-readonly FILTER_URL='https://bugzilla.redhat.com/buglist.cgi?cmdtype=runnamed&namedcmd=EAP_6_LAST_HOUR_CHANGES&ctype=csv&list_id=3184738'
+readonly BZ_SERVER_URL='https://bugzilla.redhat.com'
+readonly AUTH_URL="${BZ_SERVER_URL}/index.cgi"
+readonly FILTER_URL=${FILTER_URL:-"${BZ_SERVER_URL}/buglist.cgi?cmdtype=runnamed&namedcmd=EAP_6_LAST_HOUR_CHANGES&ctype=csv&list_id=3184738"}
 
 usage() {
   echo "$(basename ${0})"
@@ -22,7 +25,7 @@ if [ ! -e "${BUGCLERK_HOME}"/bugclerk*.jar ]; then
 fi
 
 cd "${BUGCLERK_HOME}"
-java -cp ./bugclerk-${project.version}.jar "${MAIN_CLASS}" \
+java -cp ./bugclerk-${BUGCLERK_VERSION}.jar "${MAIN_CLASS}" \
      -h "${AUTH_URL}" \
      -f "${FILTER_URL}"
 cd - > /dev/null

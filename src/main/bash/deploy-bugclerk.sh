@@ -12,10 +12,11 @@ copyFileToTargetDir() {
 declare -A files
 files['properties']='./bugclerk.properties'
 files['jar']="target/bugclerk-${BUGCLERK_VERSION}.jar"
-files['cron_script']='target/classes/hourly-run.sh'
+files['cron_script']='target/classes/filter-based-run.sh'
 files['run_script']='target/classes/run.sh'
 
-echo -n "Deploying BugClerk into ${TARGET_DIR} ... "
+echo ${TARGET_DIR}
+echo -n "Deploying BugClerk into ${TARGET_DIR} ... " 1>&2
 for file in "${!files[@]}"
 do
   file_path=${files[$file]}
@@ -31,4 +32,4 @@ do
   fi
   copyFileToTargetDir "${file_path}"
 done
-echo 'Done.'
+echo 'Done.' 1>&2
