@@ -14,7 +14,7 @@ export BUGCLERK_HOME=$(pwd)
 
 readonly UNZIP_DIR=$(mktemp -d)
 unzip "${BUGCLERK_JAR}" -d "${UNZIP_DIR}"
-cp "${UNZIP_DIR}/${BUGCLERK_SCRIPT}" .
+cp --preserve "${UNZIP_DIR}/${BUGCLERK_SCRIPT}" .
 
 export FILTER_URL='https://bugzilla.redhat.com/buglist.cgi?cmdtype=dorem&remaction=run&namedcmd=jboss-eap-6.4.z-superset&sharer_id=213224&ctype=csv'
 
@@ -23,6 +23,6 @@ if [ ! -d "${BUGCLERK_HOME}" ]; then
   exit 1
 fi
 
-./filter-based-run.sh
+bash "./${BUGCLERK_SCRIPT}"
 
 rm "${BUGCLERK_SCRIPT}" -rf "${UNZIP_DIR}" "${BUGCLERK_JAR}"
