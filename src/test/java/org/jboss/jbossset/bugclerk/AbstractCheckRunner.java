@@ -82,6 +82,13 @@ public abstract class AbstractCheckRunner {
         return createListForOneCandidate(new Candidate(createMockedBug(bugId), comments));
     }
 
+    protected Collection<Candidate> buildTestSubjectWithComments(int bugId, String... commentsContent) {
+        SortedSet<Comment> comments = new TreeSet<Comment>();
+        for ( String comment : commentsContent )
+            comments.add(createMockedComment(0, comment, bugId));
+        return createListForOneCandidate(new Candidate(createMockedBug(bugId), comments));
+    }
+
     protected Collection<Candidate> createListForOneCandidate(Candidate candidate) {
         Collection<Candidate> candidates = new ArrayList<Candidate>(1);
         candidates.add(candidate);
@@ -107,6 +114,13 @@ public abstract class AbstractCheckRunner {
         }
     }
 
+    protected void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId, int nbViolationExpected) {
+        assertThat(violations.size(), is(nbViolationExpected));
+        for ( Violation v : violations ) {
+            assertThat(v.getBug().getId(), is(bugId));
+            assertThat(v.getCheckName(), is(checkname));
+        }
+    }
 
     @Test
     public void filteredCandidateShouldBeIgnored() {
