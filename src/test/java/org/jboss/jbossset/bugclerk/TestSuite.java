@@ -2,6 +2,9 @@ package org.jboss.jbossset.bugclerk;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.Ignore;
+
+@Ignore
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     org.jboss.jbossset.bugclerk.checks.ComponentUpgradeMissingFixList.class,
