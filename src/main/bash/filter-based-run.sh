@@ -7,7 +7,7 @@ readonly MAIN_CLASS='org.jboss.jbossset.bugclerk.cli.LoadBugsIdsFromBZ'
 
 readonly BZ_SERVER_URL='https://bugzilla.redhat.com'
 readonly AUTH_URL="${BZ_SERVER_URL}/index.cgi"
-readonly FILTER_URL=${FILTER_URL:-"${BZ_SERVER_URL}/buglist.cgi?cmdtype=runnamed&namedcmd=EAP_6_LAST_HOUR_CHANGES&ctype=csv&list_id=3184738"}
+readonly FILTER_URL=${FILTER_URL:-"${BZ_SERVER_URL}/buglist.cgi?cmdtype=dorem&list_id=3303150&namedcmd=jboss-eap-6.4.z-superset&remaction=run&sharer_id=213224&ctype=csv"}
 
 usage() {
   echo "$(basename ${0})"
