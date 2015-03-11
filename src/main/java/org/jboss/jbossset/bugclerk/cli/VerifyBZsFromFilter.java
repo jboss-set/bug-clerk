@@ -45,7 +45,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 
-public class LoadBugsIdsFromBZ {
+public class VerifyBZsFromFilter {
 
     class Arguments {
         @Parameter(names = { "-h", "--bz-url" }, description = "URL to BugZilla")
@@ -104,11 +104,11 @@ public class LoadBugsIdsFromBZ {
     }
 
     private static Arguments extractParameters(String[] args) {
-        Arguments arguments = new LoadBugsIdsFromBZ().new Arguments();
+        Arguments arguments = new VerifyBZsFromFilter().new Arguments();
         JCommander jcommander = null;
         try {
             jcommander = new JCommander(arguments, args);
-            jcommander.setProgramName(LoadBugsIdsFromBZ.class.getName());
+            jcommander.setProgramName(VerifyBZsFromFilter.class.getName());
         } catch (ParameterException e) {
             System.out.println(e.getMessage());
             System.exit(1);
@@ -150,17 +150,17 @@ public class LoadBugsIdsFromBZ {
         System.out.print("Loading data from filter:" + arguments.getFilterURL() + " ... ");
         final TextPage csv = webClient.getPage(arguments.getFilterURL());
         if (csv != null) {
-            runBugClerk(buildIdsCollection(csv), buildBzUrlPrefix(new URL(arguments.getFilterURL())));
+            System.exit(runBugClerk(buildIdsCollection(csv), buildBzUrlPrefix(new URL(arguments.getFilterURL()))));
         } else
             throw new IllegalStateException("Can't invoked filter" + " - got 'null' instead of content.");
     }
 
-    private static void runBugClerk(Collection<String> ids, String urlPrefix) {
+    private static int runBugClerk(Collection<String> ids, String urlPrefix) {
         BugClerk bc = new BugClerk();
         BugClerkArguments bcArgs = new BugClerkArguments();
         bcArgs.setUrlPrefix(urlPrefix);
         bcArgs.getIds().addAll(ids);
-        bc.run(bcArgs);
+        return bc.runAndReturnsViolations(bcArgs);
     }
 
     private static Collection<String> buildIdsCollection(final TextPage csv) {

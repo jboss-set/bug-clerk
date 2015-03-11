@@ -80,7 +80,7 @@ public class BugClerk {
         new ReportViolationToBzEngine(COMMENT_MESSSAGE_HEADER, COMMENT_MESSAGE_FOOTER, new BugzillaClient()).reportViolationToBZ(violationByBugId);
     }
 
-    public void run(BugClerkArguments arguments) {
+    public int runAndReturnsViolations(BugClerkArguments arguments) {
         LoggingUtils.configureLogger(arguments.isDebug());
 
         LoggingUtils.getLogger().info("Loading data for " + arguments.getIds().size() + " issues.");
@@ -100,5 +100,11 @@ public class BugClerk {
 
         if (arguments.isReportToBz())
             updateBZwithViolations(violationByBugId);
+        return violationByBugId.size();
+    }
+
+
+    public void run(BugClerkArguments arguments) {
+        runAndReturnsViolations(arguments);
     }
 }
