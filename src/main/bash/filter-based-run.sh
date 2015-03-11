@@ -2,8 +2,7 @@
 
 readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'.'}
 readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-${project.version}}
-
-readonly MAIN_CLASS='org.jboss.jbossset.bugclerk.cli.LoadBugsIdsFromBZ'
+readonly JAR_NAME=${JAR_NAME:-'bugclerk'}
 
 readonly BZ_SERVER_URL='https://bugzilla.redhat.com'
 readonly AUTH_URL="${BZ_SERVER_URL}/index.cgi"
@@ -19,13 +18,13 @@ if [ ! -d "${BUGCLERK_HOME}" ]; then
   exit 3
 fi
 
-if [ ! -e "${BUGCLERK_HOME}"/bugclerk*.jar ]; then
+if [ ! -e "${BUGCLERK_HOME}/${JAR_NAME}-${BUGCLERK_VERSION}.jar" ]; then
   echo "No jar file in directory: ${BUGCLERK_HOME}."
   exit 4
 fi
 
 cd "${BUGCLERK_HOME}"
-java -cp ./bugclerk-${BUGCLERK_VERSION}.jar "${MAIN_CLASS}" \
+java -jar ./bugclerk-${BUGCLERK_VERSION}.jar \
      -h "${AUTH_URL}" \
      -f "${FILTER_URL}"
 cd - > /dev/null
