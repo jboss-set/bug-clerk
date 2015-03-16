@@ -33,7 +33,6 @@ import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractCheckRunner {
@@ -121,13 +120,4 @@ public abstract class AbstractCheckRunner {
             assertThat(v.getCheckName(), is(checkname));
         }
     }
-
-    @Test
-    public void filteredCandidateShouldBeIgnored() {
-        final String payload = "Well; it does seems like one forgot the PR here.";
-        final int bugId = 143794;
-
-        assertThat( engine.runCheckOnBugs(checkName, filterCandidateOut(buildTestSubjectWithComment(bugId, payload))).size(), is(0) );
-    }
-
 }
