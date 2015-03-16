@@ -29,10 +29,21 @@ global java.util.List list
 
 rule "DontCheckDocFeatureRelatedEntry"
     dialect "mvel"
-    when			
+    when
         $candidate : Candidate( bug.summary.contains("[Doc Feature]"), filtered == false);
     then
-		modify ( $candidate ) { 
+		modify ( $candidate ) {
+			candidate = false,
+			filtered = true
+         };
+end
+
+rule "IgnoreClosedBZ"
+    dialect "mvel"
+    when
+        $candidate : Candidate( bug.status == "CLOSED", filtered == false);
+    then
+		modify ( $candidate ) {
 			candidate = false,
 			filtered = true
          };
