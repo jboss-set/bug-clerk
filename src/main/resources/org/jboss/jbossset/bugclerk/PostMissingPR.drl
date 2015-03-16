@@ -35,5 +35,5 @@ rule "PostMissingPR"
 		  $bug : Candidate( bug.status == "POST", $status : bug.status, $comments : comments, filtered == false);
 		  not Comment( text.contains("github.com"), text.contains("/pull/") ) from $comments;
     then
-		insert( new Violation($bug.bug,drools.getRule().getName(), "PR appears to missing, but BZ status is " + $status) );
+		insert( new Violation($bug.bug,drools.getRule().getName(), "BZ status is " + $status + ", but PR is missing") );
 end
