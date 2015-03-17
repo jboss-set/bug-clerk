@@ -27,8 +27,6 @@ import org.jboss.pull.shared.connectors.bugzilla.Comment;
 
 import  org.jboss.jbossset.bugclerk.Violation;
 
-global java.util.List list
-
 rule "PostMissingPR"
     dialect "mvel"
     when

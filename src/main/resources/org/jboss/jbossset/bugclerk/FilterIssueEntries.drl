@@ -24,9 +24,6 @@ package org.jboss.jbossset.bugclerk;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 
-
-global java.util.List list
-
 rule "DontCheckDocFeatureRelatedEntry"
     dialect "mvel"
     when

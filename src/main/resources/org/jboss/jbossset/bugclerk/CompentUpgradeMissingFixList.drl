@@ -28,8 +28,6 @@ import org.jboss.pull.shared.connectors.common.Flag;
 
 import  org.jboss.jbossset.bugclerk.Violation;
 
-global java.util.List list
-
 rule "ComponentUpgradeMissingFixList"
     dialect "mvel"
     when
