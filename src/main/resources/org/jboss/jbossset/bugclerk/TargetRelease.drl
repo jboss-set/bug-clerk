@@ -33,9 +33,13 @@ global java.util.List list
 rule "TargetRelease"
     dialect "mvel"
     when
-       $candidate : Candidate($summary: bug.summary, $flags : bug.flags, filtered == false);
-	   $numberOfReleasesFlag : Number() from accumulate(i: Flag(name.contains("jboss-eap"), status == Status.UNKNOWN || status == Status.POSITIVE ) from $flags , count(i) );
-	   eval( $numberOfReleasesFlag > 1 )
+       $candidate : Candidate($summary: bug.summary, $flags : bug.flags , filtered == false);
+      $numberOfReleasesFlag : Number() from accumulate(i: Flag(name.contains("jboss-eap"), status == Status.UNKNOWN || status == Status.POSITIVE ) from $flags , count(i) );
+      eval( $numberOfReleasesFlag > 1 )
     then
-	   insert( new Violation($candidate.bug, drools.getRule().getName(), "Invalid number of flag Release: " + $numberOfReleasesFlag + " - only is one should be set."));
+      insert(
+        new Violation(
+          $candidate.bug, drools.getRule().getName(), "Invalid number of flag Release: " +
+          $numberOfReleasesFlag + " - only is one should be set. Flags are: " +
+          $candidate.getFlagNamesContaining("jboss-eap") + "."));
 end

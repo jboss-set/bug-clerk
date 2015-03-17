@@ -25,6 +25,7 @@ import java.util.SortedSet;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.pull.shared.connectors.common.Flag;
 
 public class Candidate {
 
@@ -46,6 +47,25 @@ public class Candidate {
         checkIfNotNull(comments, "comments");
         this.bug = bug;
         this.comments = comments;
+    }
+
+    // FIXM: Workaround, find a nicer way to implements using drools/MVEL
+    public String getFlagNamesContaining(String pattern) {
+        if ( pattern == null || "".equals(pattern))
+            throw new IllegalArgumentException("Can't invoke with an empty or 'null' pattern.");
+
+        StringBuffer res = null;
+        for ( Flag flag : bug.getFlags() ) {
+            if ( flag.getName().contains(pattern)) {
+                if ( res == null )
+                    res = new StringBuffer();
+                else
+                    res.append(",");
+                res.append(flag.getName());
+            }
+        }
+
+        return (res != null ? res.toString() : "");
     }
 
     public boolean isCandidate() {
