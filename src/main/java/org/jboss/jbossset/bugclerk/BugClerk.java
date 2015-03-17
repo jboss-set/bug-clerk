@@ -77,7 +77,8 @@ public class BugClerk {
             + " please, fill an issue on BugClerk issue tracker: " + BUGCLERK_ISSUES_TRACKER;
 
     protected void updateBZwithViolations(Map<Integer, List<Violation>> violationByBugId) {
-        new ReportViolationToBzEngine(COMMENT_MESSSAGE_HEADER, COMMENT_MESSAGE_FOOTER, new BugzillaClient()).reportViolationToBZ(violationByBugId);
+        new ReportViolationToBzEngine(COMMENT_MESSSAGE_HEADER, COMMENT_MESSAGE_FOOTER, new BugzillaClient())
+                .reportViolationToBZ(violationByBugId);
     }
 
     public int runAndReturnsViolations(BugClerkArguments arguments) {
@@ -95,14 +96,18 @@ public class BugClerk {
         LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         LoggingUtils.getLogger().info(report);
 
-        if (arguments.isMailReport() )
-            publishReport(report);
-
-        if (arguments.isReportToBz())
-            updateBZwithViolations(violationByBugId);
         return violationByBugId.size();
     }
 
+    protected void postAnalysisAction(BugClerkArguments arguments, Map<Integer, List<Violation>> violationByBugId, String report) {
+        if (!violationByBugId.isEmpty()) {
+            if (arguments.isMailReport())
+                publishReport(report);
+
+            if (arguments.isReportToBz())
+                updateBZwithViolations(violationByBugId);
+        }
+    }
 
     public void run(BugClerkArguments arguments) {
         runAndReturnsViolations(arguments);
