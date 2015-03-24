@@ -23,4 +23,10 @@ public class StringUtilsTests {
         assertEquals(expected, result.toString());
     }
 
+    @Test
+    public void testEmptyOrNull() {
+        assertEquals(StringUtils.emptyOrNull(null), true);
+        assertEquals(StringUtils.emptyOrNull(""), true);
+        assertEquals(StringUtils.emptyOrNull("content"), false);
+    }
 }

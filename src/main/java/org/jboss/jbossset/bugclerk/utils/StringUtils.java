@@ -41,4 +41,7 @@ public final class StringUtils {
         return new StringBuffer(EOL).append(EOL);
     }
 
+    public static boolean emptyOrNull(String string) {
+        return ( string == null || "".equals(string));
+    }
 }
