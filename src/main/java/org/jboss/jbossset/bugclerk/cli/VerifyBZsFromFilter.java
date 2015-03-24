@@ -160,9 +160,16 @@ public class VerifyBZsFromFilter {
         System.out.print("Loading data from filter:" + arguments.getFilterURL() + " ... ");
         final TextPage csv = webClient.getPage(arguments.getFilterURL());
         if (csv != null) {
-            System.exit(runBugClerk(buildIdsCollection(csv), buildBzUrlPrefix(new URL(arguments.getFilterURL()))));
+            endProgram(arguments,runBugClerk(buildIdsCollection(csv), buildBzUrlPrefix(new URL(arguments.getFilterURL()))));
         } else
             throw new IllegalStateException("Can't invoked filter" + " - got 'null' instead of content.");
+    }
+
+    private static void endProgram(Arguments arguments, int nbViolation) {
+        int status = 0;
+        if ( arguments.isFailOnViolation )
+            status = nbViolation;
+        System.exit(status);
     }
 
     private static int runBugClerk(Collection<String> ids, String urlPrefix) {
