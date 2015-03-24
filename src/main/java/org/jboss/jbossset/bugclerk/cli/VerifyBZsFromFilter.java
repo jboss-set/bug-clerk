@@ -21,6 +21,8 @@
  */
 package org.jboss.jbossset.bugclerk.cli;
 
+import static org.jboss.jbossset.bugclerk.utils.StringUtils.emptyOrNull;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -120,16 +122,20 @@ public class VerifyBZsFromFilter {
         return arguments;
     }
 
-    private static Arguments loadUsernamePassword(Arguments arguments) {
-
-        Properties prop;
+    private static Properties loadPropertiesFile(String filename) {
         try {
-            prop = Util.loadProperties(BugzillaClient.CONFIGURATION_FILENAME, BugzillaClient.CONFIGURATION_FILENAME);
+            return Util.loadProperties(filename, filename);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        arguments.setUsername(prop.getProperty("bugzilla.login"));
-        arguments.setPassword(prop.getProperty("bugzilla.password"));
+    }
+
+    private static Arguments loadUsernamePassword(Arguments arguments) {
+        Properties prop = loadPropertiesFile(BugzillaClient.CONFIGURATION_FILENAME);
+        if ( emptyOrNull(arguments.getPassword()))
+            arguments.setUsername(prop.getProperty("bugzilla.login"));
+        if ( emptyOrNull(arguments.getPassword()))
+            arguments.setPassword(prop.getProperty("bugzilla.password"));
         return arguments;
     }
 
