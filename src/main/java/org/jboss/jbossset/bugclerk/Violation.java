@@ -61,4 +61,44 @@ public class Violation {
     public String toString() {
         return "Violation [bugId=" + bug.getId() + ", check=" + checkName + ", message=" + message + "]";
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((bug == null) ? 0 : bug.hashCode());
+        result = prime * result + ((checkName == null) ? 0 : checkName.hashCode());
+        result = prime * result + ((message == null) ? 0 : message.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+
+        Violation other = (Violation) obj;
+        if (bug == null) {
+            if (other.bug != null)
+                return false;
+        } else if (!bug.equals(other.bug))
+            return false;
+
+        if (checkName == null) {
+            if (other.checkName != null)
+                return false;
+        } else if (!checkName.equals(other.checkName))
+            return false;
+
+        if (message == null) {
+            if (other.message != null)
+                return false;
+        } else if (!message.equals(other.message))
+            return false;
+        return true;
+    }
 }
