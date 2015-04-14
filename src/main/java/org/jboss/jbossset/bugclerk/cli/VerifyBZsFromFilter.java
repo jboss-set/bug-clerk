@@ -59,7 +59,7 @@ public class VerifyBZsFromFilter {
         @Parameter(names = { "-c", "--add-comment-on-bz"} , description = "add a comment to a BZ featuring violations, default is false", required = false)
         private boolean isCommentOnBZEnabled = false;
 
-        @Parameter(names = { "-v", "--fail-on-violation"} , description = "exit program with status equals to number of violations", required = false)
+        @Parameter(names = { "-F", "--fail-on-violation"} , description = "exit program with status equals to number of violations", required = false)
         private boolean isFailOnViolation = false;
 
         @Parameter(names = { "-u", "--username"} , description = "username for bugzilla's connection - overload data from property file", required = false)
@@ -169,7 +169,10 @@ public class VerifyBZsFromFilter {
         int status = 0;
         if ( arguments.isFailOnViolation )
             status = nbViolation;
-        System.exit(status);
+
+        // Jenkins and/or Maven deemed that calling exit, even with 0 value, is a failure, hence this workaround :(
+        if ( status != 0)
+            System.exit(status);
     }
 
     private static int runBugClerk(Collection<String> ids, String urlPrefix) {
