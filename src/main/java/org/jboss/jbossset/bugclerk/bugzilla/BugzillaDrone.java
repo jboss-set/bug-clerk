@@ -1,6 +1,9 @@
 package org.jboss.jbossset.bugclerk.bugzilla;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.jboss.jbossset.bugclerk.cli.BugClerkInvocatioWithFilterArguments;
 
@@ -35,19 +38,38 @@ public class BugzillaDrone {
 
     public void bugzillaLogin() {
         try {
-        final HtmlForm miniLoginForm = getFormById((HtmlPage) webClient.getPage(arguments.getAuthURL()), "mini_login_top");
-        updateTextFieldInput("Bugzilla_login", arguments.getUsername(), miniLoginForm);
-        updatePasswordFieldInput("Bugzilla_password", arguments.getPassword(), miniLoginForm);
-        WebResponse response = miniLoginForm.getInputByName("GoAheadAndLogIn").click().getWebResponse();
-        if (response.getStatusCode() != 200)
-            throw new IllegalStateException("Auth faild on BZ:" + response.getContentAsString());
-        } catch (IOException e ) {
+            final HtmlForm miniLoginForm = getFormById((HtmlPage) webClient.getPage(arguments.getAuthURL()), "mini_login_top");
+            updateTextFieldInput("Bugzilla_login", arguments.getUsername(), miniLoginForm);
+            updatePasswordFieldInput("Bugzilla_password", arguments.getPassword(), miniLoginForm);
+            WebResponse response = miniLoginForm.getInputByName("GoAheadAndLogIn").click().getWebResponse();
+            if (response.getStatusCode() != 200)
+                throw new IllegalStateException("Auth faild on BZ:" + response.getContentAsString());
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
+    private static Collection<String> buildIdsCollection(final TextPage csv) {
+        Collection<String> ids = new ArrayList<String>(0);
+        if (csv != null) {
+            String[] content = csv.getContent().split("\n");
+            // Remove CSV header line
+            String[] idLines = Arrays.copyOfRange(content, 1, content.length);
+            for (String line : idLines)
+                ids.add(validateId(line.substring(0, line.indexOf(','))));
+        }
+        return ids;
+    }
 
-    public TextPage retrievePayload() {
+    private static String validateId(String id) {
+        if (id == null || "".equals(id))
+            throw new IllegalArgumentException("BZ Id ");
+        if (Integer.valueOf(id) == null)
+            throw new IllegalArgumentException("This is not a valid BZ id:" + id);
+        return id;
+    }
+
+    public Collection<String> retrievePayload() {
         TextPage csv;
         try {
             csv = webClient.getPage(arguments.getFilterURL());
@@ -55,9 +77,8 @@ public class BugzillaDrone {
             throw new IllegalStateException(e);
         }
         webClient.closeAllWindows();
-        return csv;
+        return buildIdsCollection(csv);
     }
-
 
     private static HtmlForm getFormById(final HtmlPage page, String formId) {
         for (Object o : page.getForms()) {
@@ -80,4 +101,3 @@ public class BugzillaDrone {
     }
 
 }
-

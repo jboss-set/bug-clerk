@@ -2,9 +2,9 @@ package org.jboss.jbossset.bugclerk.cli;
 
 import com.beust.jcommander.Parameter;
 
-public class BugClerkInvocatioWithFilterArguments {
+public class BugClerkInvocatioWithFilterArguments extends AbstractCommonArguments {
 
-    @Parameter(names = { "-h", "--bz-url" }, description = "URL to BugZilla")
+    @Parameter(names = { "-H", "--bz-url" }, description = "URL to BugZilla")
     private String authURL;
 
     @Parameter(names = { "-f", "--filter-url" }, description = "URL to search filter")

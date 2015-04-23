@@ -36,4 +36,9 @@ public final class URLUtils {
             throw new IllegalArgumentException("Invalid URL:" + URL, e);
         }
     }
+
+    public static String buildBzUrlPrefix(URL bzURL) {
+        return bzURL.getProtocol() + "://" + bzURL.getHost() + "/show_bug.cgi?id=";
+    }
+
 }

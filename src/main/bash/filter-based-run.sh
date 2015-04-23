@@ -25,7 +25,7 @@ fi
 
 cd "${BUGCLERK_HOME}"
 java -jar ./bugclerk-${BUGCLERK_VERSION}.jar \
-     -h "${AUTH_URL}" \
+     -H "${AUTH_URL}" \
      -f "${FILTER_URL}"
 readonly STATUS=${?}
 cd - > /dev/null

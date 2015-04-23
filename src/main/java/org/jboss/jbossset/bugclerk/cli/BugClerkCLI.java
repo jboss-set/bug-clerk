@@ -23,13 +23,13 @@ package org.jboss.jbossset.bugclerk.cli;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
 
-public class BugClerkCLI {
+public class BugClerkCLI extends AbstractCommandLineInterface {
 
     private static final int PROGRAM_THROWN_EXCEPTION = 3;
 
     public static void main(String[] args) {
         try {
-            new BugClerk().run(BugClerkArguments.validateArgs(BugClerkArguments.extractParameters(args)));
+            new BugClerk().run(BugClerkArguments.validateArgs(extractParameters(new BugClerkArguments(),args)));
         } catch (Throwable t) {
             System.out.println(t.getMessage());
             if (t.getCause() != null)
@@ -37,5 +37,4 @@ public class BugClerkCLI {
             System.exit(PROGRAM_THROWN_EXCEPTION);
         }
     }
-
 }
