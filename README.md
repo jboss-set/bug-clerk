@@ -38,9 +38,9 @@ You also need to add the file 'org/jboss/jbossset/bugclerk/smtp/config.propertie
 ## **Checks**
 
 _Pretty much like a [Checkstyle]() or [PMD](http://github.com/pmd/pmd) configuration, BugClerk values resides in the number of things it can checks. So, please to do hesitate to post "check request" on the [issue tracker](https://github.com/jboss-set/bug-clerk/issues/).
+
+
 * [ComponentUpgradeMissingFixList](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ComponentUpgradeMissingFixList.drl)
-* [DontCheckDocFeatureRelatedEntry](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/DontCheckDocFeatureRelatedEntry.drl)
-* [IgnoreClosedBZ](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/IgnoreClosedBZ.drl)
 * [IssueNotAssigned](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/IssueNotAssigned.drl)
 * [PostMissingPR](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/PostMissingPR.drl)
 * [ReleaseVersionMismatch](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ReleaseVersionMismatch.drl)
