@@ -35,6 +35,14 @@ You need to have credentials to access BugZilla and file it in the provided exam
 
 You also need to add the file 'org/jboss/jbossset/bugclerk/smtp/config.properties' to your classpath to configure sending report email. If not the properties are missing, BugClerk will simply NOT send email.
 
+## How to build it ?
+
+As usual, just run "mvn install".
+
+## How to release ?
+
+Using the [Maven Release Plugin](http://maven.apache.org/maven-release/maven-release-plugin/), just follow its documentation. Then test using the run.sh and filter-based-run.sh scripts to ensure the resulting JAR is working properly. If new checks have been added, run the script update-rules-in-readme.sh and update the list at the bottom of this readme file.
+
 ## **Checks**
 
 _Pretty much like a [Checkstyle]() or [PMD](http://github.com/pmd/pmd) configuration, BugClerk values resides in the number of things it can checks. So, please to do hesitate to post "check request" on the [issue tracker](https://github.com/jboss-set/bug-clerk/issues/).
