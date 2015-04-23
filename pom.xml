@@ -130,6 +130,7 @@
         <excludes>
           <exclude>deploy-bugclerk.sh</exclude>
           <exclude>load-bugs.sh</exclude>
+          <exclude>update-rules-on-readme.sh</exclude>
         </excludes>
       </resource>
     </resources>
