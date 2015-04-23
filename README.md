@@ -38,6 +38,10 @@ You also need to add the file 'org/jboss/jbossset/bugclerk/smtp/config.propertie
 ## **Checks**
 
 _Pretty much like a [Checkstyle]() or [PMD](http://github.com/pmd/pmd) configuration, BugClerk values resides in the number of things it can checks. So, please to do hesitate to post "check request" on the [issue tracker](https://github.com/jboss-set/bug-clerk/issues/).
-
-*   [POST-PR](https://github.com/jboss-set/bug-clerk/issues/1): A BZ on status POST should have a comment thats refers to a PR on Github
-*   [COMPO-UP](https://github.com/jboss-set/bug-clerk/issues/2): Upgrade BZ not refering component fixes BZ (like on [BZ1160715](https://bugzilla.redhat.com/show_bug.cgi?id=1160715))
+* [ComponentUpgradeMissingFixList](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ComponentUpgradeMissingFixList.drl)
+* [DontCheckDocFeatureRelatedEntry](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/DontCheckDocFeatureRelatedEntry.drl)
+* [IgnoreClosedBZ](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/IgnoreClosedBZ.drl)
+* [IssueNotAssigned](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/IssueNotAssigned.drl)
+* [PostMissingPR](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/PostMissingPR.drl)
+* [ReleaseVersionMismatch](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ReleaseVersionMismatch.drl)
+* [TargetRelease](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/TargetRelease.drl)
