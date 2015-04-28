@@ -29,6 +29,7 @@ rule "DontCheckDocFeatureRelatedEntry"
     when
         $candidate : Candidate( bug.summary.contains("[Doc Feature]"), filtered == false);
     then
+    	//System.out.println($candidate.bug.id + " filtered by " + drools.getRule().getName());
 		modify ( $candidate ) {
 			candidate = false,
 			filtered = true
@@ -40,6 +41,19 @@ rule "IgnoreClosedBZ"
     when
         $candidate : Candidate( bug.status == "CLOSED", filtered == false);
     then
+      	//System.out.println($candidate.bug.id + " filtered by " + drools.getRule().getName());
+		modify ( $candidate ) {
+			candidate = false,
+			filtered = true
+         };
+end
+
+rule "IgnoreRpmsBZ"
+    dialect "mvel"
+    when
+        $candidate : Candidate( bug.summary.contains("RPMs"), filtered == false);
+    then
+	    //System.out.println($candidate.bug.id + " filtered by " + drools.getRule().getName());
 		modify ( $candidate ) {
 			candidate = false,
 			filtered = true
