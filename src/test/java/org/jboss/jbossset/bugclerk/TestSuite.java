@@ -10,6 +10,8 @@ import org.junit.runners.Suite;
     org.jboss.jbossset.bugclerk.checks.ReleaseVersionMismatch.class,
     org.jboss.jbossset.bugclerk.checks.TargetRelease.class,
     org.jboss.jbossset.bugclerk.checks.IssueNotAssigned.class,
+    org.jboss.jbossset.bugclerk.checks.BZShouldHaveDevAckFlag.class,
+    org.jboss.jbossset.bugclerk.checks.BZShouldHaveQaAckFlag.class,
 
     org.jboss.jbossset.bugclerk.utils.CollectionsUtilsTests.class,
     org.jboss.jbossset.bugclerk.utils.URLUtilsTest.class,
