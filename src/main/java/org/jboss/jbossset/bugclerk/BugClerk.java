@@ -93,19 +93,29 @@ public class BugClerk {
         LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
         String report = buildReport(violationByBugId, arguments.getUrlPrefix());
 
+        LoggingUtils.getLogger().fine("Report produced, running post analysis actions");
+        postAnalysisActions(arguments, violationByBugId, report);
+
         LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         LoggingUtils.getLogger().info(report);
 
         return violationByBugId.size();
     }
 
-    protected void postAnalysisAction(BugClerkArguments arguments, Map<Integer, List<Violation>> violationByBugId, String report) {
+    protected void postAnalysisActions(BugClerkArguments arguments, Map<Integer, List<Violation>> violationByBugId, String report) {
         if (!violationByBugId.isEmpty()) {
-            if (arguments.isMailReport())
+            if (arguments.isMailReport()) {
+                LoggingUtils.getLogger().info("Sending email notications with report.");
                 publishReport(report);
+                LoggingUtils.getLogger().info("Email notifications sent (if any).");
 
-            if (arguments.isReportToBz())
+            }
+
+            if (arguments.isReportToBz()) {
+                LoggingUtils.getLogger().info("Updating Bugzilla entries - if needed.");
                 updateBZwithViolations(violationByBugId);
+                LoggingUtils.getLogger().info("Bugzilla entries updated - if needed.");
+            }
         }
     }
 
