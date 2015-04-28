@@ -48,6 +48,8 @@ Using the [Maven Release Plugin](http://maven.apache.org/maven-release/maven-rel
 _Pretty much like a [Checkstyle]() or [PMD](http://github.com/pmd/pmd) configuration, BugClerk values resides in the number of things it can checks. So, please to do hesitate to post "check request" on the [issue tracker](https://github.com/jboss-set/bug-clerk/issues/)._
 
 
+* [BZShouldHaveDevAckFlag](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/BZShouldHaveDevAckFlag.drl)
+* [BZShouldHaveQaAckFlag](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/BZShouldHaveQaAckFlag.drl)
 * [ComponentUpgradeMissingFixList](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ComponentUpgradeMissingFixList.drl)
 * [IssueNotAssigned](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/IssueNotAssigned.drl)
 * [PostMissingPR](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/PostMissingPR.drl)
