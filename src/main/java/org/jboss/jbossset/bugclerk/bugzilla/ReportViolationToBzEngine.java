@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 
+import org.jboss.jbossset.bugclerk.Level;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 
@@ -81,11 +82,11 @@ public class ReportViolationToBzEngine {
     private StringBuffer messageBody(List<Violation> violations, StringBuffer text) {
         if (violations == null || violations.isEmpty() || "".equals(text))
             throw new IllegalArgumentException("No violations or text empty");
-
         int violationId = 1;
         for (Violation violation : violations)
-            text.append(violationId++).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
-                    .append(violation.getMessage()).append(twoEOLs());
+            if ( ! Level.WARNING.equals(violation.getLevel()))
+                text.append(violationId++).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
+                        .append(violation.getMessage()).append(twoEOLs());
         return text;
     }
 }

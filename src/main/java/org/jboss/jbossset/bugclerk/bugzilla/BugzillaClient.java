@@ -93,6 +93,8 @@ public class BugzillaClient {
     }
 
     public boolean addPrivateCommentTo(final int id, final String text) {
-        return this.bugzillaHelper.addComment(id, text, CommentVisibility.PRIVATE, 0);
+        if ( text != null && ! "".equals(text) )
+            return this.bugzillaHelper.addComment(id, text, CommentVisibility.PRIVATE, 0);
+        return false;
     }
 }

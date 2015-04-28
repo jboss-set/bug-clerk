@@ -28,6 +28,7 @@ public class Violation {
     private final Bug bug;
     private final String message;
     private final String checkName;
+    private Level level = Level.ERROR;
 
     private void constructorSanityCheck(Bug bug, String mssg) {
         if (bug == null)
@@ -45,6 +46,11 @@ public class Violation {
         this.checkName = checkName;
     }
 
+    public Violation(Bug bug, String checkName, String message, Level level) {
+        this(bug,checkName,message);
+        this.level = level;
+    }
+
     public String getMessage() {
         return message;
     }
@@ -57,9 +63,17 @@ public class Violation {
         return checkName;
     }
 
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
     @Override
     public String toString() {
-        return "Violation [bugId=" + bug.getId() + ", check=" + checkName + ", message=" + message + "]";
+        return "Violation [bugId=" + bug.getId() + ", check=" + checkName + ", message=" + message + " (" + level +  ")]";
     }
 
     @Override
