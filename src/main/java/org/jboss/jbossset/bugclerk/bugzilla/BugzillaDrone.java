@@ -49,14 +49,17 @@ public class BugzillaDrone {
         }
     }
 
-    private static Collection<String> buildIdsCollection(final TextPage csv) {
+    private Collection<String> buildIdsCollection(final TextPage csv) {
         Collection<String> ids = new ArrayList<String>(0);
         if (csv != null) {
             String[] content = csv.getContent().split("\n");
             // Remove CSV header line
             String[] idLines = Arrays.copyOfRange(content, 1, content.length);
-            for (String line : idLines)
+            for (String line : idLines) {
+                if (arguments.isNoRun())
+                    System.err.println(line);
                 ids.add(validateId(line.substring(0, line.indexOf(','))));
+            }
         }
         return ids;
     }

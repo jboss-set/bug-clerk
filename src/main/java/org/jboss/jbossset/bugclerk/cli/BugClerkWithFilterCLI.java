@@ -46,6 +46,8 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
 
         System.out.print("Loading data from filter:" + arguments.getFilterURL() + " ... ");
         final Collection<String> ids = drone.retrievePayload();
+        if ( arguments.isNoRun() ) return;
+
         if ( !ids.isEmpty()) {
             endProgram(arguments, runBugClerk(ids, URLUtils.buildBzUrlPrefix(new URL(arguments.getFilterURL()))));
         } else
