@@ -26,11 +26,13 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.pull.shared.connectors.common.Flag;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;
@@ -39,6 +41,12 @@ public abstract class AbstractCheckRunner {
 
     protected RuleEngine engine;
     protected final String checkName;
+
+    protected static final String DEV_ACK_FLAG = "devel_ack";
+    protected static final String QA_ACK_FLAG = "qa_ack";
+    protected static final String PM_ACK_FLAG = "pm_ack";
+
+    protected static final SortedSet<Comment> NO_COMMENTS = new TreeSet<Comment>();
 
     public AbstractCheckRunner() {
         checkName = this.getClass().getSimpleName();
@@ -119,5 +127,13 @@ public abstract class AbstractCheckRunner {
             assertThat(v.getBug().getId(), is(bugId));
             assertThat(v.getCheckName(), is(checkname));
         }
+    }
+
+    protected List<Flag> createAllThreeFlagsAs(Flag.Status status) {
+        List<Flag> flags = new ArrayList<Flag>(3);
+        flags.add(new Flag(QA_ACK_FLAG, "setter?", status));
+        flags.add(new Flag(PM_ACK_FLAG, "setter?", status));
+        flags.add(new Flag(DEV_ACK_FLAG, "setter?", status));
+        return flags;
     }
 }

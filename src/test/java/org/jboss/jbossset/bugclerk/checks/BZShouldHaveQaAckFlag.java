@@ -38,7 +38,6 @@ import org.mockito.Mockito;
 
 public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
 
-    private static final String QA_ACK = "qa_ack";
     @Test
     public void bzOnVerifiedButNoQaFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
@@ -52,7 +51,7 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
         final int bugId = 143794;
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         for ( Candidate candidate : mocks ) {
-            mockCandidate(candidate, Status.VERIFIED, QA_ACK, Flag.Status.UNKNOWN);
+            mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.UNKNOWN);
         }
         assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
     }
@@ -74,7 +73,7 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
         final int bugId = 143794;
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         for ( Candidate candidate : mocks ) {
-            mockCandidate(candidate, Status.VERIFIED, QA_ACK, Flag.Status.UNKNOWN);
+            mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.UNKNOWN);
         }
         assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
     }
@@ -85,7 +84,7 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
         final int bugId = 143794;
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         for ( Candidate candidate : mocks ) {
-            mockCandidate(candidate, Status.VERIFIED, QA_ACK, Flag.Status.POSITIVE);
+            mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.POSITIVE);
         }
         assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
     }

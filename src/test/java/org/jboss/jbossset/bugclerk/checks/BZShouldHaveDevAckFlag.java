@@ -38,8 +38,6 @@ import org.mockito.Mockito;
 
 public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
 
-    private static final String DEV_ACK_FLAG = "devel_ack";
-
     @Test
     public void bzOnPostButNoDevFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
