@@ -75,6 +75,10 @@ public class BugzillaDrone {
             csv = webClient.getPage(arguments.getFilterURL());
         } catch (FailingHttpStatusCodeException | IOException e) {
             throw new IllegalStateException(e);
+        } catch ( java.lang.ClassCastException e ) {
+            throw new IllegalStateException(
+                    "Data loaded from bugzilla instance is not compatibile with CSV type. Most likely filter URL is simply missing the 'ctype=csv' type.",
+                    e);
         }
         webClient.closeAllWindows();
         return buildIdsCollection(csv);
