@@ -37,21 +37,32 @@ import org.jboss.jbossset.bugclerk.utils.URLUtils;
 public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
 
     public static void main(String[] args) throws MalformedURLException {
-        BugClerkInvocatioWithFilterArguments arguments = loadUsernamePassword(extractParameters(new BugClerkInvocatioWithFilterArguments(),args));
+        BugClerkInvocatioWithFilterArguments arguments = loadUsernamePassword(extractParameters(
+                new BugClerkInvocatioWithFilterArguments(), args));
         System.out.print("Connection to BZ with URL " + arguments.getAuthURL() + " with username:" + arguments.getUsername()
                 + " ... ");
         BugzillaDrone drone = new BugzillaDrone(arguments);
         drone.bugzillaLogin();
         System.out.println("Done.");
 
-        System.out.print("Loading data from filter:" + arguments.getFilterURL() + " ... ");
-        final Collection<String> ids = drone.retrievePayload();
+        System.out.print("Loading data from filter:" + extractFilterNameOrReturnFilterURL(arguments.getFilterURL()) + " ... ");
+        runBugClerk(drone.retrievePayload(), arguments);
+    }
+
+    private static String extractFilterNameOrReturnFilterURL(String url) throws MalformedURLException {
+        String filterName = URLUtils.extractParameterValueIfAny(new URL(url), "namedcmd=");
+        return ("".equals(filterName) ? url.toString() : filterName);
+    }
+
+    private static void runBugClerk(final Collection<String> ids, BugClerkInvocatioWithFilterArguments arguments)
+            throws MalformedURLException {
         if ( arguments.isNoRun() ) return;
 
-        if ( !ids.isEmpty()) {
+        if (!ids.isEmpty()) {
             endProgram(arguments, runBugClerk(ids, URLUtils.buildBzUrlPrefix(new URL(arguments.getFilterURL()))));
         } else
-            throw new IllegalStateException("Can't invoked filter" + " - got 'null' instead of content.");
+            throw new IllegalStateException("Can't invoked filter" + " - got 'null' or no IDs instead of content.");
+
     }
 
     private static BugClerkInvocatioWithFilterArguments loadUsernamePassword(BugClerkInvocatioWithFilterArguments arguments) {
@@ -68,7 +79,7 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
         if (arguments.isFailOnViolation())
             status = nbViolation;
 
-        // Jenkins and/or Maven deemed that calling exit, even with 0 value, is a failure, hence this workaround :(
+        // Jenkins and/or Maven deemed that invoking exit, even with 0 value, is a failure, hence this workaround :(
         if (status != 0)
             System.exit(status);
     }

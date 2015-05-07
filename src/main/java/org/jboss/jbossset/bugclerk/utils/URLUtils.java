@@ -38,7 +38,28 @@ public final class URLUtils {
     }
 
     public static String buildBzUrlPrefix(URL bzURL) {
-        return bzURL.getProtocol() + "://" + bzURL.getHost() + "/show_bug.cgi?id=";
+        return throwExceptionIfURLisNull(bzURL).getProtocol() + "://" + bzURL.getHost() + "/show_bug.cgi?id=";
     }
 
+    private static URL throwExceptionIfURLisNull(URL url) {
+        if ( url == null )
+            throw new IllegalArgumentException("Can't invoke with a 'null' URL.");
+        return url;
+    }
+
+    public static String extractParameterValueIfAny(final URL url, final String param) {
+        if ( param == null || "".equals(param) )
+            throw new IllegalArgumentException("Can't invoke with a 'null' or empty param.");
+
+        final String query = url.getQuery();
+        if ( query == null || "".equals(query) )
+            throw new IllegalArgumentException("Can't invok with a 'null' or empty query.");
+
+        final int indexOfParam = query.indexOf(param);
+        if ( indexOfParam == -1 ) return "";
+        final String subString = query.substring(indexOfParam);
+        int indexEndOfParam = subString.indexOf("&");
+        if  (indexEndOfParam == - 1) indexEndOfParam = subString.length();
+        return subString.substring(param.length(), indexEndOfParam);
+    }
 }
