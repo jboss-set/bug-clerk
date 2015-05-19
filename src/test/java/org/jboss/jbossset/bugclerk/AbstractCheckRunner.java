@@ -26,7 +26,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -136,4 +138,13 @@ public abstract class AbstractCheckRunner {
         flags.add(new Flag(DEV_ACK_FLAG, "setter?", status));
         return flags;
     }
+
+    @SafeVarargs
+    protected static <T> Set<T> asSetOf(T ...items) {
+        Set<T> releasesSet = new HashSet<T>();
+        for ( T item : items )
+            releasesSet.add(item);
+        return releasesSet;
+    }
+
 }
