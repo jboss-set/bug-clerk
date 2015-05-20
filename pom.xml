@@ -159,6 +159,9 @@
           <excludes>
             <exclude>org/jboss/jbossset/bugclerk/TestSuite.java</exclude>
           </excludes>
+          <includes>
+            <include>org/jboss/jbossset/bugclerk/checks/*.java</include>
+          </includes>
         </configuration>
       </plugin>
       <plugin>
