@@ -26,9 +26,14 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
+import org.jboss.jbossset.bugclerk.Candidate;
+import org.jboss.jbossset.bugclerk.MockUtils;
+import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
+import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.jboss.pull.shared.connectors.common.Flag;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -41,7 +46,6 @@ public class ReleaseVersionMismatch extends AbstractCheckRunner {
     private List<Flag> flags = new ArrayList<Flag>(1);
     private int bugId;
 
-    @Override
     protected Bug testSpecificStubbingForBug(Bug mock) {
         Mockito.when(mock.getSummary()).thenReturn(summary);
         Mockito.when(mock.getFlags()).thenReturn(flags);
@@ -59,13 +63,16 @@ public class ReleaseVersionMismatch extends AbstractCheckRunner {
     @Test
     @Ignore //FIXME: this should work, needs to check if this means the check is failing in real life( BZ without flags ?)
     public void violationIfNoFlags() {
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubject(bugId)), checkName /*+ "EmptyFlags"*/, bugId);
+//        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubject(bugId)), checkName /*+ "EmptyFlags"*/, bugId);
     }
 
     @Test
     public void violationIfFlagPresentNotMatching() {
+        Bug mock = MockUtils.mockBug(bugId, summary);
+        Mockito.when(mock.getSummary()).thenReturn(summary);
+        Mockito.when(mock.getFlags()).thenReturn(flags);
         flags.add(new Flag("jboss-eap-6.3.0", "setter?", Flag.Status.POSITIVE));
-        assertThat(engine.runCheckOnBugs(checkName, buildTestSubject(bugId)).size(), is(0));
+        assertThat(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock,new TreeSet<Comment>()))).size(), is(0));
     }
 
 }

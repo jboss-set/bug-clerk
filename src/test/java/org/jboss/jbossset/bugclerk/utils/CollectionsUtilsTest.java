@@ -22,7 +22,7 @@ import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.junit.Test;
 
-public class CollectionsUtilsTests {
+public class CollectionsUtilsTest {
 
     @Test
     public void testGetEntryOrEmptySet() {

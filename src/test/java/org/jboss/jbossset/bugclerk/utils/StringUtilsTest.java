@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class StringUtilsTests {
+public class StringUtilsTest {
 
     @Test
     public void testFormatCheckname() {

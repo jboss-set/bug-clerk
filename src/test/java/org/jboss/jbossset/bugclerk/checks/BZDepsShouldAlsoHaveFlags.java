@@ -22,6 +22,7 @@
 package org.jboss.jbossset.bugclerk.checks;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.createAllThreeFlagsAs;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -80,10 +81,10 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
         return set;
     }
 
-    protected Collection<Candidate> buildTestSubjectWithComment(int bugId, String comment) {
+    private Collection<Candidate> buildTestSubjectWithComment(int bugId, String comment) {
         SortedSet<Comment> comments = new TreeSet<Comment>();
-        comments.add(createMockedComment(0, comment, bugId));
-        return createListForOneCandidate(new Candidate(createMockedBug(bugId), comments));
+        comments.add(MockUtils.mockComment(0, comment, bugId));
+        return createListForOneCandidate(new Candidate(MockUtils.mockBug(bugId, "summary"), comments));
     }
 
     protected Collection<Candidate> createListForOneCandidate(Candidate candidate) {
@@ -92,13 +93,7 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
         return candidates;
     }
 
-
-    private void mockCandidate(Candidate candidate, Flag.Status status) {
-        Mockito.when(candidate.getBug().getFlags()).thenReturn(createAllThreeFlagsAs(Flag.Status.POSITIVE));
-    }
-
-    @Override
-    protected Bug testSpecificStubbingForBug(Bug mock) {
+    private Bug testSpecificStubbingForBug(Bug mock) {
         Mockito.when(mock.getStatus()).thenReturn(Status.POST.toString());
 
         List<Flag> flags = new ArrayList<Flag>(1);

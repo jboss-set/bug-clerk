@@ -21,19 +21,28 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
+import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComments;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
+import org.jboss.jbossset.bugclerk.MockUtils;
+import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class IssueNotAssigned extends AbstractCheckRunner {
+
+    private Bug mock;
+    private final int bugId = 143794;
 
     private static Date twoMonthAgo() {
         Calendar cal = Calendar.getInstance();
@@ -41,42 +50,43 @@ public class IssueNotAssigned extends AbstractCheckRunner {
         return cal.getTime();
     }
 
-    @Override
-    protected Bug testSpecificStubbingForBug(Bug mock) {
+    @Before
+    public void prepareBugMock() {
+        mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(Status.NEW.toString());
         Mockito.when(mock.getCreationTime()).thenReturn(new Date());
-        return mock;
     }
 
     @Test
     public void violationBZOlderThanAMonth() {
-        final int bugId = 143794;
-        Bug mock = createMockedBug(bugId);
-        Mockito.when(mock.getStatus()).thenReturn(Status.NEW.toString());
         Mockito.when(mock.getCreationTime()).thenReturn(twoMonthAgo());
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName + "_CreationDate", createListForOneCandidate(new Candidate(mock, new TreeSet<Comment>()))), checkName, bugId );
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName + "_CreationDate",
+                        CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))), checkName, bugId);
     }
 
     @Test
     public void bzHasAlreadyFiveComments() {
-        final int bugId = 143794;
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName + "_CommentSize", buildTestSubjectWithComments(bugId, "first comment", "second one", "third one", "fourth one", "fifth one")), checkName, bugId);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName + "_CommentSize",
+                buildTestSubjectWithComments(mock, "first comment", "second one", "third one", "fourth one", "fifth one")),
+                checkName, bugId);
     }
 
     @Test
     public void bzHasAlreadyPR() {
-        final int bugId = 143794;
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName + "_PR", buildTestSubjectWithComments(bugId, "first comment", "has PR: https://github.com/jbossas/jboss-eap/pull/1640")), checkName, bugId);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(
+                        checkName + "_PR",
+                        buildTestSubjectWithComments(mock, "first comment",
+                                "has PR: https://github.com/jbossas/jboss-eap/pull/1640")), checkName, bugId);
     }
-
-
 
     @Test
     public void bzLessThanAMonthNoViolation() {
-        final int bugId = 143794;
-        Bug mock = createMockedBug(bugId);
         Mockito.when(mock.getStatus()).thenReturn(Status.NEW.toString());
         Mockito.when(mock.getCreationTime()).thenReturn(new Date());
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName, createListForOneCandidate(new Candidate(mock, new TreeSet<Comment>()))), checkName, bugId,0);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))),
+                checkName, bugId, 0);
     }
 }

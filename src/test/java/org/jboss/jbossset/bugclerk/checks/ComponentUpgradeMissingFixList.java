@@ -21,36 +21,31 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
+
+import java.util.HashSet;
+import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
+import org.jboss.jbossset.bugclerk.Candidate;
+import org.jboss.jbossset.bugclerk.MockUtils;
+import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class ComponentUpgradeMissingFixList extends AbstractCheckRunner {
 
-    @Test
-    public void violationIfNoDependsOnAndComponentUpgradeType() {
-        final String payload = "Well; it does seems like one forgot the PR here.";
-        final int bugId = 143794;
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(bugId, payload)),checkName,bugId);
-    }
-
     private final String TYPE = "Component Upgrade";
 
-    @Override
-    protected Bug testSpecificStubbingForBug(Bug mock) {
+    @Test
+    public void violationIfNoDependsOnAndComponentUpgradeType() {
+        final int bugId = 143794;
+        final Bug mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(TYPE);
+        Mockito.when(mock.getDependsOn()).thenReturn(new HashSet<Integer>());
 
-        List<Flag> flags = new ArrayList<Flag>(1);
-        Flag flag = new Flag("jboss-eap-6.4.0", "setter?", Flag.Status.POSITIVE);
-        flags.add(flag);
-
-        Mockito.when(mock.getFlags()).thenReturn(flags);
-        return mock;
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))),checkName,bugId);
     }
-
 }

@@ -21,20 +21,10 @@
  */
 package org.jboss.jbossset.bugclerk;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;
@@ -68,83 +58,4 @@ public abstract class AbstractCheckRunner {
     public void shutdownRuleEngine() {
         this.engine.shutdownRuleEngine();
     }
-
-    protected Bug createMockedBug(int bugId) {
-        return testSpecificStubbingForBug(MockUtils.mockBug(bugId, "summary"));
-    }
-
-    protected Bug testSpecificStubbingForBug(Bug bug) {
-        return bug;
-    }
-
-    protected Comment testSpecificStubbingForComment(Comment comment) {
-        return comment;
-    }
-
-    protected Comment createMockedComment(int id, String text, int bugId) {
-        return testSpecificStubbingForComment(MockUtils.mockComment(id, text, bugId));
-    }
-
-    protected Collection<Candidate> buildTestSubjectWithComment(int bugId, String comment) {
-        SortedSet<Comment> comments = new TreeSet<Comment>();
-        comments.add(createMockedComment(0, comment, bugId));
-        return createListForOneCandidate(new Candidate(createMockedBug(bugId), comments));
-    }
-
-    protected Collection<Candidate> buildTestSubjectWithComments(int bugId, String... commentsContent) {
-        SortedSet<Comment> comments = new TreeSet<Comment>();
-        for ( String comment : commentsContent )
-            comments.add(createMockedComment(0, comment, bugId));
-        return createListForOneCandidate(new Candidate(createMockedBug(bugId), comments));
-    }
-
-    protected Collection<Candidate> createListForOneCandidate(Candidate candidate) {
-        Collection<Candidate> candidates = new ArrayList<Candidate>(1);
-        candidates.add(candidate);
-        return candidates;
-    }
-
-    protected Collection<Candidate> buildTestSubject(int bugId) {
-        return createListForOneCandidate ( new Candidate(createMockedBug(bugId), new TreeSet<Comment>() ));
-    }
-
-    protected Collection<Candidate> filterCandidateOut(Collection<Candidate> candidates) {
-        for ( Candidate candidate : candidates ) {
-            candidate.setFiltered(true);
-        }
-        return candidates;
-    }
-
-    protected void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId) {
-        assertThat(violations.size(), is(1));
-        for ( Violation v : violations ) {
-            assertThat(v.getBug().getId(), is(bugId));
-            assertThat(v.getCheckName(), is(checkname));
-        }
-    }
-
-    protected void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId, int nbViolationExpected) {
-        assertThat(violations.size(), is(nbViolationExpected));
-        for ( Violation v : violations ) {
-            assertThat(v.getBug().getId(), is(bugId));
-            assertThat(v.getCheckName(), is(checkname));
-        }
-    }
-
-    protected List<Flag> createAllThreeFlagsAs(Flag.Status status) {
-        List<Flag> flags = new ArrayList<Flag>(3);
-        flags.add(new Flag(QA_ACK_FLAG, "setter?", status));
-        flags.add(new Flag(PM_ACK_FLAG, "setter?", status));
-        flags.add(new Flag(DEV_ACK_FLAG, "setter?", status));
-        return flags;
-    }
-
-    @SafeVarargs
-    protected static <T> Set<T> asSetOf(T ...items) {
-        Set<T> releasesSet = new HashSet<T>();
-        for ( T item : items )
-            releasesSet.add(item);
-        return releasesSet;
-    }
-
 }

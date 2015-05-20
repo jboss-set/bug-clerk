@@ -21,6 +21,9 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
+import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +46,7 @@ public class TargetRelease extends AbstractCheckRunner {
 
     private final String TYPE = "Component Upgrade";
 
-    @Override
+
     protected Bug testSpecificStubbingForBug(Bug mock) {
         Mockito.when(mock.getType()).thenReturn(TYPE);
 

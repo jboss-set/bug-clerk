@@ -22,6 +22,8 @@
 package org.jboss.jbossset.bugclerk.checks;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
+import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
 import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
@@ -29,7 +31,9 @@ import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
+import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.junit.Test;
@@ -37,7 +41,7 @@ import org.mockito.Mockito;
 
 public class CommunityBZ extends AbstractCheckRunner {
 
-    @Override
+
     protected Bug testSpecificStubbingForBug(Bug mock) {
         Mockito.when(mock.getCreator()).thenReturn("Romain Pelisse <belaran@gmail.com>");
         return mock;
@@ -51,10 +55,10 @@ public class CommunityBZ extends AbstractCheckRunner {
 
     @Test
     public void noViolationIfPRappearsInAComment() {
-        Bug mock = createMockedBug(123466);
+        Bug mock = MockUtils.mockBug(123466,"summary");
         Mockito.when(mock.getCreator()).thenReturn("Romain Pelisse <belaran@redhat.com>");
 
-        Collection<Violation> violations = engine.runCheckOnBugs(checkName,createListForOneCandidate(new Candidate(mock, new TreeSet<Comment>())));
+        Collection<Violation> violations = engine.runCheckOnBugs(checkName,CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>())));
         for ( Violation v : violations ) {
             System.out.println(v);
         }

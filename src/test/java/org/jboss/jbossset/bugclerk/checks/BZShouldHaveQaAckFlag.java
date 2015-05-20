@@ -22,6 +22,8 @@
 package org.jboss.jbossset.bugclerk.checks;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
+import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -30,25 +32,34 @@ import java.util.List;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
+import org.jboss.jbossset.bugclerk.MockUtils;
+import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
 import org.jboss.pull.shared.connectors.common.Flag;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
 
+    final int bugId = 143794;
+    private Bug mock;
+
     @Test
     public void bzOnVerifiedButNoQaFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-        final int bugId = 143794;
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(bugId, payload)),checkName,bugId);
+        Collection<Violation>v = engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload));
+        assertResultsIsAsExpected(
+                v
+                ,checkName,bugId);
     }
 
     @Test
     public void bzOnVeriifiedAndHasQaFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-        final int bugId = 143794;
+
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         for ( Candidate candidate : mocks ) {
             mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.UNKNOWN);
@@ -59,7 +70,6 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
     @Test
     public void bzOnVerifiedAndHasNoFlags() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-        final int bugId = 143794;
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         for ( Candidate candidate : mocks ) {
             Mockito.when(candidate.getBug().getStatus()).thenReturn(Status.VERIFIED.toString());
@@ -70,7 +80,6 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
     @Test
     public void bzOnVerifiedAndHasQaFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-        final int bugId = 143794;
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         for ( Candidate candidate : mocks ) {
             mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.UNKNOWN);
@@ -81,7 +90,6 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
     @Test
     public void bzOnVerifiedAndHasQaFlagPositive() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-        final int bugId = 143794;
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         for ( Candidate candidate : mocks ) {
             mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.POSITIVE);
@@ -99,16 +107,16 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
         Mockito.when(candidate.getBug().getFlags()).thenReturn(flags);
     }
 
-    @Override
-    protected Bug testSpecificStubbingForBug(Bug mock) {
+    @Before
+    public void testSpecificStubbingForBug() {
+        mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(Status.VERIFIED.toString());
 
         List<Flag> flags = new ArrayList<Flag>(1);
-        Flag flag = new Flag("jboss-eap-6.4.0", "setter?", Flag.Status.POSITIVE);
+        Flag flag = new Flag(BugClerkMockingHelper.PM_ACK_FLAG, "setter?", Flag.Status.NEGATIVE);
         flags.add(flag);
 
         Mockito.when(mock.getFlags()).thenReturn(flags);
-        return mock;
     }
 
 }
