@@ -65,5 +65,15 @@ public class PostMissingPR extends AbstractCheckRunner {
         assertThat(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload)).size(), is(0));
     }
 
+    @Test
+    public void noViolationIfCommitAppearsInAComment() {
+        final String payload = "PR is there : https://github.com/jbossas/redhat-picketlink/commit/43a7fc4b2bd1438f23b22ffbdcbb341aa45ba885";
+
+        final Bug mock = MockUtils.mockBug(143794, "summary");
+        Mockito.when(mock.getStatus()).thenReturn(Status.POST.toString());
+
+
+        assertThat(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload)).size(), is(0));
+    }
 
 }
