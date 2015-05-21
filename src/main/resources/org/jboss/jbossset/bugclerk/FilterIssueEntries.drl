@@ -48,6 +48,19 @@ rule "IgnoreClosedBZ"
          };
 end
 
+rule "IgnoreDuplicateBZ"
+    dialect "mvel"
+    when
+        $candidate : Candidate( bug.resolution == "DUPLICATE", filtered == false);
+    then
+	    //System.out.println($candidate.bug.id + " filtered by " + drools.getRule().getName());
+		modify ( $candidate ) {
+			candidate = false,
+			filtered = true
+         };
+end
+
+
 rule "IgnoreRpmsBZ"
     dialect "mvel"
     when
