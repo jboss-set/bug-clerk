@@ -30,7 +30,7 @@ import  org.jboss.jbossset.bugclerk.Violation;
 rule "OneOffPatchNotForSet"
     dialect "mvel"
     when
-		  $bug : Candidate( bug.type == "Support Patch", bug.assignedTo  == "jboss-set@redhat.com", $releases : bug.targetRelease);
+		  $bug : Candidate( bug.type == "Support Patch", bug.assignedTo  == "jboss-set@redhat.com", $releases : bug.targetRelease, filtered == false);
 		  $release : String() from $releases;
 		  eval ($release.equals("One-off"));
     then
