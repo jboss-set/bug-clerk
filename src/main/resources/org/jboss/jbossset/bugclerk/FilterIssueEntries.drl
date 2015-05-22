@@ -37,6 +37,19 @@ rule "IgnoreDocFeatureBZ"
          };
 end
 
+rule "IgnoreDocumentationTypeBZ"
+	salience 100
+    dialect "mvel"
+    when
+        $candidate : Candidate( bug.type.contains("Documentation"), filtered == false);
+    then
+    	//System.out.println($candidate.bug.id + " filtered by " + drools.getRule().getName());
+		modify ( $candidate ) {
+			candidate = false,
+			filtered = true
+         };
+end
+
 rule "IgnoreClosedBZ"
 	salience 100
     dialect "mvel"
