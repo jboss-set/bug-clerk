@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+    org.jboss.jbossset.bugclerk.checks.FilterIssueEntries.class,
     org.jboss.jbossset.bugclerk.checks.ComponentUpgradeMissingFixList.class,
     org.jboss.jbossset.bugclerk.checks.PostMissingPR.class,
     org.jboss.jbossset.bugclerk.checks.ReleaseVersionMismatch.class,

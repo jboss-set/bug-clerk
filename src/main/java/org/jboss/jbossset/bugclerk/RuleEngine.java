@@ -77,8 +77,14 @@ public class RuleEngine {
         addCandidatesToFacts(candidates);
         ksession.fireAllRules(createAgendaForCheck(checkname));
         return retrieveViolationsFromKSession(ksession);
-
     }
+
+    public Collection<Candidate> filterBugs(final String checkname, Collection<Candidate> candidates) {
+        addCandidatesToFacts(candidates);
+        ksession.fireAllRules(createAgendaForCheck(checkname));
+        return (Collection<Candidate>) ksession.getObjects(new ClassObjectFilter(Candidate.class));
+    }
+
 
     public void shutdownRuleEngine() {
         if (ksession != null)
