@@ -33,6 +33,7 @@ import org.jboss.jbossset.bugclerk.Level;
 global java.util.List list
 
 rule "IssueNotAssigned_CommentSize"
+	salience 0
     dialect "mvel"
     when
 	  $candidate : Candidate(bug.status == "NEW", filtered == false, $bug : bug, comments.size() >= 5);

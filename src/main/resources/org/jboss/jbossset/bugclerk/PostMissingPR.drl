@@ -28,6 +28,7 @@ import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import  org.jboss.jbossset.bugclerk.Violation;
 
 rule "PostMissingPR"
+	salience 0
     dialect "mvel"
     when
 		  $bug : Candidate( bug.status == "POST", $status : bug.status, $comments : comments, filtered == false);

@@ -30,6 +30,7 @@ import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
 
 rule "BZDepsShouldAlsoHaveFlags"
+	salience 0
     dialect "mvel"
     when
       $payload : Candidate($id : bug.id , $depends : bug.dependsOn, $flags : bug.flags , filtered == false);

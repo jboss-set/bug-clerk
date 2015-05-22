@@ -29,6 +29,7 @@ import org.jboss.pull.shared.connectors.common.Flag;
 import  org.jboss.jbossset.bugclerk.Violation;
 
 rule "ReleaseVersionMismatch"
+	salience 0
     dialect "mvel"
     when
       $candidate : Candidate(bug.summary.contains("(6.4.0)"), $summary: bug.summary, $flags : bug.flags, filtered == false);

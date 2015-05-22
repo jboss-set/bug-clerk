@@ -29,6 +29,7 @@ import org.jboss.pull.shared.connectors.common.Flag;
 import  org.jboss.jbossset.bugclerk.Violation;
 
 rule "TargetRelease"
+	salience 0
     dialect "mvel"
     when
        $candidate : Candidate($summary: bug.summary, $flags : bug.flags , filtered == false);

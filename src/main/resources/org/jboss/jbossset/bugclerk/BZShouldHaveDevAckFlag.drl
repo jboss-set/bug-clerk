@@ -30,6 +30,7 @@ import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
 
 rule "BZShouldHaveDevAckFlag"
+	salience 0
     dialect "mvel"
     when
       $candidate : Candidate(bug.status == "POST" || bug.status == "MODIFIED", $status : bug.status, $flags : bug.flags , filtered == false);
