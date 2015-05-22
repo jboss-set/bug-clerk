@@ -62,11 +62,22 @@ public class ReportViolationToBzEngine {
         for (Entry<Integer, List<Violation>> bugViolation : violationByBugId.entrySet()) {
             List<Violation> newViolationToReport = filterViolationsAlreadyReported(bugViolation.getValue(),
                     commentsByBugId.get(bugViolation.getKey().toString()));
-            if (!newViolationToReport.isEmpty())
-                return bugzillaClient.addPrivateCommentTo(bugViolation.getKey(),
+            if (!newViolationToReport.isEmpty()) {
+                newViolationToReport = keepsOnlyErrors(newViolationToReport);
+                if ( ! newViolationToReport.isEmpty() )
+                    return bugzillaClient.addPrivateCommentTo(bugViolation.getKey(),
                         messageBody(newViolationToReport, new StringBuffer(header)).append(footer).toString());
+            }
         }
         return false; // no violation reported
+    }
+
+    private List<Violation> keepsOnlyErrors(List<Violation> newViolationToReport) {
+        List<Violation> errors = new ArrayList<Violation>(newViolationToReport.size());
+        for (Violation violation : newViolationToReport)
+            if ( ! Level.WARNING.equals(violation.getLevel()))
+                errors.add(violation);
+        return errors;
     }
 
     private List<Violation> filterViolationsAlreadyReported(List<Violation> violations, SortedSet<Comment> comments) {
@@ -84,7 +95,6 @@ public class ReportViolationToBzEngine {
             throw new IllegalArgumentException("No violations or text empty");
         int violationId = 1;
         for (Violation violation : violations)
-            if ( ! Level.WARNING.equals(violation.getLevel()))
                 text.append(violationId++).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
                         .append(violation.getMessage()).append(twoEOLs());
         return text;
