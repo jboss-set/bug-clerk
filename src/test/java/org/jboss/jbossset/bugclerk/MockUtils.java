@@ -32,6 +32,7 @@ public final class MockUtils {
         Bug mock = Mockito.mock(Bug.class);
         Mockito.when(mock.getId()).thenReturn(bugId);
         Mockito.when(mock.getSummary()).thenReturn(summary);
+        Mockito.when(mock.getType()).thenReturn("Bug");
         return mock;
     }
 
