@@ -59,7 +59,7 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
         if ( arguments.isNoRun() ) return;
 
         if (!ids.isEmpty()) {
-            endProgram(arguments, runBugClerk(ids, URLUtils.buildBzUrlPrefix(new URL(arguments.getFilterURL()))));
+            endProgram(arguments, runBugClerk(ids, URLUtils.buildBzUrlPrefix(new URL(arguments.getFilterURL())),arguments.isCommentOnBZEnabled()));
         } else
             throw new IllegalStateException("Can't invoked filter" + " - got 'null' or no IDs instead of content.");
 
@@ -84,11 +84,12 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
             System.exit(status);
     }
 
-    private static int runBugClerk(Collection<String> ids, String urlPrefix) {
+    private static int runBugClerk(Collection<String> ids, String urlPrefix, boolean reportToBz) {
         BugClerk bc = new BugClerk();
         BugClerkArguments bcArgs = new BugClerkArguments();
         bcArgs.setUrlPrefix(urlPrefix);
         bcArgs.getIds().addAll(ids);
+        bcArgs.setReportToBz(reportToBz);
         return bc.runAndReturnsViolations(bcArgs);
     }
 }
