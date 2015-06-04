@@ -58,11 +58,8 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
             throws MalformedURLException {
         if ( arguments.isNoRun() ) return;
 
-        if (!ids.isEmpty()) {
+        if (!ids.isEmpty())
             endProgram(arguments, runBugClerk(ids, URLUtils.buildBzUrlPrefix(new URL(arguments.getFilterURL())),arguments.isCommentOnBZEnabled()));
-        } else
-            throw new IllegalStateException("Can't invoked filter" + " - got 'null' or no IDs instead of content.");
-
     }
 
     private static BugClerkInvocatioWithFilterArguments loadUsernamePassword(BugClerkInvocatioWithFilterArguments arguments) {
