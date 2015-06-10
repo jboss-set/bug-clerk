@@ -27,13 +27,19 @@ public class BugzillaDrone {
     private WebClient webClient;
     private BugClerkInvocatioWithFilterArguments arguments;
 
-    public BugzillaDrone(BugClerkInvocatioWithFilterArguments arguments) {
-        this.arguments = arguments;
+
+    private void init() {
         /* turn off annoying htmlunit warnings */
         java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(java.util.logging.Level.OFF);
 
         webClient = new WebClient();
         webClient.getCookieManager().setCookiesEnabled(true);
+    }
+
+    public BugzillaDrone(BugClerkInvocatioWithFilterArguments arguments) {
+        init();
+        this.arguments = arguments;
+
     }
 
     public void bugzillaLogin() {
