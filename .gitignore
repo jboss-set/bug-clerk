@@ -11,3 +11,4 @@ bugclerk.iml
 # BugClerk specific
 bugclerk.properties
 
+/bin/
