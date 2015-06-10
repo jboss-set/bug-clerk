@@ -22,6 +22,7 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
@@ -48,6 +49,13 @@ public class Candidate {
         this.bug = bug;
         this.comments = comments;
     }
+
+    public Candidate(Bug bug) {
+        checkIfNotNull(bug, "bug");
+        this.bug = bug;
+        this.comments = new TreeSet<Comment>();
+    }
+
 
     // FIXM: Workaround, find a nicer way to implements using drools/MVEL
     public String getFlagNamesContaining(String pattern) {
