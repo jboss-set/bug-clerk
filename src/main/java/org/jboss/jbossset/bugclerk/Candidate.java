@@ -21,6 +21,12 @@
  */
 package org.jboss.jbossset.bugclerk;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -32,6 +38,8 @@ public class Candidate {
 
     private final Bug bug;
     private final SortedSet<Comment> comments;
+    @SuppressWarnings("rawtypes")
+    private final Map<MetadataType, List> metadata;
 
     private boolean isCandidate = true;
     private boolean filtered = false;
@@ -48,24 +56,34 @@ public class Candidate {
         checkIfNotNull(comments, "comments");
         this.bug = bug;
         this.comments = comments;
+        this.metadata = initMetadatas();
     }
 
     public Candidate(Bug bug) {
         checkIfNotNull(bug, "bug");
         this.bug = bug;
         this.comments = new TreeSet<Comment>();
+        this.metadata = initMetadatas();
     }
 
+    @SuppressWarnings("rawtypes")
+    private Map<MetadataType, List> initMetadatas() {
+        Map<MetadataType, List> metadatas = new HashMap<MetadataType, List>(0);
+        metadatas.put(MetadataType.PULL_REQUESTS, new ArrayList<URL>(0));
+        metadatas.put(MetadataType.BUGCLERK_IGNORES, new ArrayList<String>(0));
+        return metadatas;
+    }
 
-    // FIXM: Workaround, find a nicer way to implements using drools/MVEL
+    // FIXME: Following methods are workaround,
+    // find a nicer way to implements using drools/MVEL
     public String getFlagNamesContaining(String pattern) {
-        if ( pattern == null || "".equals(pattern))
+        if (pattern == null || "".equals(pattern))
             throw new IllegalArgumentException("Can't invoke with an empty or 'null' pattern.");
 
         StringBuffer res = null;
-        for ( Flag flag : bug.getFlags() ) {
-            if ( flag.getName().contains(pattern)) {
-                if ( res == null )
+        for (Flag flag : bug.getFlags()) {
+            if (flag.getName().contains(pattern)) {
+                if (res == null)
                     res = new StringBuffer();
                 else
                     res.append(",");
@@ -75,6 +93,22 @@ public class Candidate {
 
         return (res != null ? res.toString() : "");
     }
+
+    @SuppressWarnings("unchecked")
+    public void addRuleToIgnore(String rulePattern) {
+        this.metadata.get(MetadataType.BUGCLERK_IGNORES).add(rulePattern.substring(rulePattern.indexOf("#") +1 ));
+    }
+
+    @SuppressWarnings("unchecked")
+    public void addPR(String pullRequest) {
+        try {
+            this.metadata.get(MetadataType.PULL_REQUESTS).add(new URL(pullRequest));
+        } catch (MalformedURLException e) {
+            System.out.println("Malformed Pull Request URL:" + pullRequest);
+        }
+    }
+
+    // End of workarounds
 
     public boolean isCandidate() {
         return isCandidate;
@@ -100,10 +134,14 @@ public class Candidate {
         return comments;
     }
 
-    @Override
-    public String toString() {
-        return "Candidate [bug=" + bug.getId() + ", comments=" + comments.size() + ", isCandidate=" + isCandidate
-                + ", filtered=" + filtered + "]";
+    @SuppressWarnings("rawtypes")
+    public Map<MetadataType, List> getMetadata() {
+        return metadata;
     }
 
+    @Override
+    public String toString() {
+        return "Candidate [bug=" + bug + ", comments=" + comments + ", metadata=" + metadata + ", isCandidate=" + isCandidate
+                + ", filtered=" + filtered + "]";
+    }
 }

@@ -89,3 +89,25 @@ rule "IgnoreRpmsBZ"
 			filtered = true
          };
 end
+
+rule "SetIgnoreFlags"
+	salience 100
+    dialect "mvel"
+    when
+        $candidate : Candidate( comments.size() > 0, $comments : comments, filtered == false);
+		Comment( text.contains("BugClerk#"), $comment : text ) from $comments;        
+    then
+        //System.out.println(drools.getRule().getName() + ":" + $comment + "[" + $comment.getClass() + "]");
+		$candidate.addRuleToIgnore($comment);
+end
+
+rule "AddPullRequests"
+	salience 100
+    dialect "mvel"
+    when
+        $candidate : Candidate( comments.size() > 0, $comments : comments, filtered == false);
+		Comment( text.contains("github.com"), text.contains("/pull/"), $comment : text) from $comments;
+    then
+        //System.out.println(drools.getRule().getName() + ":" + $comment + "[" + $comment.getClass() + "]");
+		$candidate.addPR($comment);
+end

@@ -24,11 +24,16 @@ package org.jboss.jbossset.bugclerk.checks;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
+import java.util.List;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
+import org.jboss.jbossset.bugclerk.MetadataType;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
@@ -87,8 +92,46 @@ public class FilterIssueEntries extends AbstractCheckRunner {
                 CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))));
     }
 
-    private static void assertThatFilterWorksAsExpected(Collection<Candidate> candidates) {
+    @Test
+    @SuppressWarnings("rawtypes")
+    public void setIgnoreFlags() {
+        final String NO_PR = "PostMissingPR";
+        final String COMMUNITY_BZ = "CommunityBZ";
+        SortedSet<Comment> comments = new TreeSet<Comment>();
+        comments.add(MockUtils.mockComment(1, "BugClerk#" + NO_PR, mock.getId()));
+        comments.add(MockUtils.mockComment(2, "BugClerk#" + COMMUNITY_BZ, mock.getId()));
+
+        Collection<Candidate> candidates = engine.filterBugs("SetIgnoreFlags",
+                CollectionUtils.asSetOf(new Candidate(mock, comments)));
         assertThat(candidates.size(), is(1));
-        assertThat(candidates.iterator().next().isFiltered(), is(true));
+        List metas = candidates.iterator().next().getMetadata().get(MetadataType.BUGCLERK_IGNORES);
+        assertThat(metas.size(), is(2));
+        assertThat(metas.contains(NO_PR), is( true));
+        assertThat(metas.contains(COMMUNITY_BZ), is(true));
+    }
+
+    @Test
+    @SuppressWarnings("rawtypes")
+    public void addPullRequests() throws MalformedURLException {
+        final URL url = new URL("https://github.com/jbossas/jboss-eap/pull/2265");
+        SortedSet<Comment> comments = new TreeSet<Comment>();
+        comments.add(MockUtils.mockComment(1,url.toString(), mock.getId()));
+
+        Collection<Candidate> candidates = engine.filterBugs("AddPullRequests",
+                CollectionUtils.asSetOf(new Candidate(mock, comments)));
+        assertThat(candidates.size(), is(1));
+        List metas = candidates.iterator().next().getMetadata().get(MetadataType.PULL_REQUESTS);
+        assertThat(metas.size(), is(1));
+        assertThat(metas.contains(url), is( true));
+    }
+
+
+    private static void assertThatFilterWorksAsExpected(Collection<Candidate> candidates, boolean isFiltered) {
+        assertThat(candidates.size(), is(1));
+        assertThat(candidates.iterator().next().isFiltered(), is(isFiltered));
+    }
+
+    private static void assertThatFilterWorksAsExpected(Collection<Candidate> candidates) {
+        assertThatFilterWorksAsExpected(candidates,true);
     }
 }
