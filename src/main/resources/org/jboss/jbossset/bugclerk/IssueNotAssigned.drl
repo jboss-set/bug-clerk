@@ -38,7 +38,7 @@ rule "IssueNotAssigned_CommentSize"
     when
 	  $candidate : Candidate(bug.status == "NEW", filtered == false, $bug : bug, comments.size() >= 5);
     then
-		insertLogical( new Violation($candidate.bug,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) " + $candidate.bug.status , Level.WARNING) );
+		insertLogical( new Violation($candidate,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) " + $candidate.bug.status , Level.WARNING) );
 end
 
 rule "IssueNotAssigned_CreationDate"
@@ -46,7 +46,7 @@ rule "IssueNotAssigned_CreationDate"
     when
   		$candidate : Candidate(bug.status == "NEW", filtered == false, bug.creationTime before[31d] new Date());    		
     then
-		insertLogical( new Violation($candidate.bug,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) " + $candidate.bug.status, Level.WARNING) );
+		insertLogical( new Violation($candidate,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) " + $candidate.bug.status, Level.WARNING) );
 end
 
 rule "IssueNotAssigned_PR"
@@ -55,5 +55,5 @@ rule "IssueNotAssigned_PR"
 	  $candidate : Candidate( bug.status == "NEW", $status : bug.status, $comments : comments, filtered == false);
 	  Comment( text.contains("github.com"), text.contains("/pull/") ) from $comments;
     then
-	  insertLogical( new Violation($candidate.bug,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) " + $candidate.bug.status, Level.WARNING) );
+	  insertLogical( new Violation($candidate,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) " + $candidate.bug.status, Level.WARNING) );
 end

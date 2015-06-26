@@ -30,9 +30,9 @@ import  org.jboss.jbossset.bugclerk.Violation;
 rule "OneOffPatchNotForSet"
     dialect "mvel"
     when
-		  $bug : Candidate( bug.type == "Support Patch", bug.assignedTo  == "jboss-set@redhat.com", $releases : bug.targetRelease, filtered == false);
+		  $candidate : Candidate( bug.type == "Support Patch", bug.assignedTo  == "jboss-set@redhat.com", $releases : bug.targetRelease, filtered == false);
 		  $release : String() from $releases;
 		  eval ($release.equals("One-off"));
     then
-		insert( new Violation($bug.bug,drools.getRule().getName(), "is assigned to SET while it's supported patch - it should be assigned to GSS.") );
+		insert( new Violation($candidate,drools.getRule().getName(), "is assigned to SET while it's supported patch - it should be assigned to GSS.") );
 end

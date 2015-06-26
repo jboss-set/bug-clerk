@@ -62,7 +62,7 @@ public final class CollectionUtils {
     public static Map<Integer, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
         Map<Integer, List<Violation>> violationIndexedByBugId = new HashMap<Integer, List<Violation>>(violations.size());
         for (Violation violation : violations) {
-            int id = violation.getBug().getId();
+            int id = violation.getCandidate().getBug().getId();
             if (!violationIndexedByBugId.containsKey(id)) {
                 List<Violation> violationsForBug = new ArrayList<Violation>();
                 violationsForBug.add(violation);

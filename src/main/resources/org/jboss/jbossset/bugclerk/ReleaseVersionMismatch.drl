@@ -35,6 +35,6 @@ rule "ReleaseVersionMismatch"
       $candidate : Candidate(bug.summary.contains("(6.4.0)"), $summary: bug.summary, $flags : bug.flags, filtered == false);
       not Flag(name == "jboss-eap-6.4.0" ) from $flags;
     then
-	  insert( new Violation($candidate.bug,drools.getRule().getName(), "Release in title[" + $summary + "] does not match flags.") );
+	  insert( new Violation($candidate,drools.getRule().getName(), "Release in title[" + $summary + "] does not match flags.") );
 		
 end

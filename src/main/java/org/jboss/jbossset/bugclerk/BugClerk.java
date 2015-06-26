@@ -61,10 +61,13 @@ public class BugClerk {
         return violations;
     }
 
+    private static final String GITHUB_LOGIN_FIELDNAME = "github.login";
+    private static final String GITHUB_TOKEN_FIELDNAME = "github.token";
+
     protected Map<String, Object> buildGlobalsMap() {
         Map<String, Object> globalsMap = new HashMap<String, Object>(1);
         globalsMap.put(KIE_GITHUB_CLIENT_ID, new GithubClient(
-                getPropertyFromConfig("github.login"), getPropertyFromConfig("github.password")));
+                getPropertyFromConfig(GITHUB_LOGIN_FIELDNAME), getPropertyFromConfig(GITHUB_TOKEN_FIELDNAME)));
         return globalsMap;
     }
 

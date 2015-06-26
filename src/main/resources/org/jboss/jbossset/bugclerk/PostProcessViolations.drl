@@ -23,24 +23,17 @@
 package org.jboss.jbossset.bugclerk;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
 
-import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.Level;
 
-rule "BZDepsShouldAlsoHaveFlags"
+rule "RemoveViolationIfCheckIsIgnored"
 	salience 0
     dialect "mvel"
     when
-      $payload : Candidate($id : bug.id , $depends : bug.dependsOn, $flags : bug.flags , filtered == false);
- 	  Flag(name == "devel_ack", status == Flag.Status.POSITIVE ) from $flags;
-   	  Flag(name == "qa_ack" , status == Flag.Status.POSITIVE ) from $flags;
-   	  Flag(name == "pm_ack", status == Flag.Status.POSITIVE ) from $flags;
-      $dependency : Candidate($depends.contains(bug.id), $flags_dep : bug.flags , filtered == false);
-      	not Flag(name == "devel_ack", status == Flag.Status.POSITIVE ) from $flags_dep or
- 	    not Flag(name == "qa_ack", status == Flag.Status.POSITIVE ) from $flags_dep or
-   	  	not Flag(name == "pm_ack", status == Flag.Status.POSITIVE ) from $flags_dep;
+        $candidate : Candidate( bug.summary.contains("[Doc Feature]"), filtered == false);
     then
-      insertLogical(new Violation($dependency, drools.getRule().getName(), "is referenced by BZ" + $id + ", which has all qa+,pm+ and dev flag+ - but not this BZ.", Level.ERROR));
+    	//System.out.println($candidate.bug.id + " filtered by " + drools.getRule().getName());
+		modify ( $candidate ) {
+			candidate = false,
+			filtered = true
+         };
 end

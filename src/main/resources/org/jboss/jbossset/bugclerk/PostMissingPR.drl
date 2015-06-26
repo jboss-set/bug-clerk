@@ -31,8 +31,8 @@ rule "PostMissingPR"
 	salience 0
     dialect "mvel"
     when
-		  $bug : Candidate( bug.status == "POST", $status : bug.status, $comments : comments, filtered == false);
+		  $candidate : Candidate( bug.status == "POST", $status : bug.status, $comments : comments, filtered == false);
 		  not Comment( text.contains("github.com"), text.contains("/pull/") || text.contains("/commit/")  ) from $comments;
     then
-		insert( new Violation($bug.bug,drools.getRule().getName(), "BZ status is " + $status + ", but PR is missing") );
+		insert( new Violation($candidate, drools.getRule().getName(), "BZ status is " + $status + ", but PR is missing") );
 end

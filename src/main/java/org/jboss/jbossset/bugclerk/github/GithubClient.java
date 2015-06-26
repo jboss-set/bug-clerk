@@ -15,17 +15,15 @@ public class GithubClient {
 
     final GitHub github;
 
-    public GithubClient(String username, String password) {
+    public GithubClient(String username, String token) {
         try {
-            github = GitHub.connectUsingPassword(username, password);
+            github = GitHub.connectUsingOAuth(username, token);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    // FIXME: To improve with Closure
     public List<GHPullRequest> extractPullRequestsFromText(String text) {
-        System.out.println("Invoked with text:" + text);
         List<GHPullRequest> pullRequests = new ArrayList<GHPullRequest>(0);
         for (String url : URLUtils.extractUrls(text)) {
             pullRequests.add(tranformIntoPullRequestOrNull(url));

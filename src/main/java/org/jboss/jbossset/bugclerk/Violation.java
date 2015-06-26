@@ -21,17 +21,16 @@
  */
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
 
 public class Violation {
 
-    private final Bug bug;
+    private final Candidate candidate;
     private final String message;
     private final String checkName;
     private Level level = Level.ERROR;
 
-    private void constructorSanityCheck(Bug bug, String mssg) {
-        if (bug == null)
+    private void constructorSanityCheck(Candidate candidate, String mssg) {
+        if (candidate == null)
             throw new IllegalArgumentException("Can't instantiate " + this.getClass().getCanonicalName()
                     + " withou a 'null' bug ref.");
         if (mssg == null || "".equals(mssg))
@@ -39,15 +38,15 @@ public class Violation {
                     + " withou a 'null' or empty message.");
     }
 
-    public Violation(Bug bug, String checkName, String message) {
-        constructorSanityCheck(bug, message);
-        this.bug = bug;
+    public Violation(Candidate candidate, String checkName, String message) {
+        constructorSanityCheck(candidate, message);
+        this.candidate = candidate;
         this.message = message;
         this.checkName = checkName;
     }
 
-    public Violation(Bug bug, String checkName, String message, Level level) {
-        this(bug,checkName,message);
+    public Violation(Candidate candidate, String checkName, String message, Level level) {
+        this(candidate,checkName,message);
         this.level = level;
     }
 
@@ -55,12 +54,12 @@ public class Violation {
         return message;
     }
 
-    public Bug getBug() {
-        return bug;
-    }
-
     public String getCheckName() {
         return checkName;
+    }
+
+    public Candidate getCandidate() {
+        return candidate;
     }
 
     public Level getLevel() {
@@ -73,15 +72,17 @@ public class Violation {
 
     @Override
     public String toString() {
-        return "Violation [bugId=" + bug.getId() + ", check=" + checkName + ", message=" + message + " (" + level +  ")]";
+        return "Violation [candidate=" + candidate + ", message=" + message + ", checkName=" + checkName + ", level=" + level
+                + "]";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((bug == null) ? 0 : bug.hashCode());
+        result = prime * result + ((candidate == null) ? 0 : candidate.hashCode());
         result = prime * result + ((checkName == null) ? 0 : checkName.hashCode());
+        result = prime * result + ((level == null) ? 0 : level.hashCode());
         result = prime * result + ((message == null) ? 0 : message.hashCode());
         return result;
     }
@@ -96,10 +97,10 @@ public class Violation {
             return false;
 
         Violation other = (Violation) obj;
-        if (bug == null) {
-            if (other.bug != null)
+        if (candidate == null) {
+            if (other.candidate != null)
                 return false;
-        } else if (!bug.equals(other.bug))
+        } else if (!candidate.equals(other.candidate))
             return false;
 
         if (checkName == null) {
@@ -115,4 +116,5 @@ public class Violation {
             return false;
         return true;
     }
+
 }

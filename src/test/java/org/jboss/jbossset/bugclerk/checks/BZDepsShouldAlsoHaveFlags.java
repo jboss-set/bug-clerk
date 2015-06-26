@@ -28,18 +28,13 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.jboss.pull.shared.connectors.common.Flag;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -81,11 +76,11 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
         return set;
     }
 
-    private Collection<Candidate> buildTestSubjectWithComment(int bugId, String comment) {
+/*    private Collection<Candidate> buildTestSubjectWithComment(int bugId, String comment) {
         SortedSet<Comment> comments = new TreeSet<Comment>();
         comments.add(MockUtils.mockComment(0, comment, bugId));
         return createListForOneCandidate(new Candidate(MockUtils.mockBug(bugId, "summary"), comments));
-    }
+    }*/
 
     protected Collection<Candidate> createListForOneCandidate(Candidate candidate) {
         Collection<Candidate> candidates = new ArrayList<Candidate>(1);
@@ -93,7 +88,7 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
         return candidates;
     }
 
-    private Bug testSpecificStubbingForBug(Bug mock) {
+/*    private Bug testSpecificStubbingForBug(Bug mock) {
         Mockito.when(mock.getStatus()).thenReturn(Status.POST.toString());
 
         List<Flag> flags = new ArrayList<Flag>(1);
@@ -102,6 +97,6 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
 
         Mockito.when(mock.getFlags()).thenReturn(flags);
         return mock;
-    }
+    }*/
 
 }

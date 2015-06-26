@@ -18,7 +18,7 @@ public final class AssertsHelper {
     public static void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId, int nbViolationExpected) {
         assertThat(violations.size(), is(nbViolationExpected));
         for ( Violation v : violations ) {
-            assertThat(v.getBug().getId(), is(bugId));
+            assertThat(v.getCandidate().getBug().getId(), is(bugId));
             assertThat(v.getCheckName(), is(checkname));
         }
     }

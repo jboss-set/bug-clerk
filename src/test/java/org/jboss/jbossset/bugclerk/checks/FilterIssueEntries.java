@@ -30,12 +30,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
-import org.jboss.jbossset.bugclerk.MetadataType;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
@@ -99,7 +99,6 @@ public class FilterIssueEntries extends AbstractCheckRunner {
     }
 
     @Test
-    @SuppressWarnings("rawtypes")
     public void setIgnoreFlags() {
         final String NO_PR = "PostMissingPR";
         final String COMMUNITY_BZ = "CommunityBZ";
@@ -110,7 +109,7 @@ public class FilterIssueEntries extends AbstractCheckRunner {
         Collection<Candidate> candidates = engine.filterBugs("SetIgnoreFlags",
                 CollectionUtils.asSetOf(new Candidate(mock, comments)));
         assertThat(candidates.size(), is(1));
-        List metas = candidates.iterator().next().getMetadata().get(MetadataType.BUGCLERK_IGNORES);
+        Set<String> metas = candidates.iterator().next().getChecksToBeIgnored();
         assertThat(metas.size(), is(2));
         assertThat(metas.contains(NO_PR), is( true));
         assertThat(metas.contains(COMMUNITY_BZ), is(true));

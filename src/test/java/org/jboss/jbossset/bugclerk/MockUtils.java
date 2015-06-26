@@ -43,7 +43,8 @@ public final class MockUtils {
         Bug bug = MockUtils.mockBug(bugId, "summary");
 
         Violation mock = Mockito.mock(Violation.class);
-        Mockito.when(mock.getBug()).thenReturn(bug);
+        Mockito.when(mock.getCandidate()).thenReturn(Mockito.mock(Candidate.class));
+        Mockito.when(mock.getCandidate().getBug()).thenReturn(bug);
         Mockito.when(mock.getCheckName()).thenReturn(checkname);
         Mockito.when(mock.getMessage()).thenReturn(checkname);
 

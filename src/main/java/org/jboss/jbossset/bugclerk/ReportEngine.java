@@ -49,7 +49,7 @@ public class ReportEngine {
     }
 
     private StringBuffer format(List<Violation> violations, StringBuffer report) {
-        int bugId = violations.get(0).getBug().getId();
+        int bugId = violations.get(0).getCandidate().getBug().getId();
         report.append("BZ").append(bugId).append(" - ").append(this.urlPrefix + bugId).append(EOL)
                 .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
         int violationId = 1;

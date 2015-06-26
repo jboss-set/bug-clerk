@@ -22,9 +22,9 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -38,8 +38,7 @@ public class Candidate {
     private final Bug bug;
     private final SortedSet<Comment> comments;
     private final List<GHPullRequest> pullRequests = new ArrayList<>(0);
-    @SuppressWarnings("rawtypes")
-    private final Map<MetadataType, List> metadata;
+    private final Set<String> checksToBeIgnored = new HashSet<String>(0);
 
     private boolean isCandidate = true;
     private boolean filtered = false;
@@ -56,21 +55,12 @@ public class Candidate {
         checkIfNotNull(comments, "comments");
         this.bug = bug;
         this.comments = comments;
-        this.metadata = initMetadatas();
     }
 
     public Candidate(Bug bug) {
         checkIfNotNull(bug, "bug");
         this.bug = bug;
         this.comments = new TreeSet<Comment>();
-        this.metadata = initMetadatas();
-    }
-
-    @SuppressWarnings("rawtypes")
-    private Map<MetadataType, List> initMetadatas() {
-        Map<MetadataType, List> metadatas = new HashMap<MetadataType, List>(0);
-        metadatas.put(MetadataType.BUGCLERK_IGNORES, new ArrayList<String>(0));
-        return metadatas;
     }
 
     public String getFlagNamesContaining(String pattern) {
@@ -91,9 +81,8 @@ public class Candidate {
         return (res != null ? res.toString() : "");
     }
 
-    @SuppressWarnings("unchecked")
     public void addRuleToIgnore(String rulePattern) {
-        this.metadata.get(MetadataType.BUGCLERK_IGNORES).add(rulePattern.substring(rulePattern.indexOf("#") +1 ));
+        this.checksToBeIgnored.add(rulePattern.substring(rulePattern.indexOf("#") +1 ));
     }
 
     public void addPR(List<GHPullRequest> pullRequests) {
@@ -125,18 +114,17 @@ public class Candidate {
         return comments;
     }
 
-    @SuppressWarnings("rawtypes")
-    public Map<MetadataType, List> getMetadata() {
-        return metadata;
-    }
-
     public List<GHPullRequest> getPullRequests() {
         return pullRequests;
     }
 
+    public Set<String> getChecksToBeIgnored() {
+        return checksToBeIgnored;
+    }
+
     @Override
     public String toString() {
-        return "Candidate [bug=" + bug + ", comments=" + comments + ", metadata=" + metadata + ", isCandidate=" + isCandidate
-                + ", filtered=" + filtered + "]";
+        return "Candidate [bug=" + bug + ", comments=" + comments + ", pullRequests=" + pullRequests + ", checksToBeIgnored="
+                + checksToBeIgnored + ", isCandidate=" + isCandidate + ", filtered=" + filtered + "]";
     }
 }
