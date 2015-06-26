@@ -33,7 +33,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
+import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.pull.shared.Util;
 
 public final class SMTPClient {
@@ -57,7 +57,7 @@ public final class SMTPClient {
 
     static Properties loadSMTPProperties() {
         try {
-            return Util.loadProperties(BugzillaClient.CONFIGURATION_FILENAME, BugzillaClient.CONFIGURATION_FILENAME);
+            return Util.loadProperties(BugClerk.CONFIGURATION_FILENAME, BugClerk.CONFIGURATION_FILENAME);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

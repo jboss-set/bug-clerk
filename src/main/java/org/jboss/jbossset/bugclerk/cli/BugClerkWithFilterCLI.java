@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
-import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
 import org.jboss.jbossset.bugclerk.bugzilla.BugzillaDrone;
 import org.jboss.jbossset.bugclerk.utils.PropertiesUtils;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
@@ -63,7 +62,7 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
     }
 
     private static BugClerkInvocatioWithFilterArguments loadUsernamePassword(BugClerkInvocatioWithFilterArguments arguments) {
-        Properties prop = PropertiesUtils.loadPropertiesFile(BugzillaClient.CONFIGURATION_FILENAME);
+        Properties prop = PropertiesUtils.loadPropertiesFile(BugClerk.CONFIGURATION_FILENAME);
         if (emptyOrNull(arguments.getPassword()))
             arguments.setUsername(prop.getProperty("bugzilla.login"));
         if (emptyOrNull(arguments.getPassword()))

@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
 import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
@@ -35,10 +36,13 @@ import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
 import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.jbossset.bugclerk.utils.StringUtils;
+import org.jboss.pull.shared.Util;
 
 public class BugClerk {
 
     private final PerformanceMonitor monitor = new PerformanceMonitor();
+
+    private Properties configurationProperties;
 
     protected List<Candidate> loadCandidates(List<String> ids) {
         return new ParallelLoader().loadCandidates(ids);
@@ -58,6 +62,19 @@ public class BugClerk {
         return reportEngine.createReport(violationByBugId);
     }
 
+    protected String getPropertyFromConfig(String propertyname) {
+        return Util.require(configurationProperties, propertyname);
+    }
+
+    protected Properties loadConfigurationProperties(String filename) {
+        try {
+            return Util.loadProperties(filename, filename);
+        } catch (IOException e) {
+            throw new IllegalStateException("Can't load configuration properties from file " + filename, e);
+        }
+    }
+
+
     private static final String NOW = new SimpleDateFormat("yyyy/MM/dd - HH:mm").format(Calendar.getInstance().getTime());
 
     private static final String TO = "Romain Pelisse <rpelisse@redhat.com>";
@@ -66,6 +83,8 @@ public class BugClerk {
     protected void publishReport(String report) {
         new SMTPClient().sendEmail(TO, FROM, "BugClerk Report - " + NOW, report);
     }
+
+    public static final String CONFIGURATION_FILENAME = "bugclerk.properties";
 
     private static final String BUGCLERK_ISSUES_TRACKER = "https://github.com/jboss-set/bug-clerk/issues";
 
@@ -83,6 +102,7 @@ public class BugClerk {
 
     public int runAndReturnsViolations(BugClerkArguments arguments) {
         LoggingUtils.configureLogger(arguments.isDebug());
+        this.configurationProperties = loadConfigurationProperties(CONFIGURATION_FILENAME);
 
         LoggingUtils.getLogger().info("Loading data for " + arguments.getIds().size() + " issues.");
         List<Candidate> candidates = loadCandidates(arguments.getIds());

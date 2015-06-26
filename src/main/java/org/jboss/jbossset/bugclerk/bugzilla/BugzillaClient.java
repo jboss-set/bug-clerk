@@ -29,6 +29,7 @@ import java.util.SortedSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.pull.shared.connectors.bugzilla.BZHelper;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
@@ -44,12 +45,11 @@ public class BugzillaClient {
         bugzillaHelper = createHelper();
     }
 
-    public static final String CONFIGURATION_FILENAME = "bugclerk.properties";
     private static final Logger LOGGER = LoggingUtils.getLogger();
 
     private static BZHelper createHelper() {
         try {
-            return new BZHelper(CONFIGURATION_FILENAME, CONFIGURATION_FILENAME);
+            return new BZHelper(BugClerk.CONFIGURATION_FILENAME, BugClerk.CONFIGURATION_FILENAME);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
