@@ -21,17 +21,22 @@
  */
 package org.jboss.jbossset.bugclerk;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jboss.jbossset.bugclerk.github.GithubClient;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.junit.After;
 import org.junit.Before;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractCheckRunner {
 
     protected RuleEngine engine;
+    protected GithubClient githubClient;
     protected final String checkName;
 
     protected static final String DEV_ACK_FLAG = "devel_ack";
@@ -46,7 +51,11 @@ public abstract class AbstractCheckRunner {
 
     @Before
     public void initRuleEngine() {
-        this.engine = new RuleEngine(BugClerk.KIE_SESSION);
+        githubClient = Mockito.mock(GithubClient.class);
+        Mockito.when(githubClient.toString()).thenReturn(GithubClient.class.toString());
+        Map<String, Object> globals = new HashMap<String, Object>(1);
+        globals.put(BugClerk.KIE_GITHUB_CLIENT_ID, githubClient);
+        this.engine = new RuleEngine(BugClerk.KIE_SESSION, globals );
     }
 
     @Before

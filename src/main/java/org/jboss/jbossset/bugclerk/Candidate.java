@@ -21,8 +21,6 @@
  */
 package org.jboss.jbossset.bugclerk;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,11 +31,13 @@ import java.util.TreeSet;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.jboss.pull.shared.connectors.common.Flag;
+import org.kohsuke.github.GHPullRequest;
 
 public class Candidate {
 
     private final Bug bug;
     private final SortedSet<Comment> comments;
+    private final List<GHPullRequest> pullRequests = new ArrayList<>(0);
     @SuppressWarnings("rawtypes")
     private final Map<MetadataType, List> metadata;
 
@@ -69,13 +69,10 @@ public class Candidate {
     @SuppressWarnings("rawtypes")
     private Map<MetadataType, List> initMetadatas() {
         Map<MetadataType, List> metadatas = new HashMap<MetadataType, List>(0);
-        metadatas.put(MetadataType.PULL_REQUESTS, new ArrayList<URL>(0));
         metadatas.put(MetadataType.BUGCLERK_IGNORES, new ArrayList<String>(0));
         return metadatas;
     }
 
-    // FIXME: Following methods are workaround,
-    // find a nicer way to implements using drools/MVEL
     public String getFlagNamesContaining(String pattern) {
         if (pattern == null || "".equals(pattern))
             throw new IllegalArgumentException("Can't invoke with an empty or 'null' pattern.");
@@ -99,16 +96,10 @@ public class Candidate {
         this.metadata.get(MetadataType.BUGCLERK_IGNORES).add(rulePattern.substring(rulePattern.indexOf("#") +1 ));
     }
 
-    @SuppressWarnings("unchecked")
-    public void addPR(String pullRequest) {
-        try {
-            this.metadata.get(MetadataType.PULL_REQUESTS).add(new URL(pullRequest));
-        } catch (MalformedURLException e) {
-            System.out.println("Malformed Pull Request URL:" + pullRequest);
-        }
+    public void addPR(List<GHPullRequest> pullRequests) {
+        if ( pullRequests != null && ! pullRequests.isEmpty() )
+            this.pullRequests.addAll(pullRequests);
     }
-
-    // End of workarounds
 
     public boolean isCandidate() {
         return isCandidate;
@@ -137,6 +128,10 @@ public class Candidate {
     @SuppressWarnings("rawtypes")
     public Map<MetadataType, List> getMetadata() {
         return metadata;
+    }
+
+    public List<GHPullRequest> getPullRequests() {
+        return pullRequests;
     }
 
     @Override

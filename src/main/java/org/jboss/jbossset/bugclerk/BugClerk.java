@@ -21,9 +21,11 @@
  */
 package org.jboss.jbossset.bugclerk;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,6 +34,7 @@ import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
 import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
 import org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngine;
 import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
+import org.jboss.jbossset.bugclerk.github.GithubClient;
 import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
 import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
@@ -49,12 +52,20 @@ public class BugClerk {
     }
 
     static final String KIE_SESSION = "BzCheck";
+    static final String KIE_GITHUB_CLIENT_ID = "githubClient";
 
     protected Collection<Violation> processEntriesAndReportViolations(List<Candidate> candidates) {
-        RuleEngine ruleEngine = new RuleEngine(KIE_SESSION);
+        RuleEngine ruleEngine = new RuleEngine(KIE_SESSION, buildGlobalsMap());
         Collection<Violation> violations = ruleEngine.processBugEntry(candidates);
         ruleEngine.shutdownRuleEngine();
         return violations;
+    }
+
+    protected Map<String, Object> buildGlobalsMap() {
+        Map<String, Object> globalsMap = new HashMap<String, Object>(1);
+        globalsMap.put(KIE_GITHUB_CLIENT_ID, new GithubClient(
+                getPropertyFromConfig("github.login"), getPropertyFromConfig("github.password")));
+        return globalsMap;
     }
 
     protected String buildReport(Map<Integer, List<Violation>> violationByBugId, String urlPrefix) {

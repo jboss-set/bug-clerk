@@ -22,6 +22,8 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.drools.core.ClassObjectFilter;
 import org.kie.api.KieServices;
@@ -35,6 +37,13 @@ public class RuleEngine {
 
     public RuleEngine(String sessionName) {
         ksession = createKSession(sessionName);
+    }
+
+    public RuleEngine(String sessionName, Map<String,Object> globals) {
+        ksession = createKSession(sessionName);
+        for ( Entry<String,Object> entry : globals.entrySet() ) {
+            ksession.getGlobals().set(entry.getKey(), entry.getValue());
+        }
     }
 
     public static KieSession createKSession(final String sessionName) {
@@ -79,6 +88,7 @@ public class RuleEngine {
         return retrieveViolationsFromKSession(ksession);
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<Candidate> filterBugs(final String checkname, Collection<Candidate> candidates) {
         addCandidatesToFacts(candidates);
         ksession.fireAllRules(createAgendaForCheck(checkname));

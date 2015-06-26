@@ -24,6 +24,7 @@ package org.jboss.jbossset.bugclerk;
 
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 
+
 rule "IgnoreDocFeatureBZ"
 	salience 100
     dialect "mvel"
@@ -101,13 +102,16 @@ rule "SetIgnoreFlags"
 		$candidate.addRuleToIgnore($comment);
 end
 
+global org.jboss.jbossset.bugclerk.github.GithubClient githubClient;
+
 rule "AddPullRequests"
 	salience 100
     dialect "mvel"
     when
         $candidate : Candidate( comments.size() > 0, $comments : comments, filtered == false);
 		Comment( text.contains("github.com"), text.contains("/pull/"), $comment : text) from $comments;
+
     then
-        //System.out.println(drools.getRule().getName() + ":" + $comment + "[" + $comment.getClass() + "]");
-		$candidate.addPR($comment);
+//        System.out.println(drools.getRule().getName() + ":" + $comment + "[" + $comment.getClass() + "]");
+		$candidate.addPR(githubClient.extractPullRequestsFromText($comment));
 end

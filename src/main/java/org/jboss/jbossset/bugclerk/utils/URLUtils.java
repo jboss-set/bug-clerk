@@ -23,6 +23,10 @@ package org.jboss.jbossset.bugclerk.utils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class URLUtils {
 
@@ -62,4 +66,31 @@ public final class URLUtils {
         if  (indexEndOfParam == - 1) indexEndOfParam = subString.length();
         return subString.substring(param.length(), indexEndOfParam);
     }
+
+    /* Copy and paste from Stackoverlow:
+     * http://stackoverflow.com/questions/1806017/extracting-urls-from-a-text-document-using-java-regular-expressions
+     * Thanks to Philip Daubmeier.
+     */
+    public static List<String> extractUrls(String input) {
+
+        Pattern pattern = Pattern.compile(
+            "\\b(((ht|f)tp(s?)\\:\\/\\/|~\\/|\\/)|www.)" +
+            "(\\w+:\\w+@)?(([-\\w]+\\.)+(com|org|net|gov" +
+            "|mil|biz|info|mobi|name|aero|jobs|museum" +
+            "|travel|[a-z]{2}))(:[\\d]{1,5})?" +
+            "(((\\/([-\\w~!$+|.,=]|%[a-f\\d]{2})+)+|\\/)+|\\?|#)?" +
+            "((\\?([-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" +
+            "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)" +
+            "(&(?:[-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" +
+            "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)*)*" +
+            "(#([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)?\\b");
+
+        Matcher matcher = pattern.matcher(input);
+        List<String> result = new ArrayList<String>(matcher.groupCount());
+        while (matcher.find()) {
+            result.add(matcher.group());
+        }
+        return result;
+    }
+
 }
