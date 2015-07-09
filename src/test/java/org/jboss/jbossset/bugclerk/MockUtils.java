@@ -1,6 +1,7 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -35,6 +36,7 @@ public final class MockUtils {
         Mockito.when(mock.getId()).thenReturn(bugId);
         Mockito.when(mock.getSummary()).thenReturn(summary);
         Mockito.when(mock.getType()).thenReturn("Bug");
+        Mockito.when(mock.getLastModified()).thenReturn(new Date());
         return mock;
     }
 
