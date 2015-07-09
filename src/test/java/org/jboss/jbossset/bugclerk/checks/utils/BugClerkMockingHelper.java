@@ -28,6 +28,12 @@ public final class BugClerkMockingHelper {
         return candidates;
     }
 
+    public static List<Flag> createFlag(String flagname, Flag.Status status) {
+        List<Flag> flags = new ArrayList<Flag>(1);
+        flags.add(new Flag(flagname, "setter?", status));
+        return flags;
+    }
+
     public static List<Flag> createAllThreeFlagsAs(Flag.Status status) {
         List<Flag> flags = new ArrayList<Flag>(3);
         flags.add(new Flag(QA_ACK_FLAG, "setter?", status));

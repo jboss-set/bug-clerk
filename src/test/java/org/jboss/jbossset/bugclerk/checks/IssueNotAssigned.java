@@ -24,7 +24,6 @@ package org.jboss.jbossset.bugclerk.checks;
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComments;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TreeSet;
 
@@ -32,6 +31,7 @@ import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
+import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
@@ -44,12 +44,6 @@ public class IssueNotAssigned extends AbstractCheckRunner {
     private Bug mock;
     private final int bugId = 143794;
 
-    private static Date twoMonthAgo() {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, -2);
-        return cal.getTime();
-    }
-
     @Before
     public void prepareBugMock() {
         mock = MockUtils.mockBug(bugId, "summary");
@@ -59,7 +53,7 @@ public class IssueNotAssigned extends AbstractCheckRunner {
 
     @Test
     public void violationBZOlderThanAMonth() {
-        Mockito.when(mock.getCreationTime()).thenReturn(twoMonthAgo());
+        Mockito.when(mock.getCreationTime()).thenReturn(DateUtils.twoMonthAgo());
         assertResultsIsAsExpected(
                 engine.runCheckOnBugs(checkName + "_CreationDate",
                         CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))), checkName, bugId);
