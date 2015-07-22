@@ -34,7 +34,6 @@ import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
 import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
 import org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngine;
 import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
-import org.jboss.jbossset.bugclerk.github.GithubClient;
 import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
 import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
@@ -61,13 +60,8 @@ public class BugClerk {
         return violations;
     }
 
-    private static final String GITHUB_LOGIN_FIELDNAME = "github.login";
-    private static final String GITHUB_TOKEN_FIELDNAME = "github.token";
-
     protected Map<String, Object> buildGlobalsMap() {
         Map<String, Object> globalsMap = new HashMap<String, Object>(1);
-        globalsMap.put(KIE_GITHUB_CLIENT_ID, new GithubClient(
-                getPropertyFromConfig(GITHUB_LOGIN_FIELDNAME), getPropertyFromConfig(GITHUB_TOKEN_FIELDNAME)));
         return globalsMap;
     }
 

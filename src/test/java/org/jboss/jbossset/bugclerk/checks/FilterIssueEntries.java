@@ -23,13 +23,8 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -38,16 +33,12 @@ import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.junit.Before;
 import org.junit.Test;
-import org.kohsuke.github.GHPullRequest;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 public class FilterIssueEntries extends AbstractCheckRunner {
 
@@ -114,67 +105,6 @@ public class FilterIssueEntries extends AbstractCheckRunner {
         assertThat(metas.contains(NO_PR), is( true));
         assertThat(metas.contains(COMMUNITY_BZ), is(true));
     }
-
-    @Test
-    public void addPullRequests() throws MalformedURLException {
-        final URL url = new URL("https://github.com/jbossas/jboss-eap/pull/2265");
-        SortedSet<Comment> comments = new TreeSet<Comment>();
-        comments.add(MockUtils.mockComment(1,url.toString(), mock.getId()));
-        Mockito.when(githubClient.extractPullRequestsFromText(any(String.class))).thenAnswer(new ExtractPullRequestsFromTextAnswer());
-
-        Collection<Candidate> candidates = engine.filterBugs("AddPullRequests",
-                CollectionUtils.asSetOf(new Candidate(mock, comments)));
-        assertThat(candidates.size(), is(1));
-        List<GHPullRequest> PRs = candidates.iterator().next().getPullRequests();
-        assertThat(PRs.size(), is(1));
-    }
-
-    class ExtractPullRequestsFromTextAnswer implements Answer<List<GHPullRequest>> {
-
-        @Override
-        public List<GHPullRequest> answer(InvocationOnMock invocation) throws Throwable {
-            List<GHPullRequest> pullRequests = new ArrayList<GHPullRequest>(0);
-            for (String url : URLUtils.extractUrls((String)invocation.getArguments()[0])) {
-                pullRequests.add(MockUtils.mockPR(url));
-            }
-            return pullRequests;
-
-        }
-
-    }
-
-    @Test
-    public void scrubPullRequests() throws MalformedURLException {
-        final String firstPR = "https://github.com/jbossas/jboss-eap/pull/2265";
-        final String secondPR = "http://github.com/jbossas/jboss-eap/pull/2455";
-        final String textToScrub = firstPR + "\n\nThis was merged, but there is still this one to merge:" + secondPR + ".";
-        Mockito.when(githubClient.extractPullRequestsFromText(any(String.class))).thenAnswer(new ExtractPullRequestsFromTextAnswer());
-
-        final URL url = new URL(textToScrub);
-        SortedSet<Comment> comments = new TreeSet<Comment>();
-        comments.add(MockUtils.mockComment(1,url.toString(), mock.getId()));
-
-        Collection<Candidate> candidates = engine.filterBugs("AddPullRequests",
-                CollectionUtils.asSetOf(new Candidate(mock, comments)));
-        assertThat(candidates.size(), is(1));
-        List<GHPullRequest> pullRequests = candidates.iterator().next().getPullRequests();
-        assertThat(pullRequests.size(), is(2));
-    }
-
-    @Test
-    public void ignoreNotPullRequestURL() throws MalformedURLException {
-        final URL url = new URL("https://svn.jboss.org/jbossas/jboss-eap\n\nThis was merged, but there is still this one to merge: http://github.com/commits/.");
-        SortedSet<Comment> comments = new TreeSet<Comment>();
-        comments.add(MockUtils.mockComment(1,url.toString(), mock.getId()));
-
-        Collection<Candidate> candidates = engine.filterBugs("AddPullRequests",
-                CollectionUtils.asSetOf(new Candidate(mock, comments)));
-        assertThat(candidates.size(), is(1));
-        List<GHPullRequest> metas = candidates.iterator().next().getPullRequests();
-        assertThat(metas.size(), is(0));
-    }
-
-
 
     private static void assertThatFilterWorksAsExpected(Collection<Candidate> candidates, boolean isFiltered) {
         assertThat(candidates.size(), is(1));

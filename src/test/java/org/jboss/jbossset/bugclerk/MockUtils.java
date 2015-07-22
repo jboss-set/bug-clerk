@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.kohsuke.github.GHPullRequest;
 import org.mockito.Mockito;
 
 public final class MockUtils {
@@ -57,11 +55,5 @@ public final class MockUtils {
         List<Violation> violations = new ArrayList<Violation>(1);
         violations.add(mockViolation(bugId, checkname));
         return violations;
-    }
-
-    public static GHPullRequest mockPR(String pullRequestURL)  {
-        GHPullRequest mockPullRequest = Mockito.mock(GHPullRequest.class);
-        Mockito.when(mockPullRequest.getUrl()).thenReturn(URLUtils.createURLFromString(pullRequestURL));
-        return mockPullRequest;
     }
 }

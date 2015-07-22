@@ -21,9 +21,7 @@
  */
 package org.jboss.jbossset.bugclerk;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -31,13 +29,11 @@ import java.util.TreeSet;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.jboss.pull.shared.connectors.common.Flag;
-import org.kohsuke.github.GHPullRequest;
 
 public class Candidate {
 
     private final Bug bug;
     private final SortedSet<Comment> comments;
-    private final List<GHPullRequest> pullRequests = new ArrayList<>(0);
     private final Set<String> checksToBeIgnored = new HashSet<String>(0);
 
     private boolean isCandidate = true;
@@ -82,12 +78,7 @@ public class Candidate {
     }
 
     public void addRuleToIgnore(String rulePattern) {
-        this.checksToBeIgnored.add(rulePattern.substring(rulePattern.indexOf("#") +1 ));
-    }
-
-    public void addPR(List<GHPullRequest> pullRequests) {
-        if ( pullRequests != null && ! pullRequests.isEmpty() )
-            this.pullRequests.addAll(pullRequests);
+        this.checksToBeIgnored.add(rulePattern.substring(rulePattern.indexOf("#") + 1));
     }
 
     public boolean isCandidate() {
@@ -114,17 +105,13 @@ public class Candidate {
         return comments;
     }
 
-    public List<GHPullRequest> getPullRequests() {
-        return pullRequests;
-    }
-
     public Set<String> getChecksToBeIgnored() {
         return checksToBeIgnored;
     }
 
     @Override
     public String toString() {
-        return "Candidate [bug=" + bug + ", comments=" + comments + ", pullRequests=" + pullRequests + ", checksToBeIgnored="
-                + checksToBeIgnored + ", isCandidate=" + isCandidate + ", filtered=" + filtered + "]";
+        return "Candidate [bug=" + bug + ", comments=" + comments + ", checksToBeIgnored=" + checksToBeIgnored
+                + ", isCandidate=" + isCandidate + ", filtered=" + filtered + "]";
     }
 }
