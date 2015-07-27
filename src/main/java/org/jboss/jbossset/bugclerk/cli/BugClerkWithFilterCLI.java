@@ -58,7 +58,7 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
         if ( arguments.isNoRun() ) return;
 
         if (!ids.isEmpty())
-            endProgram(arguments, runBugClerk(ids, URLUtils.buildBzUrlPrefix(new URL(arguments.getFilterURL())),arguments.isCommentOnBZEnabled()));
+            endProgram(arguments, runBugClerk(ids, URLUtils.buildBzUrlPrefix(new URL(arguments.getFilterURL())),arguments));
     }
 
     private static BugClerkInvocatioWithFilterArguments loadUsernamePassword(BugClerkInvocatioWithFilterArguments arguments) {
@@ -80,12 +80,19 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
             System.exit(status);
     }
 
-    private static int runBugClerk(Collection<String> ids, String urlPrefix, boolean reportToBz) {
+    private static int runBugClerk(Collection<String> ids, String urlPrefix, BugClerkInvocatioWithFilterArguments arguments) {
         BugClerk bc = new BugClerk();
-        BugClerkArguments bcArgs = new BugClerkArguments();
+        BugClerkArguments bcArgs = buildArgumentsFrom(arguments);
         bcArgs.setUrlPrefix(urlPrefix);
         bcArgs.getIds().addAll(ids);
-        bcArgs.setReportToBz(reportToBz);
         return bc.runAndReturnsViolations(bcArgs);
+    }
+
+    private static BugClerkArguments buildArgumentsFrom(BugClerkInvocatioWithFilterArguments arguments) {
+        BugClerkArguments bcArgs = new BugClerkArguments();
+        bcArgs.setReportToBz(arguments.isCommentOnBZEnabled());
+        bcArgs.setXmlReportFilename(arguments.getXmlReportFilename());
+        bcArgs.setHtmlReportFilename(arguments.getHtmlReportFilename());
+        return bcArgs;
     }
 }

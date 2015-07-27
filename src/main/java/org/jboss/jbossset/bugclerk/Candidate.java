@@ -77,6 +77,19 @@ public class Candidate {
         return (res != null ? res.toString() : "");
     }
 
+
+    public Flag getFlagWithName(String flagname) {
+        if (flagname == null || "".equals(flagname))
+            throw new IllegalArgumentException("Can't invoke with an empty or 'null' pattern.");
+
+        for (Flag flag : bug.getFlags()) {
+            if (flag.getName().contains(flagname)) {
+                return flag;
+            }
+        }
+        return null;
+    }
+
     public void addRuleToIgnore(String rulePattern) {
         this.checksToBeIgnored.add(rulePattern.substring(rulePattern.indexOf("#") + 1));
     }

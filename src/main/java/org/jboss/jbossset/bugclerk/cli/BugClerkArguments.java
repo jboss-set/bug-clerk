@@ -36,15 +36,16 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
     @Parameter(description = "Issue IDs", variableArity = true)
     private final List<String> ids = new ArrayList<String>();
 
-    @Parameter(names = { "-c", "--comment-on-bz"}, description = "add a comment to a BZ featuring violations, default is false",required = false)
+    @Parameter(names = { "-c", "--comment-on-bz" }, description = "add a comment to a BZ featuring violations, default is false", required = false)
     private boolean reportToBz = false;
 
-    @Parameter(names = { "-m", "--mail-report"}, description = "sent a report by mail, default is false",required = false)
+    @Parameter(names = { "-m", "--mail-report" }, description = "sent a report by mail, default is false", required = false)
     private boolean mailReport = false;
 
     public static BugClerkArguments validateArgs(BugClerkArguments arguments) {
         return arguments;
     }
+
     public String getUrlPrefix() {
         return urlPrefix;
     }
@@ -84,4 +85,9 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
         return 0;
     }
 
+    @Override
+    public String toString() {
+        return "BugClerkArguments [urlPrefix=" + urlPrefix + ", ids=" + ids + ", reportToBz=" + reportToBz + ", mailReport="
+                + mailReport + super.toString();
+    }
 }

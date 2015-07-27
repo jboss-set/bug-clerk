@@ -21,6 +21,7 @@
  */
 package org.jboss.jbossset.bugclerk;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,14 +31,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.transform.stream.StreamSource;
+
 import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
 import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
 import org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngine;
 import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
+import org.jboss.jbossset.bugclerk.reports.BugClerkReport;
+import org.jboss.jbossset.bugclerk.reports.BugClerkReportEngine;
+import org.jboss.jbossset.bugclerk.reports.ReportEngine;
+import org.jboss.jbossset.bugclerk.reports.StringReportEngine;
 import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
 import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
+import org.jboss.jbossset.bugclerk.utils.StreamUtils;
 import org.jboss.jbossset.bugclerk.utils.StringUtils;
+import org.jboss.jbossset.bugclerk.utils.XMLUtils;
 import org.jboss.pull.shared.Util;
 
 public class BugClerk {
@@ -52,6 +61,7 @@ public class BugClerk {
 
     static final String KIE_SESSION = "BzCheck";
     static final String KIE_GITHUB_CLIENT_ID = "githubClient";
+    static final String XSLT_FILENAME = "xslt/stylesheet.xsl";
 
     protected Collection<Violation> processEntriesAndReportViolations(List<Candidate> candidates) {
         RuleEngine ruleEngine = new RuleEngine(KIE_SESSION, buildGlobalsMap());
@@ -66,7 +76,12 @@ public class BugClerk {
     }
 
     protected String buildReport(Map<Integer, List<Violation>> violationByBugId, String urlPrefix) {
-        ReportEngine reportEngine = new ReportEngine(urlPrefix);
+        ReportEngine<String> reportEngine = new StringReportEngine(urlPrefix);
+        return reportEngine.createReport(violationByBugId);
+    }
+
+    protected BugClerkReport buildBugClerkReport(Map<Integer, List<Violation>> violationByBugId, String urlPrefix) {
+        ReportEngine<BugClerkReport> reportEngine = new BugClerkReportEngine(urlPrefix);
         return reportEngine.createReport(violationByBugId);
     }
 
@@ -127,7 +142,29 @@ public class BugClerk {
         LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         LoggingUtils.getLogger().info(report);
 
+        reportsGeneration(arguments, violationByBugId);
+        LoggingUtils.getLogger().fine("Generating XML/HTML Report:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         return violationByBugId.size();
+    }
+
+    protected void reportsGeneration(BugClerkArguments arguments, Map<Integer, List<Violation>> violationByBugId) {
+        if ( arguments.isXMLReport() || arguments.isHtmlReport() ) {
+            BugClerkReport xmlReport = buildBugClerkReport(violationByBugId, arguments.getUrlPrefix());
+            if ( arguments.isXMLReport() )
+                BugClerkReportEngine.printXmlReport( xmlReport, StreamUtils.getOutputStreamForFile(arguments.getXmlReportFilename()));
+            if ( arguments.isHtmlReport() )
+                XMLUtils.xmlToXhtml(xmlReport, new StreamSource(this.getClass().getResourceAsStream(XSLT_FILENAME)), StreamUtils.getStreamResultForFile(arguments.getHtmlReportFilename()));
+        }
+    }
+
+    protected static void deleteFile(String xmlReport) {
+        new File(xmlReport).deleteOnExit();
+    }
+
+    protected static String getXmlReportFilename(BugClerkArguments arguments) {
+        if ( arguments.getXmlReportFilename() != null )
+            return arguments.getXmlReportFilename();
+        return arguments.getHtmlReportFilename() + ".xml";
     }
 
     protected void postAnalysisActions(BugClerkArguments arguments, Map<Integer, List<Violation>> violationByBugId, String report) {

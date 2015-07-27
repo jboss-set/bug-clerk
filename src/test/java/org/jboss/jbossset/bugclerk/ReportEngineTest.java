@@ -2,6 +2,8 @@ package org.jboss.jbossset.bugclerk;
 
 import static org.junit.Assert.assertTrue;
 
+import org.jboss.jbossset.bugclerk.reports.ReportEngine;
+import org.jboss.jbossset.bugclerk.reports.StringReportEngine;
 import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
 import org.junit.Test;
 
@@ -13,7 +15,7 @@ public class ReportEngineTest {
         final int bugId = 1;
         final String checkname = "checkname";
 
-        ReportEngine engine = new ReportEngine(dummyUrl);
+        ReportEngine<String> engine = new StringReportEngine(dummyUrl);
         String report = engine.createReport(CollectionUtils.indexedViolationsByBugId(MockUtils.mockViolationsListWithOneItem(bugId, checkname)));
         assertTrue(report.contains(dummyUrl));
         assertTrue(report.contains(checkname));

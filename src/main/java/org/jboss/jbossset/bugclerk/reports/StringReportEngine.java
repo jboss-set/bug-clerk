@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jbossset.bugclerk;
+package org.jboss.jbossset.bugclerk.reports;
 
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.EOL;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.ITEM_ID_SEPARATOR;
@@ -28,14 +28,20 @@ import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 import java.util.List;
 import java.util.Map;
 
-public class ReportEngine {
+import org.jboss.jbossset.bugclerk.Violation;
+
+public class StringReportEngine implements ReportEngine<String> {
 
     private final String urlPrefix;
 
-    public ReportEngine(String urlPrefix) {
+    public StringReportEngine(String urlPrefix) {
         this.urlPrefix = urlPrefix;
     }
 
+    /* (non-Javadoc)
+     * @see org.jboss.jbossset.bugclerk.reports.ReportEngine#createReport(java.util.Map)
+     */
+    @Override
     public String createReport(Map<Integer, List<Violation>> violationByBugId) {
         String reportString = "";
         if (!violationByBugId.isEmpty()) {
