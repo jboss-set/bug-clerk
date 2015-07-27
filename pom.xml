@@ -158,6 +158,7 @@
         <configuration>
           <excludes>
             <exclude>org/jboss/jbossset/bugclerk/TestSuite.java</exclude>
+            <exclude>org/jboss/jbossset/bugclerk/cli/*.java</exclude>
           </excludes>
           <includes>
             <include>org/jboss/jbossset/bugclerk/checks/*.java</include>
