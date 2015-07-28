@@ -61,7 +61,7 @@ public class BugClerk {
 
     static final String KIE_SESSION = "BzCheck";
     static final String KIE_GITHUB_CLIENT_ID = "githubClient";
-    static final String XSLT_FILENAME = "xslt/stylesheet.xsl";
+    static final String XSLT_FILENAME = "/xslt/stylesheet.xsl";
 
     protected Collection<Violation> processEntriesAndReportViolations(List<Candidate> candidates) {
         RuleEngine ruleEngine = new RuleEngine(KIE_SESSION, buildGlobalsMap());
