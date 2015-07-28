@@ -20,7 +20,7 @@ public class BugClerkIntegrationTests {
     private String reportFilename;
 
     @BeforeClass
-    public void checkIfCredentialFileExists() {
+    public static void checkIfCredentialFileExists() {
         File credential = new File(BZ_SERVER_CREDENTIALS_FILE);
         if ( credential == null || ! credential.exists() )
             throw new IllegalStateException("No credential file:" + BZ_SERVER_CREDENTIALS_FILE);
@@ -43,6 +43,9 @@ public class BugClerkIntegrationTests {
     public void runOnPotentialSETIssue() {
         final String filterName = REDHAT_BZ_SERVER_URL + "/buglist.cgi?cmdtype=dorem&list_id=3394903&namedcmd=Potential JBoss SET EAP 6 issues&remaction=run&sharer_id=213224&ctype=csv";
         runBugClerkWithFiltername(reportFilename, filterName);
+        File file = new File(reportFilename);
+        if ( ! file.exists() )
+            fail("No report generated.");
     }
 
     private static void runBugClerk(String[] args) {
