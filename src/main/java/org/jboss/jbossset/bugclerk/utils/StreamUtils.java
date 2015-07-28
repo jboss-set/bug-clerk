@@ -26,11 +26,6 @@ public final class StreamUtils {
     public static StreamResult getStreamResultForFile(String filename) {
         if (filename == null || "".equals(filename) )
             throw new IllegalArgumentException("Filename for result can't be null or empty.");
-
-        File file = new File(filename);
-        if ( ! file.canWrite() )
-            throw new IllegalArgumentException("File can't be write on :" + filename);
-
         return  new StreamResult(new File(filename));
     }
 
