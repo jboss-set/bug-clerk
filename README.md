@@ -35,6 +35,16 @@ You need to have credentials to access BugZilla and file it in the provided exam
 
 You also need to add the file 'org/jboss/jbossset/bugclerk/smtp/config.properties' to your classpath to configure sending report email. If not the properties are missing, BugClerk will simply NOT send email.
 
+Once you have all of this here is how you can run BugClerk on a specific Bugzilla entry:
+
+$ java -cp ${BUGCLERK_HOME}/bugclerk-${VERSION}.jar org.jboss.jbossset.bugclerk.cli.BugClerkCLI 1199194  -u 'https://bugzilla.redhat.com/show_bug.cgi?id='
+
+Or you can simply retrieve all the BZs in a filter and have Bugclerk analyze them:
+
+$ java -jar ${BUGCLERK_HOME}/bugclerk-${VERSION}.jar -H https://bugzilla.redhat.com/index.cgi -f 'https://bugzilla.redhat.com/buglist.cgi?cmdtype=runnamed&list_id=3525838&namedcmd=bz-created-on-EAP-in-the-last-hour&ctype=csv'
+
+For commodity purpose, some launch scripts have been provided in src/main/bash.
+
 ## How to build it ?
 
 As usual, just run "mvn install".
