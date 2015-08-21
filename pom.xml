@@ -121,6 +121,15 @@
 
   <build>
     <resources>
+      <!--TO BE REMOVED-->
+      <resource>
+        <filtering>true</filtering>
+        <directory>${project.basedir}</directory>
+        <targetPath>${project.build.directory}</targetPath>
+        <includes>
+          <include>bugclerk.properties</include>
+        </includes>
+      </resource>
       <resource>
         <directory>src/main/resources/</directory>
       </resource>

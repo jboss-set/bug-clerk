@@ -7,14 +7,15 @@
    <style>
 table {
     border-collapse:separate;
-    border:solid black 1px;
+    border:solid black 2px;
     border-radius:6px;
     -moz-border-radius:6px;
 }
 
 td, th {
-    border-left:solid black 1px;
-    border-top:solid black 1px;
+    border-left:solid black 2px;
+    border-top:solid black 2px;
+    text-align:center;
 }
 
 th {
@@ -27,16 +28,30 @@ td:first-child {
      border-left: none;
 }
 
+td:last-child {
+       text-align:left;
+       }
+
 h1 {
   text-align: center;
 }
+
+li {
+  margin-top:2px;
+}
+       body {
+       background: lightblue;
+       }
    </style>
    </head>
    <body>
-       <h1><a href="https://github.com/jboss-set/bug-clerk">BugClerk Report</a></h1>
-    <table>
+    <a name="top"></a>
+    <h1>BugClerk Report</h1>
+    <table align="center">
      <tr>
       <th>BZ</th>
+      <th>Acks</th>
+      <th>Release</th>
       <th>Violation</th>
      </tr>
      <xsl:for-each select="//bz">
@@ -48,21 +63,26 @@ h1 {
             </xsl:attribute>
             <xsl:value-of select="@id" />
           </xsl:element>
-          <br/>
-          <xsl:value-of select="@acks"/>
-          <br/>
-          <xsl:value-of select="@release"/>
        </td>
        <td>
-          <ul>
-           <xsl:for-each select="./violation">
-               <li>[<xsl:value-of select="@severity"/>] <em><xsl:value-of select="@checkname"/></em> : <xsl:value-of select="@message"/></li>
-           </xsl:for-each>
-          </ul>
+         <xsl:value-of select="@acks"/>
+       </td>
+       <td>
+         <xsl:value-of select="@release"/>
+       </td>
+       <td>
+           <ul>
+              <xsl:for-each select="./violation">
+                  <li><b>[<xsl:value-of select="@severity"/>]</b><xsl:text> </xsl:text><em><xsl:value-of select="@checkname"/></em> : <xsl:value-of select="@message"/><br/></li>
+              </xsl:for-each>
+           </ul>
        </td>
       </tr>
      </xsl:for-each>
+     <p align="right"><a href="https://github.com/jboss-set/bug-clerk">BugClerk GH Repository</a></p>
     </table>
+    <br/>
+    <p align="right"><a href="#top">Back to top</a></p>
    </body>
   </html>
  </xsl:template>
