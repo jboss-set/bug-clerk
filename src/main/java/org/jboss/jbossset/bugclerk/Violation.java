@@ -22,7 +22,7 @@
 package org.jboss.jbossset.bugclerk;
 
 
-public class Violation {
+public class    Violation {
 
     private final Candidate candidate;
     private final String message;
@@ -32,10 +32,10 @@ public class Violation {
     private void constructorSanityCheck(Candidate candidate, String mssg) {
         if (candidate == null)
             throw new IllegalArgumentException("Can't instantiate " + this.getClass().getCanonicalName()
-                    + " withou a 'null' bug ref.");
+                    + " with a 'null' bug ref.");
         if (mssg == null || "".equals(mssg))
             throw new IllegalArgumentException("Can't instantiate " + this.getClass().getCanonicalName()
-                    + " withou a 'null' or empty message.");
+                    + " with a 'null' or empty message.");
     }
 
     public Violation(Candidate candidate, String checkName, String message) {
