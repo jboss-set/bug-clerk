@@ -27,6 +27,7 @@
     <xmlrpc-client.version>3.1.3</xmlrpc-client.version>
     <version.org.drools>6.1.0.Final</version.org.drools>
     <version.org.kie>6.1.0.Final</version.org.kie>
+    <pmd.version>3.5</pmd.version>
   </properties>
 
   <scm>
@@ -255,6 +256,31 @@
              </execution>
           </executions>
         </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${pmd.version}</version>
+        <executions>
+          <execution>
+            <id>pmd-cpd</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>pmd</goal>
+              <goal>cpd</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/pmd</outputDirectory>
+              <targetDirectory>${project.build.directory}/pmd</targetDirectory>
+              <rulesets>
+                <ruleset>rulesets/java/basic.xml</ruleset>
+                <ruleset>rulesets/java/design.xml</ruleset>
+                <!--custom rules-->
+                <ruleset>/src/main/resources/pmd.xml</ruleset>
+              </rulesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
