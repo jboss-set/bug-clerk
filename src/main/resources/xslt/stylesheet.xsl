@@ -9,7 +9,6 @@ table {
     border-collapse:separate;
     border:solid black 2px;
     border-radius:6px;
-    -moz-border-radius:6px;
 }
 
 td, th {
@@ -38,9 +37,6 @@ h1 {
 
 li {
   margin-top:2px;
-}
-body {
-  background: lightblue;
 }
    </style>
    </head>
