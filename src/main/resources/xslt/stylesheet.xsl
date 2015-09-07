@@ -38,6 +38,10 @@ h1 {
 li {
   margin-top:2px;
 }
+body {
+  background: rgb(255, 255, 255);
+  background: rgba(255, 255, 255, 0);
+}
    </style>
    </head>
    <body>
