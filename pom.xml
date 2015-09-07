@@ -268,8 +268,6 @@
               <goal>cpd</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/pmd</outputDirectory>
-              <targetDirectory>${project.build.directory}/pmd</targetDirectory>
               <rulesets>
                 <ruleset>rulesets/java/basic.xml</ruleset>
                 <ruleset>rulesets/java/design.xml</ruleset>
