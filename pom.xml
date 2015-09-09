@@ -268,8 +268,6 @@
               <goal>cpd</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/pmd</outputDirectory>
-              <targetDirectory>${project.build.directory}/pmd</targetDirectory>
               <rulesets>
                 <ruleset>rulesets/java/basic.xml</ruleset>
                 <ruleset>rulesets/java/design.xml</ruleset>
@@ -277,6 +275,20 @@
                 <ruleset>/src/main/resources/pmd.xml</ruleset>
               </rulesets>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+        <executions>
+          <execution>
+            <id>javadoc</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -313,6 +325,20 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <linkJavadoc>true</linkJavadoc>
+          <javadocDir>${project.build.directory}/site/apidocs</javadocDir>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <repositories>
     <repository>
