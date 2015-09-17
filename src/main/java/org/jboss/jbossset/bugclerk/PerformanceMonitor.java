@@ -38,7 +38,7 @@ public class PerformanceMonitor {
     }
 
     public double timeSpentInSecondsSince() {
-        return ((System.nanoTime() - startTime) / (UNIT_SHIFT * UNIT_SHIFT * UNIT_SHIFT));
+        return ((System.currentTimeMillis() - startTime) / (UNIT_SHIFT * UNIT_SHIFT * UNIT_SHIFT));
     }
 
 }
