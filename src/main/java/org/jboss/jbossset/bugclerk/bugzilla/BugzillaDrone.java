@@ -25,8 +25,13 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 public class BugzillaDrone {
 
     private WebClient webClient;
-    private BugClerkInvocatioWithFilterArguments arguments;
 
+    private final String authUrl;
+    private final String filterUrl;
+    private final String username;
+    private final String password;
+
+    private final boolean isNoRun;
 
     private void init() {
         /* turn off annoying htmlunit warnings */
@@ -36,17 +41,20 @@ public class BugzillaDrone {
         webClient.getCookieManager().setCookiesEnabled(true);
     }
 
-    public BugzillaDrone(BugClerkInvocatioWithFilterArguments arguments) {
+    public BugzillaDrone(String authURL, String filterURL, String username, String password, boolean isNoRun) {
+        this.authUrl = authURL;
+        this.filterUrl = filterURL;
+        this.username = username;
+        this.password = password;
+        this.isNoRun = isNoRun;
         init();
-        this.arguments = arguments;
-
     }
 
     public void bugzillaLogin() {
         try {
-            final HtmlForm miniLoginForm = getFormById((HtmlPage) webClient.getPage(arguments.getAuthURL()), "mini_login_top");
-            updateTextFieldInput("Bugzilla_login", arguments.getUsername(), miniLoginForm);
-            updatePasswordFieldInput("Bugzilla_password", arguments.getPassword(), miniLoginForm);
+            final HtmlForm miniLoginForm = getFormById((HtmlPage) webClient.getPage(authUrl), "mini_login_top");
+            updateTextFieldInput("Bugzilla_login", username, miniLoginForm);
+            updatePasswordFieldInput("Bugzilla_password", password, miniLoginForm);
             WebResponse response = miniLoginForm.getInputByName("GoAheadAndLogIn").click().getWebResponse();
             if (response.getStatusCode() != 200)
                 throw new IllegalStateException("Auth faild on BZ:" + response.getContentAsString());
@@ -62,7 +70,7 @@ public class BugzillaDrone {
             // Remove CSV header line
             String[] idLines = Arrays.copyOfRange(content, 1, content.length);
             for (String line : idLines) {
-                if (arguments.isNoRun())
+                if (isNoRun)
                     System.err.println(line);
                 ids.add(validateId(line.substring(0, line.indexOf(','))));
             }
@@ -81,10 +89,10 @@ public class BugzillaDrone {
     public Collection<String> retrievePayload() {
         TextPage csv;
         try {
-            csv = webClient.getPage(arguments.getFilterURL());
+            csv = webClient.getPage(filterUrl);
         } catch (FailingHttpStatusCodeException | IOException e) {
             throw new IllegalStateException(e);
-        } catch ( java.lang.ClassCastException e ) {
+        } catch (java.lang.ClassCastException e) {
             throw new IllegalStateException(
                     "Data loaded from bugzilla instance is not compatibile with CSV type. Most likely filter URL is simply missing the 'ctype=csv' type.",
                     e);

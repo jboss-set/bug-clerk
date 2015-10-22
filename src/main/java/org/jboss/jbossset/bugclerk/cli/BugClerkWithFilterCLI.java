@@ -40,7 +40,7 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
                 new BugClerkInvocatioWithFilterArguments(), args));
         System.out.print("Connection to BZ with URL " + arguments.getAuthURL() + " with username:" + arguments.getUsername()
                 + " ... ");
-        BugzillaDrone drone = new BugzillaDrone(arguments);
+        BugzillaDrone drone = new BugzillaDrone(arguments.getAuthURL(), arguments.getFilterURL(), arguments.getUsername(), arguments.getPassword(), arguments.isNoRun());
         drone.bugzillaLogin();
         System.out.println("Done.");
 
