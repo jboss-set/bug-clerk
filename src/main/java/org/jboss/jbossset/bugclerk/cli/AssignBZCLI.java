@@ -21,7 +21,7 @@ public class AssignBZCLI {
         AssignBZArguments arguments = extractParameters(new AssignBZArguments(), args);
         BugsClient client = new BugsClient("https://bugzilla.redhat.com/", arguments.getUsername(), arguments.getPassword());
         Bug bug = client.getBug(Integer.valueOf(arguments.getBugId()));
-        Map<String,Boolean> map = xxx();
+        Map<String,Boolean> map = buildFlagsMap();
         List<Flag> flags = bug.getFlags();
 
         for ( Flag flag : flags )
@@ -37,11 +37,11 @@ public class AssignBZCLI {
         params.put("status", Status.ASSIGNED.toString());
         params.put("estimated_time", arguments.getEstimate());
         params.put("assigned_to", arguments.getAssignedTo());
-        params.put("flags", yyy(flags));
+        params.put("flags", buildFlagsAsMapArray(flags));
         client.customOperation("Bug.update", params);
     }
 
-    private static Object[] yyy(List<Flag> flags) {
+    private static Object[] buildFlagsAsMapArray(List<Flag> flags) {
         Object[] objects = new Object[flags.size()];
         int i = 0;
         for (Flag flag : flags) {
@@ -69,7 +69,7 @@ public class AssignBZCLI {
         throw new IllegalStateException("Invalid Status:" + status);
     }
 
-    private static Map<String, Boolean> xxx() {
+    private static Map<String, Boolean> buildFlagsMap() {
         Map<String,Boolean> map = new HashMap<String, Boolean>(3);
         map.put("pm_ack",false);
         map.put("devel_ack",false);
