@@ -1,6 +1,7 @@
 #!/bin/bash
 
 readonly TAG=${1}
+readonly TAG_RELEASE=${2:-'HEAD'}
 
 if [ -z "${TAG}" ]; then
   echo "Missing tag , abort..."
@@ -15,7 +16,7 @@ fi
 
 readonly GIT_LOG=$(mktemp)
 
-git log --no-color ${TAG}..HEAD > "${GIT_LOG}"
+git log --no-color ${TAG}..${TAG_RELEASE} > "${GIT_LOG}"
 
 cat "${GIT_LOG}"  | sed -e '/^commit/d' -e '/^Date:/d' -e '/^Author:/d' \
     -e '/^$/d' -e '/maven-release-plugin/d' -e 's/^ */* /'
