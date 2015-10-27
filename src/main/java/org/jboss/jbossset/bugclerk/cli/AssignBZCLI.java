@@ -18,7 +18,7 @@ public class AssignBZCLI {
     private static final int INVALID_COMMAND_INPUT = 1;
 
     private static final String BUGZILLA_URL = "https://bugzilla.redhat.com/";
-    
+
     public static void main(String[] args) {
         AssignBZArguments arguments = extractParameters(new AssignBZArguments(), args);
         BugsClient client = new BugsClient(BUGZILLA_URL, arguments.getUsername(), arguments.getPassword());
