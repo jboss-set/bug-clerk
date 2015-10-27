@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.jboss.jbossset.bugclerk.cli.BugClerkInvocatioWithFilterArguments;
-
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
@@ -33,9 +32,12 @@ public class BugzillaDrone {
 
     private final boolean isNoRun;
 
+    private final boolean debug = false;
+    private static final String LOGGER_NAME = "com.gargoylesoftware";
+
     private void init() {
         /* turn off annoying htmlunit warnings */
-        java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(java.util.logging.Level.OFF);
+        java.util.logging.Logger.getLogger(LOGGER_NAME).setLevel(java.util.logging.Level.OFF);
 
         webClient = new WebClient();
         webClient.getCookieManager().setCookiesEnabled(true);
@@ -56,8 +58,9 @@ public class BugzillaDrone {
             updateTextFieldInput("Bugzilla_login", username, miniLoginForm);
             updatePasswordFieldInput("Bugzilla_password", password, miniLoginForm);
             WebResponse response = miniLoginForm.getInputByName("GoAheadAndLogIn").click().getWebResponse();
+            printPage(response);
             if (response.getStatusCode() != 200)
-                throw new IllegalStateException("Auth faild on BZ:" + response.getContentAsString());
+                throw new IllegalStateException("Auth failed on BZ:" + response.getContentAsString());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -86,10 +89,22 @@ public class BugzillaDrone {
         return id;
     }
 
+    private void printPage(WebResponse response) {
+        if ( debug )
+            System.err.println(response.getContentAsString());
+    }
+
     public Collection<String> retrievePayload() {
         TextPage csv;
         try {
-            csv = webClient.getPage(filterUrl);
+            Page page  = webClient.getPage(filterUrl);
+            printPage(page.getWebResponse());
+            if ( page instanceof TextPage )
+                csv = (TextPage) page;
+            else {
+                throw new IllegalStateException(
+                        "Data loaded from bugzilla instance is not compatibile with CSV type. Most likely filter URL is simply missing the 'ctype=csv' type. Page type returned is:" + page.getClass());
+            }
         } catch (FailingHttpStatusCodeException | IOException e) {
             throw new IllegalStateException(e);
         } catch (java.lang.ClassCastException e) {
