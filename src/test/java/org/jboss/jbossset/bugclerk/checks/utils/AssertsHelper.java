@@ -14,6 +14,14 @@ public final class AssertsHelper {
     public static void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId) {
         assertResultsIsAsExpected(violations,checkname,bugId,1);
     }
+    
+    public static void assertOneViolationFound(Collection<Violation> violations, String checkname, int bugId) {
+        assertResultsIsAsExpected(violations,checkname,bugId,1);
+    }
+    
+    public static void assertNoViolationFound(Collection<Violation> violations, String checkname, int bugId) {
+        assertResultsIsAsExpected(violations,checkname,bugId,0);
+    }
 
     public static void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId, int nbViolationExpected) {
         assertThat(violations.size(), is(nbViolationExpected));

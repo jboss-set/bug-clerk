@@ -23,18 +23,18 @@ public class AssignBZCLI {
         AssignBZArguments arguments = extractParameters(new AssignBZArguments(), args);
         BugsClient client = new BugsClient(BUGZILLA_URL, arguments.getUsername(), arguments.getPassword());
         Bug bug = client.getBug(Integer.valueOf(arguments.getBugId()));
-        Map<String,Boolean> map = buildFlagsMap();
+        Map<String, Boolean> map = buildFlagsMap();
         List<Flag> flags = bug.getFlags();
 
-        for ( Flag flag : flags )
-            if ( map.containsKey(flag.getName()))
-                map.put(flag.getName(),true);
+        for (Flag flag : flags)
+            if (map.containsKey(flag.getName()))
+                map.put(flag.getName(), true);
 
-        for ( Entry<String, Boolean> entry : map.entrySet() )
-            if ( ! entry.getValue() )
+        for (Entry<String, Boolean> entry : map.entrySet())
+            if (!entry.getValue())
                 flags.add(new Flag(entry.getKey(), arguments.getAssignedTo(), Flag.Status.UNKNOWN));
 
-        Map<String, Object> params = new HashMap<String,Object>(4);
+        Map<String, Object> params = new HashMap<String, Object>(4);
         params.put("ids", arguments.getBugId());
         params.put("status", Status.ASSIGNED.toString());
         params.put("estimated_time", arguments.getEstimate());
@@ -72,13 +72,12 @@ public class AssignBZCLI {
     }
 
     private static Map<String, Boolean> buildFlagsMap() {
-        Map<String,Boolean> map = new HashMap<String, Boolean>(3);
-        map.put("pm_ack",false);
-        map.put("devel_ack",false);
-        map.put("qa_ack",false);
+        Map<String, Boolean> map = new HashMap<String, Boolean>(3);
+        map.put("pm_ack", false);
+        map.put("devel_ack", false);
+        map.put("qa_ack", false);
         return map;
     }
-
 
     protected static AssignBZArguments extractParameters(AssignBZArguments arguments, String[] args) {
         JCommander jcommander = null;
