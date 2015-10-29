@@ -26,15 +26,14 @@ import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.jboss.pull.shared.connectors.common.Flag;
 
-import  org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.jbossset.bugclerk.Violation;
 
 rule "ReleaseVersionMismatch"
-	salience 0
-    dialect "mvel"
-    when
-      $candidate : Candidate(bug.summary.contains("(6.4.0)"), $summary: bug.summary, $flags : bug.flags, filtered == false);
-      not Flag(name == "jboss-eap-6.4.0" ) from $flags;
-    then
-	  insert( new Violation($candidate,drools.getRule().getName(), "Release in title[" + $summary + "] does not match flags.") );
-		
+  salience 0
+  dialect "mvel"
+  when
+    $candidate : Candidate(bug.summary.contains("(6.4.0)"), $summary: bug.summary, $flags : bug.flags, filtered == false);
+    not Flag(name == "jboss-eap-6.4.0" ) from $flags;
+  then
+    insert( new Violation($candidate,drools.getRule().getName(), "Release in title[" + $summary + "] does not match flags.") );
 end

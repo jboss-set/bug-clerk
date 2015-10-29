@@ -26,13 +26,13 @@ import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 import org.jboss.pull.shared.connectors.common.Flag;
 
-import  org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.jbossset.bugclerk.Violation;
 
 rule "ComponentUpgradeMissingFixList"
-	salience 0
-    dialect "mvel"
-    when
-      $candidate : Candidate( bug.type == "Component Upgrade", bug.DependsOn.size == 0, filtered == false);
-    then
-	  insert( new Violation($candidate,drools.getRule().getName(),  "Component Upgrade BZ does not have any fixes it depends on !"));		
+  salience 0
+  dialect "mvel"
+  when
+    $candidate : Candidate( bug.type == "Component Upgrade", bug.DependsOn.size == 0, filtered == false);
+  then
+    insert( new Violation($candidate,drools.getRule().getName(),  "Component Upgrade BZ does not have any fixes it depends on !"));
 end

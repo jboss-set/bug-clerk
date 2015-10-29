@@ -30,17 +30,17 @@ import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
 
 rule "BZDepsShouldAlsoHaveFlags"
-	salience 0
-    dialect "mvel"
-    when
-      $payload : Candidate($id : bug.id , $depends : bug.dependsOn, $flags : bug.flags , filtered == false);
- 	  Flag(name == "devel_ack", status == Flag.Status.POSITIVE ) from $flags;
-   	  Flag(name == "qa_ack" , status == Flag.Status.POSITIVE ) from $flags;
-   	  Flag(name == "pm_ack", status == Flag.Status.POSITIVE ) from $flags;
-      $dependency : Candidate($depends.contains(bug.id), $flags_dep : bug.flags , filtered == false);
-      	not Flag(name == "devel_ack", status == Flag.Status.POSITIVE ) from $flags_dep or
- 	    not Flag(name == "qa_ack", status == Flag.Status.POSITIVE ) from $flags_dep or
-   	  	not Flag(name == "pm_ack", status == Flag.Status.POSITIVE ) from $flags_dep;
-    then
-      insertLogical(new Violation($dependency, drools.getRule().getName(), "is referenced by BZ" + $id + ", which has all qa+,pm+ and dev flag+ - but not this BZ.", Level.ERROR));
+  salience 0
+  dialect "mvel"
+  when
+    $payload : Candidate($id : bug.id , $depends : bug.dependsOn, $flags : bug.flags , filtered == false);
+    Flag(name == "devel_ack", status == Flag.Status.POSITIVE ) from $flags;
+    Flag(name == "qa_ack" , status == Flag.Status.POSITIVE ) from $flags;
+    Flag(name == "pm_ack", status == Flag.Status.POSITIVE ) from $flags;
+    $dependency : Candidate($depends.contains(bug.id), $flags_dep : bug.flags , filtered == false);
+    not Flag(name == "devel_ack", status == Flag.Status.POSITIVE ) from $flags_dep or
+    not Flag(name == "qa_ack", status == Flag.Status.POSITIVE ) from $flags_dep or
+    not Flag(name == "pm_ack", status == Flag.Status.POSITIVE ) from $flags_dep;
+  then
+    insertLogical(new Violation($dependency, drools.getRule().getName(), "is referenced by BZ" + $id + ", which has all qa+,pm+ and dev flag+ - but not this BZ.", Level.ERROR));
 end

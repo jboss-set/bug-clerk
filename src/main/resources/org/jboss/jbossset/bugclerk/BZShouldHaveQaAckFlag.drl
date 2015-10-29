@@ -30,11 +30,11 @@ import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
 
 rule "BZShouldHaveQaAckFlag"
-	salience 0
-    dialect "mvel"
-    when
-      $candidate : Candidate(bug.status == "VERIFIED", $status : bug.status, $flags : bug.flags , filtered == false);
- 	  not Flag(name == "qa_ack" ) from $flags;
-    then
-      insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no qa flag set.", Level.WARNING));
+  salience 0
+  dialect "mvel"
+  when
+    $candidate : Candidate(bug.status == "VERIFIED", $status : bug.status, $flags : bug.flags , filtered == false);
+    not Flag(name == "qa_ack" ) from $flags;
+  then
+    insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no qa flag set.", Level.WARNING));
 end

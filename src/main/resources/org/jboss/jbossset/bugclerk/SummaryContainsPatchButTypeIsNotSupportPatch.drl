@@ -25,16 +25,16 @@ package org.jboss.jbossset.bugclerk;
 import org.jboss.pull.shared.connectors.bugzilla.Bug;
 import org.jboss.pull.shared.connectors.bugzilla.Comment;
 
-import  org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
 
 global java.util.List list
 
 rule "SummaryContainsPatchButTypeIsNotSupportPatch"
-	salience 0
-    dialect "mvel"
-    when
-	  $candidate : Candidate(bug.type != "Support Patch", bug.summary.toLowerCase().contains("patch") ,filtered == false);
-    then
-		insert( new Violation($candidate, drools.getRule().getName(), "Summary description contains word 'patch' but bug type is not 'Support Patch':" + $candidate.bug.type , Level.WARNING) );
+  salience 0
+  dialect "mvel"
+  when
+    $candidate : Candidate(bug.type != "Support Patch", bug.summary.toLowerCase().contains("patch") ,filtered == false);
+  then
+    insert( new Violation($candidate, drools.getRule().getName(), "Summary description contains word 'patch' but bug type is not 'Support Patch':" + $candidate.bug.type , Level.WARNING) );
 end
