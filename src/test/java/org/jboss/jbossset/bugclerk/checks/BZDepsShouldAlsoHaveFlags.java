@@ -52,12 +52,7 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
 
         Mockito.when(payload.getFlags()).thenReturn(createAllThreeFlagsAs(Flag.Status.POSITIVE));
         Mockito.when(payload.getDependsOn()).thenReturn(idsAsIntegerSet(14380,158690));
-
-        Collection<Violation> violations = engine.runCheckOnBugs(checkName, mocks);
-        for ( Violation v : violations ) {
-            System.out.println(v);
-        }
-        assertThat(violations.size(), is(1));
+        assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(1));
     }
 
     private static final Collection<Candidate> buildCollectionOfCandidates(Bug ... bugs) {
