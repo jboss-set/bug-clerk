@@ -36,5 +36,5 @@ rule "BZShouldHaveDevAckFlag"
     $candidate : Candidate(bug.status == "POST" || bug.status == "MODIFIED", $status : bug.status, $flags : bug.flags , filtered == false);
     not Flag(name == "devel_ack" ) from $flags;
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no dev flag set.", Level.WARNING));
+    insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no dev flag set.", Level.ERROR));
 end

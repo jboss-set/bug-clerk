@@ -36,5 +36,5 @@ rule "BZShouldHaveQaAckFlag"
     $candidate : Candidate(bug.status == "VERIFIED", $status : bug.status, $flags : bug.flags , filtered == false);
     not Flag(name == "qa_ack" ) from $flags;
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no qa flag set.", Level.WARNING));
+    insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no qa flag set.", Level.ERROR));
 end
