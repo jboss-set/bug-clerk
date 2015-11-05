@@ -39,8 +39,19 @@ public class AssignBZCLI {
         params.put("status", Status.ASSIGNED.toString());
         params.put("estimated_time", arguments.getEstimate());
         params.put("assigned_to", arguments.getAssignedTo());
-        params.put("flags", buildFlagsAsMapArray(flags));
+        params.put("flags", buildFlagsAsStringArray(flags));
         client.customOperation("Bug.update", params);
+    }
+
+    private static Object[] buildFlagsAsStringArray(List<Flag> flags) {
+        Object[] objects = new Object[flags.size()];
+        int i = 0;
+        for ( Flag flag : flags ) {
+            objects[i] = flag.getSetter() + " set " + flag.getName() + " to UNKNOWN";
+            System.out.println(objects[i]);
+            i++;
+        }
+        return objects;
     }
 
     private static Object[] buildFlagsAsMapArray(List<Flag> flags) {
