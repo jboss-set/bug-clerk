@@ -62,12 +62,12 @@ public class BugClerk {
         return globalsMap;
     }
 
-    protected String buildReport(Map<String, List<Violation>> violationByBugId, String urlPrefix) {
+    protected String buildReport(Map<Issue, List<Violation>> violationByBugId, String urlPrefix) {
         ReportEngine<String> reportEngine = new StringReportEngine(urlPrefix);
         return reportEngine.createReport(violationByBugId);
     }
 
-    protected BugClerkReport buildBugClerkReport(Map<String, List<Violation>> violationByBugId, String urlPrefix) {
+    protected BugClerkReport buildBugClerkReport(Map<Issue, List<Violation>> violationByBugId, String urlPrefix) {
         ReportEngine<BugClerkReport> reportEngine = new BugClerkReportEngine(urlPrefix);
         return reportEngine.createReport(violationByBugId);
     }
@@ -80,7 +80,7 @@ public class BugClerk {
         LoggingUtils.getLogger().info("Loading data from tracker took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
         Collection<Violation> violations = processEntriesAndReportViolations(candidates);
-        Map<String, List<Violation>> violationByBugId = indexedViolationsByBugId(violations);
+        Map<Issue, List<Violation>> violationByBugId = indexedViolationsByBugId(violations);
         LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
         String report = buildReport(violationByBugId, arguments.getUrlPrefix());
 
@@ -95,10 +95,10 @@ public class BugClerk {
         return violationByBugId.size();
     }
 
-    private Map<String, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
-        Map<String, List<Violation>> map = new HashMap<String, List<Violation>>();
+    private Map<Issue, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
+        Map<Issue, List<Violation>> map = new HashMap<Issue, List<Violation>>();
         violations.forEach(item -> {
-            String id = item.getCandidate().getBug().getTrackerId().get();
+            Issue id = item.getCandidate().getBug();
             if (!map.containsKey(id))
                 map.put(id, new ArrayList<Violation>(1));
             map.get(id).add(item);
@@ -114,7 +114,7 @@ public class BugClerk {
         return candidates;
     }
 
-    protected void reportsGeneration(BugClerkArguments arguments, Map<String, List<Violation>> violationByBugId) {
+    protected void reportsGeneration(BugClerkArguments arguments, Map<Issue, List<Violation>> violationByBugId) {
         if (arguments.isXMLReport() || arguments.isHtmlReport()) {
             BugClerkReport xmlReport = buildBugClerkReport(violationByBugId, arguments.getUrlPrefix());
             if (arguments.isXMLReport())
@@ -133,7 +133,7 @@ public class BugClerk {
         return arguments.getHtmlReportFilename() + ".xml";
     }
 
-    protected void postAnalysisActions(BugClerkArguments arguments, Map<String, List<Violation>> violationByBugId, String report) {
+    protected void postAnalysisActions(BugClerkArguments arguments, Map<Issue, List<Violation>> violationByBugId, String report) {
         if (!violationByBugId.isEmpty() && arguments.isReportToBz()) {
             LoggingUtils.getLogger().info("Updating Bugzilla entries - if needed.");
             aphrodite.addComments(new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(violationByBugId));

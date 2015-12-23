@@ -1,4 +1,4 @@
-package org.jboss.jbossset.bugclerk.bugzilla;
+package org.jboss.jbossset.bugclerk.comments;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

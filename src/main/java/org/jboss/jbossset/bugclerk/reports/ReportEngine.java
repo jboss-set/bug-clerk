@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Issue;
 
 public interface ReportEngine<T> {
 
-    T createReport(Map<String, List<Violation>> violationByBugId);
+    T createReport(Map<Issue, List<Violation>> violationByBugId);
 }

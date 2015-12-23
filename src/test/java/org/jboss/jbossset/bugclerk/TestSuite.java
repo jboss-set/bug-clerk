@@ -20,7 +20,8 @@ import org.junit.runners.Suite;
         org.jboss.jbossset.bugclerk.checks.ReleaseVersionMismatch.class,
         org.jboss.jbossset.bugclerk.checks.SummaryContainsPatchButTypeIsNotSupportPatch.class,
         org.jboss.jbossset.bugclerk.ReportEngineTest.class,
-        org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngineTest.class,
+        org.jboss.jbossset.bugclerk.BuildReportToUpdateTracker.class,
+        org.jboss.jbossset.bugclerk.comments.CommentPatternMatcherTest.class,
         org.jboss.jbossset.bugclerk.utils.URLUtilsTest.class,
 })
 public class TestSuite {

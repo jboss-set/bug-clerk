@@ -30,10 +30,10 @@ public final class BugClerkReportEngine implements ReportEngine<BugClerkReport> 
     }
 
     @Override
-    public BugClerkReport createReport(Map<String, List<Violation>> violationByBugId) {
+    public BugClerkReport createReport(Map<Issue, List<Violation>> violationByBugId) {
         BugClerkReport report = new BugClerkReport();
         List<BugReport> bugs = new ArrayList<>(violationByBugId.size());
-        for (Entry<String, List<Violation>> entry : violationByBugId.entrySet()) {
+        for (Entry<Issue, List<Violation>> entry : violationByBugId.entrySet()) {
             BugReport bugReport = new BugReport();
             Candidate candidate = entry.getValue().get(0).getCandidate();
             Issue bug = candidate.getBug();

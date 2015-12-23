@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Issue;
 
 public class StringReportEngine implements ReportEngine<String> {
 
@@ -39,7 +40,7 @@ public class StringReportEngine implements ReportEngine<String> {
     }
 
     @Override
-    public String createReport(Map<String, List<Violation>> violationByBugId) {
+    public String createReport(Map<Issue, List<Violation>> violationByBugId) {
         String reportString = "";
         if (!violationByBugId.isEmpty()) {
             StringBuffer report = new StringBuffer();

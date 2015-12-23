@@ -3,10 +3,8 @@ package org.jboss.jbossset.bugclerk;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
 import org.jboss.set.aphrodite.domain.Comment;
@@ -87,6 +85,7 @@ public final class MockUtils {
         Mockito.when(mock.getCandidate().getBug()).thenReturn(bug);
         Mockito.when(mock.getCheckName()).thenReturn(checkname);
         Mockito.when(mock.getMessage()).thenReturn(checkname);
+        Mockito.when(mock.getLevel()).thenReturn(Level.WARNING);
         return mock;
     }
 

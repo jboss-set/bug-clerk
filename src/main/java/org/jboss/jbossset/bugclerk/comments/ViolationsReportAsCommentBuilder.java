@@ -54,26 +54,30 @@ public class ViolationsReportAsCommentBuilder {
             + "or if you wish to ask for enhancement or new checks for " + BugClerk.class.getSimpleName()
             + " please, fill an issue on BugClerk issue tracker: " + BUGCLERK_ISSUES_TRACKER;
 
-    public Map<Issue, Comment> reportViolationToBugTracker(Map<String, List<Violation>> violationByBugId) {
+    public Map<Issue, Comment> reportViolationToBugTracker(Map<Issue, List<Violation>> violationByBugId) {
         Map<Issue, Comment> commentsToAddToIssues = new HashMap<Issue, Comment>();
         violationByBugId.forEach((k, violations) -> {
-            buildCommentReportIfNotAlreadyReported(violations);
+            Comment comment = buildCommentReportIfNotAlreadyReported(violations);
+            if ( comment != null )
+                commentsToAddToIssues.put(k, comment);
         });
         return commentsToAddToIssues;
     }
 
-    private void buildCommentReportIfNotAlreadyReported(List<Violation> violations) {
+    private Comment buildCommentReportIfNotAlreadyReported(List<Violation> violations) {
         List<Violation> newViolationToReport = filterViolationsAlreadyReported(violations);
         if (!newViolationToReport.isEmpty()) {
-            buildReportComment(newViolationToReport.stream().filter(v -> v.getLevel() == Level.ERROR)
+            return buildReportComment(newViolationToReport.stream().filter(v -> v.getLevel() == Level.ERROR)
                     .collect(Collectors.toList()));
         }
+        return null;
     }
 
-    private void buildReportComment(List<Violation> newViolationToReport) {
+    private Comment buildReportComment(List<Violation> newViolationToReport) {
         if (!newViolationToReport.isEmpty())
-            new Comment(messageBody(newViolationToReport, new StringBuffer(COMMENT_MESSSAGE_HEADER)).append(
-                    COMMENT_MESSAGE_FOOTER).toString(), true);
+            return new Comment(messageBody(newViolationToReport, new StringBuffer(COMMENT_MESSSAGE_HEADER)).append(
+                            COMMENT_MESSAGE_FOOTER).toString(), true);
+        return null;
     }
 
     private List<Violation> filterViolationsAlreadyReported(List<Violation> violations) {

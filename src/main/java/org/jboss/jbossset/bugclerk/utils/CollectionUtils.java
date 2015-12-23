@@ -28,16 +28,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Issue;
 
 public final class CollectionUtils {
 
     private CollectionUtils() {
     }
 
-    public static Map<String, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
-        Map<String, List<Violation>> violationIndexedByBugId = new HashMap<String, List<Violation>>(violations.size());
+    public static Map<Issue, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
+        Map<Issue, List<Violation>> violationIndexedByBugId = new HashMap<Issue, List<Violation>>(violations.size());
         for (Violation violation : violations) {
-            String id = violation.getCandidate().getBug().getTrackerId().get();
+            Issue id = violation.getCandidate().getBug();
             if (!violationIndexedByBugId.containsKey(id)) {
                 List<Violation> violationsForBug = new ArrayList<Violation>();
                 violationsForBug.add(violation);
