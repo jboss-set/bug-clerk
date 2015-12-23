@@ -29,17 +29,9 @@ import java.util.Map;
 
 import org.jboss.jbossset.bugclerk.Violation;
 
-// FIME: All methods here should be replaced/enhanced by a closures
 public final class CollectionUtils {
 
     private CollectionUtils() {
-    }
-
-    public static Map<String, Violation> indexViolationByCheckname(Collection<Violation> violations) {
-        Map<String, Violation> violationIndexedByCheckname = new HashMap<String, Violation>(violations.size());
-        for (Violation violation : violations)
-            violationIndexedByCheckname.put(violation.getCheckName(), violation);
-        return violationIndexedByCheckname;
     }
 
     public static Map<String, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
@@ -55,4 +47,4 @@ public final class CollectionUtils {
         }
         return violationIndexedByBugId;
     }
-}
+};

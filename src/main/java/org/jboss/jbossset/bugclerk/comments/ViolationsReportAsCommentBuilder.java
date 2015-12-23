@@ -22,7 +22,6 @@
 
 package org.jboss.jbossset.bugclerk.comments;
 
-import static org.jboss.jbossset.bugclerk.utils.CollectionUtils.indexViolationByCheckname;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.ITEM_ID_SEPARATOR;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.formatCheckname;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
@@ -33,7 +32,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.Level;
@@ -57,37 +56,42 @@ public class ViolationsReportAsCommentBuilder {
 
     public Map<Issue, Comment> reportViolationToBugTracker(Map<String, List<Violation>> violationByBugId) {
         Map<Issue, Comment> commentsToAddToIssues = new HashMap<Issue, Comment>();
-        for (Entry<String, List<Violation>> bugViolation : violationByBugId.entrySet()) {
-            List<Violation> newViolationToReport = filterViolationsAlreadyReported(bugViolation.getValue());
-            if (!newViolationToReport.isEmpty()) {
-                newViolationToReport = keepsOnlyErrors(newViolationToReport);
-                if (!newViolationToReport.isEmpty())
-                    new Comment(messageBody(newViolationToReport, new StringBuffer(COMMENT_MESSSAGE_HEADER)).append(
-                            COMMENT_MESSAGE_FOOTER).toString(), true);
-            }
-        }
+        violationByBugId.forEach((k, violations) -> {
+            buildCommentReportIfNotAlreadyReported(violations);
+        });
         return commentsToAddToIssues;
     }
 
-    private List<Violation> keepsOnlyErrors(List<Violation> newViolationToReport) {
-        // FIXME: Closure ?
-        List<Violation> errors = new ArrayList<Violation>(newViolationToReport.size());
-        for (Violation violation : newViolationToReport)
-            if (!Level.WARNING.equals(violation.getLevel()))
-                errors.add(violation);
-        return errors;
+    private void buildCommentReportIfNotAlreadyReported(List<Violation> violations) {
+        List<Violation> newViolationToReport = filterViolationsAlreadyReported(violations);
+        if (!newViolationToReport.isEmpty()) {
+            buildReportComment(newViolationToReport.stream().filter(v -> v.getLevel() == Level.ERROR)
+                    .collect(Collectors.toList()));
+        }
+    }
+
+    private void buildReportComment(List<Violation> newViolationToReport) {
+        if (!newViolationToReport.isEmpty())
+            new Comment(messageBody(newViolationToReport, new StringBuffer(COMMENT_MESSSAGE_HEADER)).append(
+                    COMMENT_MESSAGE_FOOTER).toString(), true);
     }
 
     private List<Violation> filterViolationsAlreadyReported(List<Violation> violations) {
-        // FIXME: Closure ?
         List<Violation> violationsToReport = new ArrayList<>(violations.size());
-        for (Entry<String, Violation> entry : indexViolationByCheckname(violations).entrySet()) {
-            CommentPatternMatcher matcher = new CommentPatternMatcher(formatCheckname(entry.getKey()));
-            List<Comment> comments = entry.getValue().getCandidate().getBug().getComments();
-            if (!matcher.containsPattern(comments))
-                violationsToReport.add(entry.getValue());
-        }
+        Map<String, Violation> indexedByCheckname = violations.stream().collect(
+                Collectors.toMap(k -> ((Violation) k).getCheckName(), v -> v));
+        indexedByCheckname.forEach((k, v) -> {
+            addViolationToReportIfNotAlreadyReported(formatCheckname(k), v.getCandidate().getBug().getComments(),
+                    violationsToReport, v);
+        });
         return violationsToReport;
+    }
+
+    private void addViolationToReportIfNotAlreadyReported(String checkname, List<Comment> comments,
+            List<Violation> violationsToReport, Violation v) {
+        CommentPatternMatcher matcher = new CommentPatternMatcher(checkname);
+        if (!matcher.containsPattern(comments))
+            violationsToReport.add(v);
     }
 
     private StringBuffer messageBody(List<Violation> violations, StringBuffer text) {
@@ -95,8 +99,12 @@ public class ViolationsReportAsCommentBuilder {
             throw new IllegalArgumentException("No violations or text empty");
         int violationId = 1;
         for (Violation violation : violations)
-            text.append(violationId++).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
-                    .append(violation.getMessage()).append(twoEOLs());
+            addViolationToCommentReport(text, violationId++, violation);
         return text;
+    }
+
+    private void addViolationToCommentReport(StringBuffer text, int violationId, Violation violation) {
+        text.append(violationId).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
+                .append(violation.getMessage()).append(twoEOLs());
     }
 }

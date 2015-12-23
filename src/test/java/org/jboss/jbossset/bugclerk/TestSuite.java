@@ -11,15 +11,18 @@ import org.junit.runners.Suite;
         org.jboss.jbossset.bugclerk.checks.BZShouldHaveTimeEstimate.class,
         org.jboss.jbossset.bugclerk.checks.CommunityBZ.class,
         org.jboss.jbossset.bugclerk.checks.ComponentUpgradeMissingFixList.class,
-        org.jboss.jbossset.bugclerk.checks.FilterIssueEntries.class, org.jboss.jbossset.bugclerk.checks.IssueNotAssigned.class,
+        org.jboss.jbossset.bugclerk.checks.FilterIssueEntries.class, 
+        org.jboss.jbossset.bugclerk.checks.IssueNotAssigned.class,
         org.jboss.jbossset.bugclerk.checks.OneOffPatchNotForSet.class,
-        org.jboss.jbossset.bugclerk.checks.PostMissingPmAck.class, org.jboss.jbossset.bugclerk.checks.PostMissingPR.class,
+        org.jboss.jbossset.bugclerk.checks.PostMissingPmAck.class, 
+        org.jboss.jbossset.bugclerk.checks.PostMissingPR.class,
         org.jboss.jbossset.bugclerk.checks.RegressionMayImpactOneOffRelease.class,
         org.jboss.jbossset.bugclerk.checks.ReleaseVersionMismatch.class,
         org.jboss.jbossset.bugclerk.checks.SummaryContainsPatchButTypeIsNotSupportPatch.class,
-        org.jboss.jbossset.bugclerk.utils.CollectionsUtilsTest.class, org.jboss.jbossset.bugclerk.utils.URLUtilsTest.class,
         org.jboss.jbossset.bugclerk.ReportEngineTest.class,
-        org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngineTest.class })
+        org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngineTest.class,
+        org.jboss.jbossset.bugclerk.utils.URLUtilsTest.class,
+})
 public class TestSuite {
 
 }

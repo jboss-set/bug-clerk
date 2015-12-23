@@ -96,23 +96,21 @@ public class BugClerk {
     }
 
     private Map<String, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
-        // FIXME: do with closure
         Map<String, List<Violation>> map = new HashMap<String, List<Violation>>();
-        for (Violation v : violations) {
-            String id = v.getCandidate().getBug().getTrackerId().get();
+        violations.forEach(item -> {
+            String id = item.getCandidate().getBug().getTrackerId().get();
             if (!map.containsKey(id))
                 map.put(id, new ArrayList<Violation>(1));
-            map.get(id).add(v);
-        }
+            map.get(id).add(item);
+        });
         return map;
     }
 
     private List<Candidate> loadCandidates(List<Issue> issues) {
-        // FIXME: do with closure
         final List<Candidate> candidates = new ArrayList<>(issues.size());
-        for (Issue issue : issues) {
+        issues.forEach((issue) -> {
             candidates.add(new Candidate(issue));
-        }
+        });
         return candidates;
     }
 
