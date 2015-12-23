@@ -5,7 +5,7 @@
   <parent>
     <artifactId>jboss-parent</artifactId>
     <groupId>org.jboss</groupId>
-    <version>16</version>
+    <version>19</version>
     <relativePath />
   </parent>
 
@@ -21,13 +21,14 @@
     <java.version>1.8</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <checkstyle.plugin.version>2.11</checkstyle.plugin.version>
+
     <mockito.version>1.9.5</mockito.version>
     <org.jboss.jbossset.pull-shared.version>0.5.3</org.jboss.jbossset.pull-shared.version>
-    <org.wildfly.wildfly.build.config.version>8.0.0.Final</org.wildfly.wildfly.build.config.version>
-    <xmlrpc-client.version>3.1.3</xmlrpc-client.version>
-    <version.org.drools>6.1.0.Final</version.org.drools>
-    <version.org.kie>6.1.0.Final</version.org.kie>
+    <org.wildfly.checkstyle-config.version>1.0.4.Final</org.wildfly.checkstyle-config.version>
+
+    <version.drools>6.1.0.Final</version.drools>
+    <version.org.drools>${version.drools}</version.org.drools>
+    <version.org.kie>${version.drools}</version.org.kie>
   </properties>
 
   <scm>
@@ -290,18 +291,29 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>${checkstyle.plugin.version}</version>
           <configuration>
-            <configLocation>jboss-as-checkstyle/checkstyle.xml</configLocation>
+            <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
             <consoleOutput>true</consoleOutput>
             <failsOnError>true</failsOnError>
             <useFile />
+            <linkXRef>false</linkXRef>
           </configuration>
           <dependencies>
             <dependency>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-build-config</artifactId>
-              <version>${org.wildfly.wildfly.build.config.version}</version>
+            <groupId>org.wildfly.checkstyle</groupId>
+            <artifactId>wildfly-checkstyle-config</artifactId>
+            <version>${org.wildfly.checkstyle-config.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${version.checkstyle}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>com.sun</groupId>
+                  <artifactId>tools</artifactId>
+                </exclusion>
+              </exclusions>
             </dependency>
           </dependencies>
           <executions>
