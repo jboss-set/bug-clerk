@@ -26,7 +26,7 @@
     <org.jboss.jbossset.pull-shared.version>0.5.3</org.jboss.jbossset.pull-shared.version>
     <org.wildfly.checkstyle-config.version>1.0.4.Final</org.wildfly.checkstyle-config.version>
 
-    <version.drools>6.1.0.Final</version.drools>
+    <version.drools>6.3.0.Final</version.drools>
     <version.org.drools>${version.drools}</version.org.drools>
     <version.org.kie>${version.drools}</version.org.kie>
   </properties>
