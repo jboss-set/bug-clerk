@@ -151,6 +151,12 @@
             <exclude>org/jboss/jbossset/bugclerk/checks/CommunityBZ.java</exclude>
           </excludes>
           <includes>
+            <!-- Some internal tests -->
+            <include>org/jboss/jbossset/bugclerk/utils/URLUtilsTest.java</include>
+            <include>org/jboss/jbossset/bugclerk/ReportEngineTest.java</include>
+            <include>org/jboss/jbossset/bugclerk/utils/StringUtilsTest.java</include>
+            <include>org/jboss/jbossset/bugclerk/comments/CommentPatternMatcherTest.java</include>
+            <!-- All tests based on checks -->
             <include>org/jboss/jbossset/bugclerk/checks/*.java</include>
           </includes>
         </configuration>
