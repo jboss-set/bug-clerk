@@ -46,44 +46,59 @@ public final class URLUtils {
     }
 
     private static URL throwExceptionIfURLisNull(URL url) {
-        if ( url == null )
+        if (url == null)
             throw new IllegalArgumentException("Can't invoke with a 'null' URL.");
         return url;
     }
 
     public static String extractParameterValueIfAny(final URL url, final String param) {
-        if ( param == null || "".equals(param) )
+        if (param == null || "".equals(param))
             throw new IllegalArgumentException("Can't invoke with a 'null' or empty param.");
 
         final String query = url.getQuery();
-        if ( query == null || "".equals(query) )
+        if (query == null || "".equals(query))
             throw new IllegalArgumentException("Can't invok with a 'null' or empty query.");
 
         final int indexOfParam = query.indexOf(param);
-        if ( indexOfParam == -1 ) return "";
+        if (indexOfParam == -1)
+            return "";
         final String subString = query.substring(indexOfParam);
         int indexEndOfParam = subString.indexOf("&");
-        if  (indexEndOfParam == - 1) indexEndOfParam = subString.length();
+        if (indexEndOfParam == -1)
+            indexEndOfParam = subString.length();
         return subString.substring(param.length(), indexEndOfParam);
     }
 
-    /* Copy and paste from Stackoverlow:
-     * http://stackoverflow.com/questions/1806017/extracting-urls-from-a-text-document-using-java-regular-expressions
-     * Thanks to Philip Daubmeier.
+    private static final String SLASH = "/";
+
+    public static String getServerUrl(URL tracker) {
+        return tracker.getProtocol() + ":" + SLASH + SLASH + tracker.getHost() + SLASH;
+    }
+
+    public static String getServerUrl(String url) {
+        return getServerUrl(createURLFromString(url));
+    }
+
+    private static final String BZ_FILTERNAME_URL_PARAMNAME = "namedcmd=";
+
+    public static String extractFilterNameOrReturnFilterURL(String url) throws MalformedURLException {
+        String filterName = URLUtils.extractParameterValueIfAny(new URL(url), BZ_FILTERNAME_URL_PARAMNAME);
+        return ("".equals(filterName) ? url.toString() : filterName);
+    }
+
+    /*
+     * Copy and paste from Stackoverlow:
+     * http://stackoverflow.com/questions/1806017/extracting-urls-from-a-text-document-using-java-regular-expressions Thanks to
+     * Philip Daubmeier.
      */
     public static List<String> extractUrls(String input) {
 
-        Pattern pattern = Pattern.compile(
-            "\\b(((ht|f)tp(s?)\\:\\/\\/|~\\/|\\/)|www.)" +
-            "(\\w+:\\w+@)?(([-\\w]+\\.)+(com|org|net|gov" +
-            "|mil|biz|info|mobi|name|aero|jobs|museum" +
-            "|travel|[a-z]{2}))(:[\\d]{1,5})?" +
-            "(((\\/([-\\w~!$+|.,=]|%[a-f\\d]{2})+)+|\\/)+|\\?|#)?" +
-            "((\\?([-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" +
-            "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)" +
-            "(&(?:[-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" +
-            "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)*)*" +
-            "(#([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)?\\b");
+        Pattern pattern = Pattern.compile("\\b(((ht|f)tp(s?)\\:\\/\\/|~\\/|\\/)|www.)"
+                + "(\\w+:\\w+@)?(([-\\w]+\\.)+(com|org|net|gov" + "|mil|biz|info|mobi|name|aero|jobs|museum"
+                + "|travel|[a-z]{2}))(:[\\d]{1,5})?" + "(((\\/([-\\w~!$+|.,=]|%[a-f\\d]{2})+)+|\\/)+|\\?|#)?"
+                + "((\\?([-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" + "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)"
+                + "(&(?:[-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" + "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)*)*"
+                + "(#([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)?\\b");
 
         Matcher matcher = pattern.matcher(input);
         List<String> result = new ArrayList<String>(matcher.groupCount());

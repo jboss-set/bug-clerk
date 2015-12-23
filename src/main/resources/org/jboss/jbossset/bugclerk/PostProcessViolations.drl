@@ -22,13 +22,13 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
+import org.jboss.set.aphrodite.domain.Issue;
 
 rule "RemoveViolationIfCheckIsIgnored"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate( bug.summary.contains("[Doc Feature]"), filtered == false);
+    $candidate : Candidate( bug.summary.get.contains("[Doc Feature]"), filtered == false);
   then
     //System.out.println($candidate.bug.id + " filtered by " + drools.getRule().getName());
     modify ( $candidate ) {

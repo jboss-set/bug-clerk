@@ -21,42 +21,46 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
-import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertOneViolationFound;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.BUGZILLA_TRACKER_ID_PREFIX;
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertNoViolationFound;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertOneViolationFound;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class RegressionMayImpactOneOffRelease extends AbstractCheckRunner {
 
-    private final int originalBugId = 143794;
-    private final int oneOffBugId = 143798;
-    
+    private final String originalBugId = "143794";
+    private final String oneOffBugId = "143798";
+
     @Test
     public void oneOffBZWithRegressionInBlocksList() {
-        assertOneViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("Regression here...")), checkName, oneOffBugId );
+        assertOneViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("Regression here...")), checkName,
+                originalBugId);
     }
-    
+
     @Test
     public void oneOffBZWithRegressionLowerCaseInBlocksList() {
-        assertOneViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("Appears to be a regression here...")), checkName, oneOffBugId );
+        assertOneViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("Appears to be a regression here...")),
+                checkName, originalBugId);
     }
 
     public void oneOffButNoRegression() {
-        assertNoViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("New bug ?")), checkName, oneOffBugId );
+        assertNoViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("New bug ?")), checkName, oneOffBugId);
     }
-
-    
 
     protected Collection<Candidate> prepareCandidates(String regressionText) {
         Collection<Candidate> candidates = new HashSet<Candidate>(2);
@@ -64,29 +68,40 @@ public class RegressionMayImpactOneOffRelease extends AbstractCheckRunner {
         candidates.add(prepareOriginal(regressionText));
         return candidates;
     }
-    
+
     protected Candidate prepareOneOff() {
-        final Bug oneOff = MockUtils.mockBug(oneOffBugId, "it's a one-off");
-        Mockito.when(oneOff.getType()).thenReturn("Support Patch");
-        Set<Integer> blocks = new HashSet<Integer>(1);
-        blocks.add(originalBugId);
-        Mockito.when(oneOff.getBlocks()).thenReturn(blocks);       
-        return new Candidate(oneOff, new TreeSet<Comment>());
+        final Issue oneOff = MockUtils.mockBug(oneOffBugId, "it's a one-off");
+        Mockito.when(oneOff.getType()).thenReturn(IssueType.ONE_OFF);
+        URL url = buildUrlForId(originalBugId);
+        URL url2 = buildUrlForId(originalBugId);
+        assert url.equals(url2);
+        List<URL> urls = buildUrlListForOneUrl(url);
+        assert urls.contains(url);
+        Mockito.when(oneOff.getBlocks()).thenReturn(buildUrlListForOneUrl(buildUrlForId(originalBugId)));
+        assert !oneOff.getBlocks().isEmpty();
+        return new Candidate(oneOff);
     }
-    
-    protected Candidate prepareOriginal(String regressionText) {  
-        final Bug originalOne = prepareOriginalBug();
-        return new Candidate(originalOne,MockUtils.mockCommentsWithOneItem(1, regressionText, originalBugId));
+
+    private List<URL> buildUrlListForOneUrl(URL url) {
+        List<URL> list = new ArrayList<URL>(1);
+        list.add(buildUrlForId(originalBugId));
+        return list;
     }
-    
-    protected Bug prepareOriginalBug() {
-        final Bug originalOne = MockUtils.mockBug(originalBugId, "it's the original one");
-        Set<Integer> dependsOn = new HashSet<Integer>(1);
-        dependsOn.add(oneOffBugId);
-        Mockito.when(originalOne.getDependsOn()).thenReturn(dependsOn);      
-        assert originalOne.getDependsOn().contains(oneOffBugId);
-        Mockito.when(originalOne.getType()).thenReturn("Bug");
-        return originalOne;
+
+    private URL buildUrlForId(String id) {
+        try {
+            return new URL(BUGZILLA_TRACKER_ID_PREFIX + id);
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e);
+        }
     }
-    
+
+    protected Candidate prepareOriginal(String regressionText) {
+        final List<Comment> comments = MockUtils.mockCommentsWithOneItem("1", regressionText, originalBugId);
+        final Issue originalOne = MockUtils.mockBug(originalBugId, "it's the original one");
+        Mockito.when(originalOne.getDependsOn()).thenReturn(buildUrlListForOneUrl(buildUrlForId(oneOffBugId)));
+        Mockito.when(originalOne.getType()).thenReturn(IssueType.SUPPORT_PATCH);
+        Mockito.when(originalOne.getComments()).thenReturn(comments);
+        return new Candidate(originalOne);
+    }
 }

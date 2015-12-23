@@ -22,8 +22,8 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
 
 import java.util.Date;
 
@@ -36,7 +36,7 @@ rule "IssueNotAssigned_CommentSize"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate(bug.status == "NEW", filtered == false, $bug : bug, comments.size() >= 5);
+    $candidate : Candidate(bug.status.toString == "NEW", $bug : bug, bug.comments.size() >= 5, filtered == false);
   then
     insertLogical( new Violation($candidate,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) " , Level.WARNING) );
 end
@@ -44,7 +44,7 @@ end
 rule "IssueNotAssigned_CreationDate"
   dialect "mvel"
   when
-    $candidate : Candidate(bug.status == "NEW", filtered == false, bug.creationTime before[31d] new Date());
+    $candidate : Candidate(bug.status.toString == "NEW", bug.creationTime.get before[31d] new Date(), filtered == false);
   then
     insertLogical( new Violation($candidate,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) ", Level.WARNING) );
 end
@@ -52,8 +52,8 @@ end
 rule "IssueNotAssigned_PR"
   dialect "mvel"
   when
-    $candidate : Candidate( bug.status == "NEW", $status : bug.status, $comments : comments, filtered == false);
-    Comment( text.contains("github.com"), text.contains("/pull/") ) from $comments;
+    $candidate : Candidate( bug.status.toString == "NEW", $status : bug.status.toString, $comments : bug.comments, filtered == false);
+    Comment( body.contains("github.com"), body.contains("/pull/") ) from $comments;
   then
     insertLogical( new Violation($candidate,"IssueNotAssigned", "status is still NEW while BZ is over a month old and/or had some activity on it (PR, Coments) ", Level.WARNING) );
 end

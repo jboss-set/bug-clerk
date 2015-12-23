@@ -22,41 +22,40 @@
 package org.jboss.jbossset.bugclerk.checks;
 
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertNoViolationFound;
-import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertOneViolationFound;
 
+import java.util.HashSet;
 import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class SummaryContainsPatchButTypeIsNotSupportPatch extends AbstractCheckRunner {
 
-    private final int bugId = 143794;
+    private final String bugId = "143794";
 
-    
-    @Test
-    public void violationIfPostAndThreeWeeksAgo() {
-        assertOneViolationFound(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock("summary with Patch in it","Bug"),new TreeSet<Comment>())) ), checkName, bugId );
-    }
-    
     @Test
     public void noViolationIfCorrectBugType() {
-        assertNoViolationFound(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock("summary with Patch in it","Support Patch"),new TreeSet<Comment>())) ), checkName, bugId);
+        assertNoViolationFound(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock(
+                "summary with Patch in it", IssueType.SUPPORT_PATCH)))), checkName, bugId);
     }
 
     @Test
     public void noViolationIfNoPatchInDesc() {
-        assertNoViolationFound(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock("Summary","romain@redhat.com"),new TreeSet<Comment>())) ), checkName, bugId);
+        assertNoViolationFound(
+                engine.runCheckOnBugs(checkName,
+                        CollectionUtils.asSetOf(new Candidate(prepareMock("Summary", IssueType.BUG)))),
+                checkName, bugId);
     }
 
-    protected Bug prepareMock(String summary, String type) {
-        final Bug mock = MockUtils.mockBug(bugId, summary);
+    protected Issue prepareMock(String summary, IssueType type) {
+        final Issue mock = MockUtils.mockBug(bugId, summary);
         Mockito.when(mock.getType()).thenReturn(type);
         return mock;
     }

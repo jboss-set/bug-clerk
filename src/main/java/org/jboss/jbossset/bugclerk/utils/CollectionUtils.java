@@ -24,45 +24,28 @@ package org.jboss.jbossset.bugclerk.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
 
+// FIME: All methods here should be replaced/enhanced by a closures
 public final class CollectionUtils {
 
     private CollectionUtils() {
     }
 
-    public static <K, V> SortedSet<V> getEntryOrEmptySet(K key, Map<K, SortedSet<V>> map) {
-        return (map.containsKey(key) ? map.get(key) : new TreeSet<V>());
+    public static Map<String, Violation> indexViolationByCheckname(Collection<Violation> violations) {
+        Map<String, Violation> violationIndexedByCheckname = new HashMap<String, Violation>(violations.size());
+        for (Violation violation : violations)
+            violationIndexedByCheckname.put(violation.getCheckName(), violation);
+        return violationIndexedByCheckname;
     }
 
-    @SafeVarargs
-    public static <T> Object[] objectsToArray(T... objects) {
-        return objects;
-//        Object[] facts = { objects };
-  //      return facts;
-    }
-
-    public static List<Candidate> createCandidateList(Map<String, Bug> bugs, Map<String, SortedSet<Comment>> comments) {
-        List<Candidate> candidates = new ArrayList<Candidate>(bugs.size());
-        for (Bug bug : bugs.values())
-            candidates.add(new Candidate(bug, CollectionUtils.getEntryOrEmptySet(String.valueOf(bug.getId()), comments)));
-        return candidates;
-    }
-
-    public static Map<Integer, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
-        Map<Integer, List<Violation>> violationIndexedByBugId = new HashMap<Integer, List<Violation>>(violations.size());
+    public static Map<String, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
+        Map<String, List<Violation>> violationIndexedByBugId = new HashMap<String, List<Violation>>(violations.size());
         for (Violation violation : violations) {
-            int id = violation.getCandidate().getBug().getId();
+            String id = violation.getCandidate().getBug().getTrackerId().get();
             if (!violationIndexedByBugId.containsKey(id)) {
                 List<Violation> violationsForBug = new ArrayList<Violation>();
                 violationsForBug.add(violation);
@@ -71,23 +54,5 @@ public final class CollectionUtils {
                 violationIndexedByBugId.get(id).add(violation);
         }
         return violationIndexedByBugId;
-    }
-
-    public static Set<String> bugSetToIdStringSet(Set<Integer> intSet) {
-        if ( intSet == null )
-            throw new IllegalArgumentException("provided set can't be null.");
-
-        Set<String> stringSet = new HashSet<>(intSet.size());
-        if ( ! intSet.isEmpty() )
-            for ( Integer integer : intSet )
-                stringSet.add(String.valueOf(integer));
-        return stringSet;
-    }
-
-    public static Map<String, Violation> indexViolationByCheckname(Collection<Violation> violations) {
-        Map<String, Violation> violationIndexedByCheckname = new HashMap<String,Violation>(violations.size());
-        for ( Violation violation : violations )
-            violationIndexedByCheckname.put(violation.getCheckName(),violation);
-        return violationIndexedByCheckname;
     }
 }

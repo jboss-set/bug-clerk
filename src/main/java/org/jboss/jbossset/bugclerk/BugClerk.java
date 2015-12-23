@@ -21,50 +21,37 @@
  */
 package org.jboss.jbossset.bugclerk;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.transform.stream.StreamSource;
 
-import org.jboss.jbossset.bugclerk.bugzilla.BugzillaClient;
-import org.jboss.jbossset.bugclerk.bugzilla.ParallelLoader;
-import org.jboss.jbossset.bugclerk.bugzilla.ReportViolationToBzEngine;
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
-import org.jboss.jbossset.bugclerk.reports.BugClerkReport;
+import org.jboss.jbossset.bugclerk.comments.ViolationsReportAsCommentBuilder;
 import org.jboss.jbossset.bugclerk.reports.BugClerkReportEngine;
 import org.jboss.jbossset.bugclerk.reports.ReportEngine;
 import org.jboss.jbossset.bugclerk.reports.StringReportEngine;
-import org.jboss.jbossset.bugclerk.smtp.SMTPClient;
-import org.jboss.jbossset.bugclerk.utils.CollectionUtils;
+import org.jboss.jbossset.bugclerk.reports.xml.BugClerkReport;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.jbossset.bugclerk.utils.StreamUtils;
-import org.jboss.jbossset.bugclerk.utils.StringUtils;
 import org.jboss.jbossset.bugclerk.utils.XMLUtils;
-import org.jboss.pull.shared.Util;
+import org.jboss.set.aphrodite.domain.Issue;
 
 public class BugClerk {
 
+    private final AphroditeClient aphrodite;
     private final PerformanceMonitor monitor = new PerformanceMonitor();
 
-    private Properties configurationProperties;
-
-    protected List<Candidate> loadCandidates(List<String> ids) {
-        return new ParallelLoader().loadCandidates(ids);
+    public BugClerk(AphroditeClient aphrodite) {
+        this.aphrodite = aphrodite;
     }
 
-    static final String KIE_SESSION = "BzCheck";
-    static final String KIE_GITHUB_CLIENT_ID = "githubClient";
-    static final String XSLT_FILENAME = "/xslt/stylesheet.xsl";
-
     protected Collection<Violation> processEntriesAndReportViolations(List<Candidate> candidates) {
-        RuleEngine ruleEngine = new RuleEngine(KIE_SESSION, buildGlobalsMap());
+        RuleEngine ruleEngine = new RuleEngine(buildGlobalsMap());
         Collection<Violation> violations = ruleEngine.processBugEntry(candidates);
         ruleEngine.shutdownRuleEngine();
         return violations;
@@ -75,64 +62,25 @@ public class BugClerk {
         return globalsMap;
     }
 
-    protected String buildReport(Map<Integer, List<Violation>> violationByBugId, String urlPrefix) {
+    protected String buildReport(Map<String, List<Violation>> violationByBugId, String urlPrefix) {
         ReportEngine<String> reportEngine = new StringReportEngine(urlPrefix);
         return reportEngine.createReport(violationByBugId);
     }
 
-    protected BugClerkReport buildBugClerkReport(Map<Integer, List<Violation>> violationByBugId, String urlPrefix) {
+    protected BugClerkReport buildBugClerkReport(Map<String, List<Violation>> violationByBugId, String urlPrefix) {
         ReportEngine<BugClerkReport> reportEngine = new BugClerkReportEngine(urlPrefix);
         return reportEngine.createReport(violationByBugId);
     }
 
-    protected String getPropertyFromConfig(String propertyname) {
-        return Util.require(configurationProperties, propertyname);
-    }
-
-    protected Properties loadConfigurationProperties(String filename) {
-        try {
-            return Util.loadProperties(filename, filename);
-        } catch (IOException e) {
-            throw new IllegalStateException("Can't load configuration properties from file " + filename, e);
-        }
-    }
-
-
-    private static final String NOW = new SimpleDateFormat("yyyy/MM/dd - HH:mm").format(Calendar.getInstance().getTime());
-
-    private static final String TO = "Romain Pelisse <rpelisse@redhat.com>";
-    private static final String FROM = "BugClerk <rpelisse@redhat.com>";
-
-    protected void publishReport(String report) {
-        new SMTPClient().sendEmail(TO, FROM, "BugClerk Report - " + NOW, report);
-    }
-
-    public static final String CONFIGURATION_FILENAME = "bugclerk.properties";
-
-    private static final String BUGCLERK_ISSUES_TRACKER = "https://github.com/jboss-set/bug-clerk/issues";
-
-    private static final String COMMENT_MESSSAGE_HEADER = BugClerk.class.getSimpleName() + " (automated tool) noticed on "
-            + NOW + " the following" + " discrepencies in this entry:" + StringUtils.twoEOLs();
-
-    private static final String COMMENT_MESSAGE_FOOTER = "If the issues reported are erronous "
-            + "or if you wish to ask for enhancement or new checks for " + BugClerk.class.getSimpleName()
-            + " please, fill an issue on BugClerk issue tracker: " + BUGCLERK_ISSUES_TRACKER;
-
-    protected void updateBZwithViolations(Map<Integer, List<Violation>> violationByBugId) {
-        new ReportViolationToBzEngine(COMMENT_MESSSAGE_HEADER, COMMENT_MESSAGE_FOOTER, new BugzillaClient())
-                .reportViolationToBZ(violationByBugId);
-    }
-
     public int runAndReturnsViolations(BugClerkArguments arguments) {
         LoggingUtils.configureLogger(arguments.isDebug());
-        this.configurationProperties = loadConfigurationProperties(CONFIGURATION_FILENAME);
 
         LoggingUtils.getLogger().info("Loading data for " + arguments.getIds().size() + " issues.");
-        List<Candidate> candidates = loadCandidates(arguments.getIds());
+        List<Candidate> candidates = loadCandidates(arguments.getIssues());
         LoggingUtils.getLogger().info("Loading data from tracker took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
         Collection<Violation> violations = processEntriesAndReportViolations(candidates);
-        Map<Integer, List<Violation>> violationByBugId = CollectionUtils.indexedViolationsByBugId(violations);
+        Map<String, List<Violation>> violationByBugId = indexedViolationsByBugId(violations);
         LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
         String report = buildReport(violationByBugId, arguments.getUrlPrefix());
 
@@ -147,44 +95,51 @@ public class BugClerk {
         return violationByBugId.size();
     }
 
-    protected void reportsGeneration(BugClerkArguments arguments, Map<Integer, List<Violation>> violationByBugId) {
-        if ( arguments.isXMLReport() || arguments.isHtmlReport() ) {
+    private Map<String, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
+        // FIXME: do with closure
+        Map<String, List<Violation>> map = new HashMap<String, List<Violation>>();
+        for (Violation v : violations) {
+            String id = v.getCandidate().getBug().getTrackerId().get();
+            if (!map.containsKey(id))
+                map.put(id, new ArrayList<Violation>(1));
+            map.get(id).add(v);
+        }
+        return map;
+    }
+
+    private List<Candidate> loadCandidates(List<Issue> issues) {
+        // FIXME: do with closure
+        final List<Candidate> candidates = new ArrayList<>(issues.size());
+        for (Issue issue : issues) {
+            candidates.add(new Candidate(issue));
+        }
+        return candidates;
+    }
+
+    protected void reportsGeneration(BugClerkArguments arguments, Map<String, List<Violation>> violationByBugId) {
+        if (arguments.isXMLReport() || arguments.isHtmlReport()) {
             BugClerkReport xmlReport = buildBugClerkReport(violationByBugId, arguments.getUrlPrefix());
-            if ( arguments.isXMLReport() )
-                BugClerkReportEngine.printXmlReport( xmlReport, StreamUtils.getOutputStreamForFile(arguments.getXmlReportFilename()));
-            if ( arguments.isHtmlReport() )
-                XMLUtils.xmlToXhtml(xmlReport, new StreamSource(this.getClass().getResourceAsStream(XSLT_FILENAME)), StreamUtils.getStreamResultForFile(arguments.getHtmlReportFilename()));
+            if (arguments.isXMLReport())
+                BugClerkReportEngine.printXmlReport(xmlReport,
+                        StreamUtils.getOutputStreamForFile(arguments.getXmlReportFilename()));
+            if (arguments.isHtmlReport())
+                XMLUtils.xmlToXhtml(xmlReport,
+                        new StreamSource(this.getClass().getResourceAsStream(BugClerkReportEngine.XSLT_FILENAME)),
+                        StreamUtils.getStreamResultForFile(arguments.getHtmlReportFilename()));
         }
     }
 
-    protected static void deleteFile(String xmlReport) {
-        new File(xmlReport).deleteOnExit();
-    }
-
     protected static String getXmlReportFilename(BugClerkArguments arguments) {
-        if ( arguments.getXmlReportFilename() != null )
+        if (arguments.getXmlReportFilename() != null)
             return arguments.getXmlReportFilename();
         return arguments.getHtmlReportFilename() + ".xml";
     }
 
-    protected void postAnalysisActions(BugClerkArguments arguments, Map<Integer, List<Violation>> violationByBugId, String report) {
-        if (!violationByBugId.isEmpty()) {
-            if (arguments.isMailReport()) {
-                LoggingUtils.getLogger().info("Sending email notications with report.");
-                publishReport(report);
-                LoggingUtils.getLogger().info("Email notifications sent (if any).");
-
-            }
-
-            if (arguments.isReportToBz()) {
-                LoggingUtils.getLogger().info("Updating Bugzilla entries - if needed.");
-                updateBZwithViolations(violationByBugId);
-                LoggingUtils.getLogger().info("Bugzilla entries updated - if needed.");
-            }
+    protected void postAnalysisActions(BugClerkArguments arguments, Map<String, List<Violation>> violationByBugId, String report) {
+        if (!violationByBugId.isEmpty() && arguments.isReportToBz()) {
+            LoggingUtils.getLogger().info("Updating Bugzilla entries - if needed.");
+            aphrodite.addComments(new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(violationByBugId));
+            LoggingUtils.getLogger().info("Bugzilla entries updated - if needed.");
         }
-    }
-
-    public void run(BugClerkArguments arguments) {
-        runAndReturnsViolations(arguments);
     }
 }

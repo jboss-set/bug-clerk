@@ -38,11 +38,8 @@ public class StringReportEngine implements ReportEngine<String> {
         this.urlPrefix = urlPrefix;
     }
 
-    /* (non-Javadoc)
-     * @see org.jboss.jbossset.bugclerk.reports.ReportEngine#createReport(java.util.Map)
-     */
     @Override
-    public String createReport(Map<Integer, List<Violation>> violationByBugId) {
+    public String createReport(Map<String, List<Violation>> violationByBugId) {
         String reportString = "";
         if (!violationByBugId.isEmpty()) {
             StringBuffer report = new StringBuffer();
@@ -55,12 +52,13 @@ public class StringReportEngine implements ReportEngine<String> {
     }
 
     private StringBuffer format(List<Violation> violations, StringBuffer report) {
-        int bugId = violations.get(0).getCandidate().getBug().getId();
+        String bugId = violations.get(0).getCandidate().getBug().getTrackerId().get();
         report.append("BZ").append(bugId).append(" - ").append(this.urlPrefix + bugId).append(EOL)
                 .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
         int violationId = 1;
         for (Violation violation : violations)
-            report.append(violationId++).append(ITEM_ID_SEPARATOR).append(" (" + violation.getLevel() + ") ").append(violation.getMessage()).append(EOL);
+            report.append(violationId++).append(ITEM_ID_SEPARATOR).append(" (" + violation.getLevel() + ") ")
+                    .append(violation.getMessage()).append(EOL);
         return report.append(twoEOLs());
     }
 }

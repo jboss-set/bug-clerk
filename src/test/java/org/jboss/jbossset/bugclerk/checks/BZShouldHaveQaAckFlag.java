@@ -26,64 +26,46 @@ import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResul
 import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Flag;
+import org.jboss.set.aphrodite.domain.FlagStatus;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
 
-    final int bugId = 143794;
-    private Bug mock;
+    final String bugId = "143794";
+    private Issue mock;
 
     @Test
     public void bzOnVerifiedButNoQaFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-        Collection<Violation>v = engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload));
-        assertResultsIsAsExpected(
-                v
-                ,checkName,bugId);
+        Collection<Violation> v = engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload));
+        assertResultsIsAsExpected(v, checkName, bugId);
     }
 
     @Test
-    public void bzOnVeriifiedAndHasQaFlag() {
+    public void bzOnVerifiedAndHasNoQaFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
-        for ( Candidate candidate : mocks ) {
-            mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.UNKNOWN);
-        }
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.VERIFIED);
+        mock.getStage().getStateMap().put(Flag.QE, FlagStatus.NO_SET);
         assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
-    }
-
-    @Test
-    public void bzOnVerifiedAndHasNoFlags() {
-        final String payload = "Well; it does seems like one forgot the PR here.";
-        Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
-        for ( Candidate candidate : mocks ) {
-            Mockito.when(candidate.getBug().getStatus()).thenReturn(Status.VERIFIED.toString());
-        }
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, mocks), checkName, bugId);
     }
 
     @Test
     public void bzOnVerifiedAndHasQaFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
-        for ( Candidate candidate : mocks ) {
-            mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.UNKNOWN);
-        }
+        mock.getStage().getStateMap().put(Flag.QE, FlagStatus.NO_SET);
         assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
     }
 
@@ -91,32 +73,13 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
     public void bzOnVerifiedAndHasQaFlagPositive() {
         final String payload = "Well; it does seems like one forgot the PR here.";
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
-        for ( Candidate candidate : mocks ) {
-            mockCandidate(candidate, Status.VERIFIED, QA_ACK_FLAG, Flag.Status.POSITIVE);
-        }
+        mock.getStage().getStateMap().put(Flag.QE, FlagStatus.ACCEPTED);
         assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
-    }
-
-
-    private static void mockCandidate(Candidate candidate, Status status, String flagname, Flag.Status flagStatus) {
-        Mockito.when(candidate.getBug().getStatus()).thenReturn(status.toString());
-
-        List<Flag> flags = new ArrayList<Flag>(1);
-        Flag flag = new Flag(flagname, "setter?", flagStatus);
-        flags.add(flag);
-        Mockito.when(candidate.getBug().getFlags()).thenReturn(flags);
     }
 
     @Before
     public void testSpecificStubbingForBug() {
         mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getStatus()).thenReturn(Status.VERIFIED.toString());
-
-        List<Flag> flags = new ArrayList<Flag>(1);
-        Flag flag = new Flag(BugClerkMockingHelper.PM_ACK_FLAG, "setter?", Flag.Status.NEGATIVE);
-        flags.add(flag);
-
-        Mockito.when(mock.getFlags()).thenReturn(flags);
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.VERIFIED);
     }
-
 }

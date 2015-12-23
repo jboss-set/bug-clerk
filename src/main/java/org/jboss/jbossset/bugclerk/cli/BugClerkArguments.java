@@ -25,6 +25,8 @@ package org.jboss.jbossset.bugclerk.cli;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.set.aphrodite.domain.Issue;
+
 import com.beust.jcommander.IVariableArity;
 import com.beust.jcommander.Parameter;
 
@@ -39,10 +41,18 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
     @Parameter(names = { "-c", "--comment-on-bz" }, description = "add a comment to a BZ featuring violations, default is false", required = false)
     private boolean reportToBz = false;
 
-    @Parameter(names = { "-m", "--mail-report" }, description = "sent a report by mail, default is false", required = false)
-    private boolean mailReport = false;
+    private List<Issue> issues;
+
+    public List<Issue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<Issue> issues) {
+        this.issues = issues;
+    }
 
     public static BugClerkArguments validateArgs(BugClerkArguments arguments) {
+        // TODO !
         return arguments;
     }
 
@@ -66,14 +76,6 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
         this.reportToBz = reportToBz;
     }
 
-    public boolean isMailReport() {
-        return mailReport;
-    }
-
-    public void setMailReport(boolean mailReport) {
-        this.mailReport = mailReport;
-    }
-
     @Override
     public int processVariableArity(String optionName, String[] options) {
         if ("-i".equals(optionName) || "--ids".equals(optionName)) {
@@ -87,7 +89,6 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
 
     @Override
     public String toString() {
-        return "BugClerkArguments [urlPrefix=" + urlPrefix + ", ids=" + ids + ", reportToBz=" + reportToBz + ", mailReport="
-                + mailReport + super.toString();
+        return "BugClerkArguments [urlPrefix=" + urlPrefix + ", ids=" + ids + ", reportToBz=" + reportToBz + super.toString();
     }
 }

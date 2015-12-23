@@ -25,42 +25,39 @@ import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResul
 import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComments;
 
 import java.util.Date;
-import java.util.TreeSet;
+import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class IssueNotAssigned extends AbstractCheckRunner {
 
-    private Bug mock;
-    private final int bugId = 143794;
+    private Issue mock;
+    private final String bugId = "143794";
 
     @Before
     public void prepareBugMock() {
         mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getStatus()).thenReturn(Status.NEW.toString());
-        Mockito.when(mock.getCreationTime()).thenReturn(new Date());
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.NEW);
     }
 
     @Test
     public void violationBZOlderThanAMonth() {
-        Mockito.when(mock.getCreationTime()).thenReturn(DateUtils.twoMonthAgo());
         assertResultsIsAsExpected(
                 engine.runCheckOnBugs(checkName + "_CreationDate",
-                        CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))), checkName, bugId);
+                        CollectionUtils.asSetOf(new Candidate(mock))), checkName, bugId);
     }
 
     @Test
     public void bzHasAlreadyFiveComments() {
+        Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(new Date()));
         assertResultsIsAsExpected(engine.runCheckOnBugs(checkName + "_CommentSize",
                 buildTestSubjectWithComments(mock, "first comment", "second one", "third one", "fourth one", "fifth one")),
                 checkName, bugId);
@@ -68,19 +65,18 @@ public class IssueNotAssigned extends AbstractCheckRunner {
 
     @Test
     public void bzHasAlreadyPR() {
-        assertResultsIsAsExpected(
-                engine.runCheckOnBugs(
-                        checkName + "_PR",
-                        buildTestSubjectWithComments(mock, "first comment",
-                                "has PR: https://github.com/jbossas/jboss-eap/pull/1640")), checkName, bugId);
+        Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(new Date()));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName + "_PR",
+                buildTestSubjectWithComments(mock, "first comment", "has PR: https://github.com/jbossas/jboss-eap/pull/1640")),
+                checkName, bugId);
     }
 
     @Test
     public void bzLessThanAMonthNoViolation() {
-        Mockito.when(mock.getStatus()).thenReturn(Status.NEW.toString());
-        Mockito.when(mock.getCreationTime()).thenReturn(new Date());
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.NEW);
+        Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(new Date()));
         assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))),
+                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
                 checkName, bugId, 0);
     }
 }

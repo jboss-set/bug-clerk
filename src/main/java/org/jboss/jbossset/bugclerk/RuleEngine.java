@@ -34,14 +34,11 @@ import org.kie.api.runtime.rule.Match;
 public class RuleEngine {
 
     private final KieSession ksession;
+    static final String KIE_SESSION = "BzCheck";
 
-    public RuleEngine(String sessionName) {
-        ksession = createKSession(sessionName);
-    }
-
-    public RuleEngine(String sessionName, Map<String,Object> globals) {
-        ksession = createKSession(sessionName);
-        for ( Entry<String,Object> entry : globals.entrySet() ) {
+    public RuleEngine(Map<String, Object> globals) {
+        ksession = createKSession(KIE_SESSION);
+        for (Entry<String, Object> entry : globals.entrySet()) {
             ksession.getGlobals().set(entry.getKey(), entry.getValue());
         }
     }
@@ -94,7 +91,6 @@ public class RuleEngine {
         ksession.fireAllRules(createAgendaForCheck(checkname));
         return (Collection<Candidate>) ksession.getObjects(new ClassObjectFilter(Candidate.class));
     }
-
 
     public void shutdownRuleEngine() {
         if (ksession != null)

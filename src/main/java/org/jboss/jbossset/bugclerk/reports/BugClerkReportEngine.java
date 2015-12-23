@@ -12,34 +12,37 @@ import javax.xml.bind.Marshaller;
 
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.utils.FlagsUtils;
+import org.jboss.jbossset.bugclerk.reports.xml.BugClerkReport;
+import org.jboss.jbossset.bugclerk.reports.xml.BugReport;
+import org.jboss.jbossset.bugclerk.reports.xml.ViolationDescription;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
+import org.jboss.set.aphrodite.domain.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
 
 public final class BugClerkReportEngine implements ReportEngine<BugClerkReport> {
 
-
     private final String urlPrefix;
+
+    public static final String XSLT_FILENAME = "/xslt/stylesheet.xsl";
 
     public BugClerkReportEngine(String urlPrefix) {
         this.urlPrefix = urlPrefix;
     }
 
     @Override
-    public BugClerkReport createReport(Map<Integer, List<Violation>> violationByBugId) {
+    public BugClerkReport createReport(Map<String, List<Violation>> violationByBugId) {
         BugClerkReport report = new BugClerkReport();
         List<BugReport> bugs = new ArrayList<>(violationByBugId.size());
-        for ( Entry<Integer, List<Violation>> entry : violationByBugId.entrySet() ) {
+        for (Entry<String, List<Violation>> entry : violationByBugId.entrySet()) {
             BugReport bugReport = new BugReport();
             Candidate candidate = entry.getValue().get(0).getCandidate();
-            Bug bug = candidate.getBug();
-            bugReport.setBugId(bug.getId());
+            Issue bug = candidate.getBug();
+            bugReport.setBugId(bug.getTrackerId().get());
             bugReport.setStatus(bug.getStatus().toString());
             bugReport.setAckFlags(getAckFlags(candidate));
-            bugReport.setReleaseFlags(getAndFormatFlag(candidate,FlagsUtils.RELEASE_64Z));
             bugReport.setLink(URLUtils.createURLFromString(urlPrefix + entry.getKey()));
             List<ViolationDescription> violations = new ArrayList<ViolationDescription>(entry.getValue().size());
-            for ( Violation violation : entry.getValue() ) {
+            for (Violation violation : entry.getValue()) {
                 ViolationDescription desc = new ViolationDescription();
                 desc.setCheckname(violation.getCheckName());
                 desc.setMessage(violation.getMessage());
@@ -53,15 +56,9 @@ public final class BugClerkReportEngine implements ReportEngine<BugClerkReport> 
         return report;
     }
 
-    private String getAndFormatFlag(Candidate candidate, String flag) {
-        return FlagsUtils.formatAckFlagWithStatus(candidate.getFlagWithName(flag));
-    }
-
     private String getAckFlags(Candidate candidate) {
-        String dev = getAndFormatFlag(candidate,FlagsUtils.DEV_ACK_FLAG);
-        String qa = getAndFormatFlag(candidate,FlagsUtils.QA_ACK_FLAG);
-        String pm = getAndFormatFlag(candidate,FlagsUtils.PM_ACK_FLAG);
-        return dev + "/" + qa + "/" + pm;
+        return candidate.getBug().getStage().getStatus(Flag.DEV) + "/" + candidate.getBug().getStage().getStatus(Flag.QE) + "/"
+                + candidate.getBug().getStage().getStatus(Flag.PM);
     }
 
     public static void printXmlReport(BugClerkReport report, OutputStream out) {
@@ -77,6 +74,5 @@ public final class BugClerkReportEngine implements ReportEngine<BugClerkReport> 
             throw new IllegalStateException(e);
         }
     }
-
 
 }

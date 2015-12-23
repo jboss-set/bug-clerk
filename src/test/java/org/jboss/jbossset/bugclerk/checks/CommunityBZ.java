@@ -23,47 +23,35 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
-import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collection;
-import java.util.TreeSet;
+import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
-import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class CommunityBZ extends AbstractCheckRunner {
 
-
-    protected Bug testSpecificStubbingForBug(Bug mock) {
-        Mockito.when(mock.getCreator()).thenReturn("Romain Pelisse <belaran@gmail.com>");
-        return mock;
-    }
-
     @Test
     public void violationIfCreatorEmailIsNotFromRedHat() {
-        final int bugId = 143794;
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(bugId, "payload")), checkName, bugId );
+        final String bugId = "123466";
+        Issue mock = MockUtils.mockBug(bugId, "summary");
+        Mockito.when(mock.getReporter()).thenReturn(Optional.of("Romain Pelisse <belaran@gmail.com>"));
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
+                checkName, bugId);
     }
 
     @Test
-    public void noViolationIfPRappearsInAComment() {
-        Bug mock = MockUtils.mockBug(123466,"summary");
-        Mockito.when(mock.getCreator()).thenReturn("Romain Pelisse <belaran@redhat.com>");
-
-        Collection<Violation> violations = engine.runCheckOnBugs(checkName,CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>())));
-        for ( Violation v : violations ) {
-            System.out.println(v);
-        }
-        assertThat(violations.size(), is(0));
+    public void noViolationIfEmailIsFromRedHat() {
+        Issue mock = MockUtils.mockBug("123466", "summary");
+        assertThat(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock)))
+                .size(), is(0));
     }
-
-
 }

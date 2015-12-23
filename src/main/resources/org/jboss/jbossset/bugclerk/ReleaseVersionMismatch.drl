@@ -22,9 +22,9 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.IssueStatus;
 
 import org.jboss.jbossset.bugclerk.Violation;
 
@@ -32,8 +32,9 @@ rule "ReleaseVersionMismatch"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate(bug.summary.contains("(6.4.0)"), $summary: bug.summary, $flags : bug.flags, filtered == false);
-    not Flag(name == "jboss-eap-6.4.0" ) from $flags;
+    // FIXME: enhance pattern matching on summary
+    $candidate : Candidate( bug.summary.get.contains("(6.4.0)"), $release : bug.release.version.get , $summary : bug.summary.get, filtered == false);
+  //  eval( NOT $candidate.bug.summary.get.contains($release));
   then
-    insert( new Violation($candidate,drools.getRule().getName(), "Release in title[" + $summary + "] does not match flags.") );
+    insert( new Violation($candidate,drools.getRule().getName(), "Release in title does not match actual release (" + $release  + "]:" + $summary) );
 end

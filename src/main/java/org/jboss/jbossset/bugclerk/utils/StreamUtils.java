@@ -9,7 +9,8 @@ import javax.xml.transform.stream.StreamResult;
 
 public final class StreamUtils {
 
-    private StreamUtils() {}
+    private StreamUtils() {
+    }
 
     public static OutputStream getOutputStreamForFile(String filename) {
         try {
@@ -24,9 +25,9 @@ public final class StreamUtils {
     }
 
     public static StreamResult getStreamResultForFile(String filename) {
-        if (filename == null || "".equals(filename) )
+        if (filename == null || "".equals(filename))
             throw new IllegalArgumentException("Filename for result can't be null or empty.");
-        return  new StreamResult(new File(filename));
+        return new StreamResult(new File(filename));
     }
 
 }

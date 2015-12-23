@@ -20,70 +20,70 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jbossset.bugclerk.bugzilla;
+package org.jboss.jbossset.bugclerk.comments;
 
-import static org.jboss.jbossset.bugclerk.utils.CollectionUtils.bugSetToIdStringSet;
 import static org.jboss.jbossset.bugclerk.utils.CollectionUtils.indexViolationByCheckname;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.ITEM_ID_SEPARATOR;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.formatCheckname;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedSet;
 
+import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.Level;
 import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.jbossset.bugclerk.utils.StringUtils;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
 
-public class ReportViolationToBzEngine {
+public class ViolationsReportAsCommentBuilder {
 
-    private final String header;
-    private final String footer;
-    private final BugzillaClient bugzillaClient;
+    private static final String NOW = new SimpleDateFormat("yyyy/MM/dd - HH:mm").format(Calendar.getInstance().getTime());
 
+    private static final String BUGCLERK_ISSUES_TRACKER = "https://github.com/jboss-set/bug-clerk/issues";
 
-    public ReportViolationToBzEngine(String header, String footer, BugzillaClient bugzillaClient) {
-        this.header = header;
-        this.footer = footer;
-        this.bugzillaClient = bugzillaClient;
-    }
+    private static final String COMMENT_MESSSAGE_HEADER = BugClerk.class.getSimpleName() + " (automated tool) noticed on "
+            + NOW + " the following" + " discrepencies in this entry:" + StringUtils.twoEOLs();
 
-    public boolean reportViolationToBZ(Map<Integer, List<Violation>> violationByBugId) {
+    private static final String COMMENT_MESSAGE_FOOTER = "If the issues reported are erronous "
+            + "or if you wish to ask for enhancement or new checks for " + BugClerk.class.getSimpleName()
+            + " please, fill an issue on BugClerk issue tracker: " + BUGCLERK_ISSUES_TRACKER;
 
-        return reportViolationToBugTracker(violationByBugId,
-                bugzillaClient.loadCommentForBug(bugSetToIdStringSet(violationByBugId
-                        .keySet())));
-    }
-
-    boolean reportViolationToBugTracker(Map<Integer, List<Violation>> violationByBugId, Map<String, SortedSet<Comment>> commentsByBugId) {
-        for (Entry<Integer, List<Violation>> bugViolation : violationByBugId.entrySet()) {
-            List<Violation> newViolationToReport = filterViolationsAlreadyReported(bugViolation.getValue(),
-                    commentsByBugId.get(bugViolation.getKey().toString()));
+    public Map<Issue, Comment> reportViolationToBugTracker(Map<String, List<Violation>> violationByBugId) {
+        Map<Issue, Comment> commentsToAddToIssues = new HashMap<Issue, Comment>();
+        for (Entry<String, List<Violation>> bugViolation : violationByBugId.entrySet()) {
+            List<Violation> newViolationToReport = filterViolationsAlreadyReported(bugViolation.getValue());
             if (!newViolationToReport.isEmpty()) {
                 newViolationToReport = keepsOnlyErrors(newViolationToReport);
-                if ( ! newViolationToReport.isEmpty() )
-                    return bugzillaClient.addPrivateCommentTo(bugViolation.getKey(),
-                        messageBody(newViolationToReport, new StringBuffer(header)).append(footer).toString());
+                if (!newViolationToReport.isEmpty())
+                    new Comment(messageBody(newViolationToReport, new StringBuffer(COMMENT_MESSSAGE_HEADER)).append(
+                            COMMENT_MESSAGE_FOOTER).toString(), true);
             }
         }
-        return false; // no violation reported
+        return commentsToAddToIssues;
     }
 
     private List<Violation> keepsOnlyErrors(List<Violation> newViolationToReport) {
+        // FIXME: Closure ?
         List<Violation> errors = new ArrayList<Violation>(newViolationToReport.size());
         for (Violation violation : newViolationToReport)
-            if ( ! Level.WARNING.equals(violation.getLevel()))
+            if (!Level.WARNING.equals(violation.getLevel()))
                 errors.add(violation);
         return errors;
     }
 
-    private List<Violation> filterViolationsAlreadyReported(List<Violation> violations, SortedSet<Comment> comments) {
+    private List<Violation> filterViolationsAlreadyReported(List<Violation> violations) {
+        // FIXME: Closure ?
         List<Violation> violationsToReport = new ArrayList<>(violations.size());
         for (Entry<String, Violation> entry : indexViolationByCheckname(violations).entrySet()) {
             CommentPatternMatcher matcher = new CommentPatternMatcher(formatCheckname(entry.getKey()));
+            List<Comment> comments = entry.getValue().getCandidate().getBug().getComments();
             if (!matcher.containsPattern(comments))
                 violationsToReport.add(entry.getValue());
         }
@@ -95,8 +95,8 @@ public class ReportViolationToBzEngine {
             throw new IllegalArgumentException("No violations or text empty");
         int violationId = 1;
         for (Violation violation : violations)
-                text.append(violationId++).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
-                        .append(violation.getMessage()).append(twoEOLs());
+            text.append(violationId++).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
+                    .append(violation.getMessage()).append(twoEOLs());
         return text;
     }
 }

@@ -21,53 +21,32 @@
  */
 package org.jboss.jbossset.bugclerk.cli;
 
-import static org.jboss.jbossset.bugclerk.utils.StringUtils.emptyOrNull;
-
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Properties;
+import java.util.List;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
-import org.jboss.jbossset.bugclerk.bugzilla.BugzillaDrone;
-import org.jboss.jbossset.bugclerk.utils.PropertiesUtils;
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeParameters;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.spi.AphroditeException;
+import org.jboss.set.aphrodite.spi.NotFoundException;
 
 public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
 
-    public static void main(String[] args) throws MalformedURLException {
-        BugClerkInvocatioWithFilterArguments arguments = loadUsernamePassword(extractParameters(
-                new BugClerkInvocatioWithFilterArguments(), args));
-        System.out.print("Connection to BZ with URL " + arguments.getAuthURL() + " with username:" + arguments.getUsername()
+    public static void main(String[] args) throws MalformedURLException, AphroditeException, NotFoundException {
+        BugClerkInvocatioWithFilterArguments arguments = extractParameters(new BugClerkInvocatioWithFilterArguments(), args);
+        final String trackerUrl = URLUtils.getServerUrl(arguments.getFilterURL());
+        System.out.print("Connection to BZ with URL " + arguments.getFilterURL() + " with username:" + arguments.getUsername()
                 + " ... ");
-        BugzillaDrone drone = new BugzillaDrone(arguments.getAuthURL(), arguments.getFilterURL(), arguments.getUsername(), arguments.getPassword(), arguments.isNoRun());
-        drone.bugzillaLogin();
-        System.out.println("Done.");
+        AphroditeClient client = new AphroditeClient(new AphroditeParameters(trackerUrl, arguments.getUsername(),
+                arguments.getPassword()));
+        System.out.print("Loading data from filter:" + URLUtils.extractFilterNameOrReturnFilterURL(arguments.getFilterURL())
+                + " ... ");
+        final List<Issue> issues = client.retrievePayload(arguments.getFilterURL());
 
-        System.out.print("Loading data from filter:" + extractFilterNameOrReturnFilterURL(arguments.getFilterURL()) + " ... ");
-        runBugClerk(drone.retrievePayload(), arguments);
-    }
-
-    private static String extractFilterNameOrReturnFilterURL(String url) throws MalformedURLException {
-        String filterName = URLUtils.extractParameterValueIfAny(new URL(url), "namedcmd=");
-        return ("".equals(filterName) ? url.toString() : filterName);
-    }
-
-    private static void runBugClerk(final Collection<String> ids, BugClerkInvocatioWithFilterArguments arguments)
-            throws MalformedURLException {
-        if ( arguments.isNoRun() ) return;
-
-        if (!ids.isEmpty())
-            endProgram(arguments, runBugClerk(ids, URLUtils.buildBzUrlPrefix(new URL(arguments.getFilterURL())),arguments));
-    }
-
-    private static BugClerkInvocatioWithFilterArguments loadUsernamePassword(BugClerkInvocatioWithFilterArguments arguments) {
-        Properties prop = PropertiesUtils.loadPropertiesFile(BugClerk.CONFIGURATION_FILENAME);
-        if (emptyOrNull(arguments.getPassword()))
-            arguments.setUsername(prop.getProperty("bugzilla.login"));
-        if (emptyOrNull(arguments.getPassword()))
-            arguments.setPassword(prop.getProperty("bugzilla.password"));
-        return arguments;
+        if (!issues.isEmpty())
+            endProgram(arguments, runBugClerk(issues, client, arguments));
     }
 
     private static void endProgram(BugClerkInvocatioWithFilterArguments arguments, int nbViolation) {
@@ -80,11 +59,10 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
             System.exit(status);
     }
 
-    private static int runBugClerk(Collection<String> ids, String urlPrefix, BugClerkInvocatioWithFilterArguments arguments) {
-        BugClerk bc = new BugClerk();
+    private static int runBugClerk(List<Issue> issues, AphroditeClient aphrodite, BugClerkInvocatioWithFilterArguments arguments) {
+        BugClerk bc = new BugClerk(aphrodite);
         BugClerkArguments bcArgs = buildArgumentsFrom(arguments);
-        bcArgs.setUrlPrefix(urlPrefix);
-        bcArgs.getIds().addAll(ids);
+        bcArgs.setIssues(issues);
         return bc.runAndReturnsViolations(bcArgs);
     }
 
@@ -93,6 +71,7 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
         bcArgs.setReportToBz(arguments.isCommentOnBZEnabled());
         bcArgs.setXmlReportFilename(arguments.getXmlReportFilename());
         bcArgs.setHtmlReportFilename(arguments.getHtmlReportFilename());
+        bcArgs.setUrlPrefix(URLUtils.buildBzUrlPrefix(URLUtils.createURLFromString(arguments.getFilterURL())));
         return bcArgs;
     }
 }

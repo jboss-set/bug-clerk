@@ -23,17 +23,12 @@ package org.jboss.jbossset.bugclerk;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
 
 public class Candidate {
 
-    private final Bug bug;
-    private final SortedSet<Comment> comments;
+    private final Issue bug;
     private final Set<String> checksToBeIgnored = new HashSet<String>(0);
 
     private boolean isCandidate = true;
@@ -46,48 +41,9 @@ public class Candidate {
         }
     }
 
-    public Candidate(Bug bug, SortedSet<Comment> comments) {
-        checkIfNotNull(bug, "bug");
-        checkIfNotNull(comments, "comments");
-        this.bug = bug;
-        this.comments = comments;
-    }
-
-    public Candidate(Bug bug) {
+    public Candidate(Issue bug) {
         checkIfNotNull(bug, "bug");
         this.bug = bug;
-        this.comments = new TreeSet<Comment>();
-    }
-
-    public String getFlagNamesContaining(String pattern) {
-        if (pattern == null || "".equals(pattern))
-            throw new IllegalArgumentException("Can't invoke with an empty or 'null' pattern.");
-
-        StringBuffer res = null;
-        for (Flag flag : bug.getFlags()) {
-            if (flag.getName().contains(pattern)) {
-                if (res == null)
-                    res = new StringBuffer();
-                else
-                    res.append(",");
-                res.append(flag.getName());
-            }
-        }
-
-        return (res != null ? res.toString() : "");
-    }
-
-
-    public Flag getFlagWithName(String flagname) {
-        if (flagname == null || "".equals(flagname))
-            throw new IllegalArgumentException("Can't invoke with an empty or 'null' pattern.");
-
-        for (Flag flag : bug.getFlags()) {
-            if (flag.getName().contains(flagname)) {
-                return flag;
-            }
-        }
-        return null;
     }
 
     public void addRuleToIgnore(String rulePattern) {
@@ -110,12 +66,8 @@ public class Candidate {
         this.filtered = filtered;
     }
 
-    public Bug getBug() {
+    public Issue getBug() {
         return bug;
-    }
-
-    public SortedSet<Comment> getComments() {
-        return comments;
     }
 
     public Set<String> getChecksToBeIgnored() {
@@ -124,7 +76,7 @@ public class Candidate {
 
     @Override
     public String toString() {
-        return "Candidate [bug=" + bug + ", comments=" + comments + ", checksToBeIgnored=" + checksToBeIgnored
-                + ", isCandidate=" + isCandidate + ", filtered=" + filtered + "]";
+        return "Candidate [bug=" + bug + ", checksToBeIgnored=" + checksToBeIgnored + ", isCandidate=" + isCandidate
+                + ", filtered=" + filtered + "]";
     }
 }

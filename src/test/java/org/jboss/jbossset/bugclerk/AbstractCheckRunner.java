@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Comment;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;
@@ -49,7 +49,7 @@ public abstract class AbstractCheckRunner {
     @Before
     public void initRuleEngine() {
         Map<String, Object> globals = new HashMap<String, Object>(1);
-        this.engine = new RuleEngine(BugClerk.KIE_SESSION, globals );
+        this.engine = new RuleEngine(globals);
     }
 
     @Before

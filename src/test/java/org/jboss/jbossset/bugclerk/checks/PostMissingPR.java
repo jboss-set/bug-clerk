@@ -26,41 +26,39 @@ import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResul
 import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
 import static org.junit.Assert.assertThat;
 
-import java.util.TreeSet;
-
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class PostMissingPR extends AbstractCheckRunner {
 
-    protected Bug testSpecificStubbingForBug(Bug mock) {
-        Mockito.when(mock.getStatus()).thenReturn(Status.POST.toString());
+    protected Issue testSpecificStubbingForBug(Issue mock) {
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
         return mock;
     }
 
     @Test
     public void violationIfPRappearsInAComment() {
-        final int bugId = 143794;
-        final Bug mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getStatus()).thenReturn(Status.POST.toString());
+        final String bugId = "143794";
+        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock,new TreeSet<Comment>())) ), checkName, bugId );
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
+                checkName, bugId);
     }
 
     @Test
     public void noViolationIfPRappearsInAComment() {
         final String payload = "Where did you find that one?\n \n I copied the wrong one, I was testing for a case and I cherry picked it into my branch and built it, looks like I copied from there, where the has was different.\n \n Wildfly is:\n \n commit 3f0118a695aa7350e63fef395e2b4c61eb3932e4\n Author: Brian Stansberry <brian.stansberry@redhat.com>\n Date: Thu Apr 18 20:24:17 2013 -0500\n \n AS7-6949 Don't read child resource twice; avoid NPE\n \n \n 6.x PR:\n https://github.com/jbossas/jboss-eap/pull/2273\n";
 
-        final Bug mock = MockUtils.mockBug(143794, "summary");
-        Mockito.when(mock.getStatus()).thenReturn(Status.POST.toString());
-
+        final Issue mock = MockUtils.mockBug("143794", "summary");
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
         assertThat(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload)).size(), is(0));
     }
@@ -69,9 +67,8 @@ public class PostMissingPR extends AbstractCheckRunner {
     public void noViolationIfCommitAppearsInAComment() {
         final String payload = "PR is there : https://github.com/jbossas/redhat-picketlink/commit/43a7fc4b2bd1438f23b22ffbdcbb341aa45ba885";
 
-        final Bug mock = MockUtils.mockBug(143794, "summary");
-        Mockito.when(mock.getStatus()).thenReturn(Status.POST.toString());
-
+        final Issue mock = MockUtils.mockBug("143794", "summary");
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
         assertThat(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload)).size(), is(0));
     }

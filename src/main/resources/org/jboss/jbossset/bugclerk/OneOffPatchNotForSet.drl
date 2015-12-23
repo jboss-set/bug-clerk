@@ -22,17 +22,15 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueType;
 
 import org.jboss.jbossset.bugclerk.Violation;
 
 rule "OneOffPatchNotForSet"
   dialect "mvel"
   when
-    $candidate : Candidate( bug.type == "Support Patch", bug.assignedTo  == "jboss-set@redhat.com", $releases : bug.targetRelease, filtered == false);
-    $release : String() from $releases;
-    eval ($release.equals("One-off"));
+    $candidate : Candidate( bug.type.toString == "ONE_OFF" || bug.type.toString == "SUPPORT_PATCH",  bug.assignee.get  == "jboss-set@redhat.com", filtered == false);
   then
     insert( new Violation($candidate,drools.getRule().getName(), "is assigned to SET while it's supported patch - it should be assigned to GSS.") );
 end

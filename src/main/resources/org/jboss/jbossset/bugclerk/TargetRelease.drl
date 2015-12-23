@@ -22,9 +22,10 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.FlagStatus;
 
 import org.jboss.jbossset.bugclerk.Violation;
 
@@ -32,9 +33,9 @@ rule "TargetRelease"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate($summary: bug.summary, $flags : bug.flags , filtered == false);
-    $numberOfReleasesFlag : Number() from accumulate(i: Flag(name.contains("jboss-eap"), status == Status.POSITIVE ) from $flags , count(i) );
+    $candidate : Candidate($description: bug.description.get, bug.streamStatus.size() > 0,  $streamStatus : bug.streamStatus.values() , filtered == false);
+    $numberOfReleasesFlag : Number() from accumulate(i: FlagStatus(/*FIXME: FlagStatus.ACCEPTED*/) from $streamStatus , count(i) );
     eval( $numberOfReleasesFlag > 1 )
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "Invalid number of flag Release: " + $numberOfReleasesFlag + " - only is one should be set. Flags are: " + $candidate.getFlagNamesContaining("jboss-eap") + "."));
+    insert(new Violation($candidate, drools.getRule().getName(), "Invalid number of flag Release: " + $numberOfReleasesFlag + " - only is one should be set. Flags are: " +/*FIXME: $candidate.getFlagNamesContaining("jboss-eap") + */ "."));
 end

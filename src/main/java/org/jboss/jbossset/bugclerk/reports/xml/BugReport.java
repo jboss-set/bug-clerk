@@ -1,4 +1,4 @@
-package org.jboss.jbossset.bugclerk.reports;
+package org.jboss.jbossset.bugclerk.reports.xml;
 
 import java.net.URL;
 import java.util.List;
@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class BugReport {
 
-    private int bugId;
+    private String bugId;
     private URL link;
     private String ackFlags;
     private String releaseFlags;
@@ -16,18 +16,19 @@ public class BugReport {
 
     private List<ViolationDescription> violations;
 
-    public BugReport() {} // required by JAXB
+    public BugReport() {
+    } // required by JAXB
 
-    @XmlAttribute(name="id")
-    public int getBugId() {
+    @XmlAttribute(name = "id")
+    public String getBugId() {
         return bugId;
     }
 
-    public void setBugId(int bugId) {
+    public void setBugId(String bugId) {
         this.bugId = bugId;
     }
 
-    @XmlAttribute(name="acks")
+    @XmlAttribute(name = "acks")
     public String getAckFlags() {
         return ackFlags;
     }
@@ -36,7 +37,7 @@ public class BugReport {
         this.ackFlags = ackFlags;
     }
 
-    @XmlAttribute(name="release")
+    @XmlAttribute(name = "release")
     public String getReleaseFlags() {
         return releaseFlags;
     }
@@ -53,7 +54,7 @@ public class BugReport {
         this.status = status;
     }
 
-    @XmlElement(name="violation")
+    @XmlElement(name = "violation")
     public List<ViolationDescription> getViolations() {
         return violations;
     }
@@ -62,7 +63,7 @@ public class BugReport {
         this.violations = violations;
     }
 
-    @XmlAttribute(name="href")
+    @XmlAttribute(name = "href")
     public URL getLink() {
         return link;
     }
@@ -70,6 +71,5 @@ public class BugReport {
     public void setLink(URL link) {
         this.link = link;
     }
-
 
 }

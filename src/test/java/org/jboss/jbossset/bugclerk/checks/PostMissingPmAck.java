@@ -23,65 +23,69 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 
-import java.util.TreeSet;
+import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
-import org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Flag;
+import org.jboss.set.aphrodite.domain.FlagStatus;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class PostMissingPmAck extends AbstractCheckRunner {
 
-    protected Bug testSpecificStubbingForBug(Bug mock) {
-        Mockito.when(mock.getStatus()).thenReturn(Status.POST.toString());
+    protected Issue testSpecificStubbingForBug(Issue mock) {
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
         return mock;
     }
 
     @Test
     public void violationIfPostAndThreeWeeksAgo() {
-        final int bugId = 143794;
-        final Bug mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getLastModified()).thenReturn(DateUtils.threeWeeksAgo());
+        final String bugId = "143794";
+        final Issue mock = MockUtils.mockBug(bugId, "summary");
 
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock),new TreeSet<Comment>())) ), checkName, bugId );
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName,
+                        CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock)))),
+                checkName, bugId);
     }
-
 
     @Test
     public void noViolationIfTwoWeeksOld() {
-        final int bugId = 143794;
-        final Bug mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getLastModified()).thenReturn(DateUtils.twoWeeksAgo());
+        final String bugId = "143794";
+        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(DateUtils.twoWeeksAgo()));
 
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock),new TreeSet<Comment>())) ), checkName, bugId,0);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName,
+                        CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock)))),
+                checkName, bugId, 0);
     }
 
     @Test
     public void noViolationIfNoPR() {
-        final int bugId = 143794;
-        final Bug mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getLastModified()).thenReturn(DateUtils.threeWeeksAgo());
+        final String bugId = "143794";
+        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(DateUtils.threeWeeksAgo()));
 
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock,new TreeSet<Comment>())) ), checkName, bugId,0);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
+                checkName, bugId, 0);
     }
 
     @Test
     public void noViolationIfPmAcked() {
-        final int bugId = 143794;
-        final Bug mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getLastModified()).thenReturn(DateUtils.threeWeeksAgo());
-        Mockito.when(mock.getFlags()).thenReturn(BugClerkMockingHelper.createFlag(PM_ACK_FLAG, Flag.Status.POSITIVE));
+        final String bugId = "143794";
+        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        mock.getStage().getStateMap().put(Flag.PM, FlagStatus.ACCEPTED);
 
-
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock,new TreeSet<Comment>())) ), checkName, bugId,0);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
+                checkName, bugId, 0);
     }
-
 }

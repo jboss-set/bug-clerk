@@ -22,9 +22,10 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.IssueType;
+
 
 import org.jboss.jbossset.bugclerk.Violation;
 
@@ -32,7 +33,7 @@ rule "ComponentUpgradeMissingFixList"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate( bug.type == "Component Upgrade", bug.DependsOn.size == 0, filtered == false);
+    $candidate : Candidate( bug.type.toString == "UPGRADE", bug.dependsOn.isEmpty() == true, filtered == false);
   then
     insert( new Violation($candidate,drools.getRule().getName(),  "Component Upgrade BZ does not have any fixes it depends on !"));
 end

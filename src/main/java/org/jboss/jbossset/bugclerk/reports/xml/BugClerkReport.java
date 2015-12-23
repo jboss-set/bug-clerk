@@ -1,4 +1,4 @@
-package org.jboss.jbossset.bugclerk.reports;
+package org.jboss.jbossset.bugclerk.reports.xml;
 
 import java.util.List;
 
@@ -10,9 +10,10 @@ public class BugClerkReport {
 
     private List<BugReport> bugs;
 
-    public BugClerkReport() {}
+    public BugClerkReport() {
+    }
 
-    @XmlElement(name="bz")
+    @XmlElement(name = "bz")
     public List<BugReport> getBugs() {
         return bugs;
     }

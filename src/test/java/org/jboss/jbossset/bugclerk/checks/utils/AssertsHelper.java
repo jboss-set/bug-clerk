@@ -9,24 +9,28 @@ import org.jboss.jbossset.bugclerk.Violation;
 
 public final class AssertsHelper {
 
-    private AssertsHelper() {}
-
-    public static void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId) {
-        assertResultsIsAsExpected(violations,checkname,bugId,1);
-    }
-    
-    public static void assertOneViolationFound(Collection<Violation> violations, String checkname, int bugId) {
-        assertResultsIsAsExpected(violations,checkname,bugId,1);
-    }
-    
-    public static void assertNoViolationFound(Collection<Violation> violations, String checkname, int bugId) {
-        assertResultsIsAsExpected(violations,checkname,bugId,0);
+    private AssertsHelper() {
     }
 
-    public static void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, int bugId, int nbViolationExpected) {
+    public static void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, String bugId) {
+        assertResultsIsAsExpected(violations, checkname, bugId, 1);
+    }
+
+    public static void assertOneViolationFound(Collection<Violation> violations, String checkname, String bugId) {
+        assertResultsIsAsExpected(violations, checkname, bugId, 1);
+    }
+
+    public static void assertNoViolationFound(Collection<Violation> violations, String checkname, String bugId) {
+        assertResultsIsAsExpected(violations, checkname, bugId, 0);
+    }
+
+    public static final String BUGZILLA_TRACKER_ID_PREFIX = "https://bugzilla.redhat.com/show_bug.cgi?id=";
+
+    public static void assertResultsIsAsExpected(Collection<Violation> violations, String checkname, String bugId,
+            int nbViolationExpected) {
         assertThat(violations.size(), is(nbViolationExpected));
-        for ( Violation v : violations ) {
-            assertThat(v.getCandidate().getBug().getId(), is(bugId));
+        for (Violation v : violations) {
+            assertThat(v.getCandidate().getBug().getTrackerId().get(), is(bugId));
             assertThat(v.getCheckName(), is(checkname));
         }
     }

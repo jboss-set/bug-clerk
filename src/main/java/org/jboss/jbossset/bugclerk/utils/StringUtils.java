@@ -42,6 +42,6 @@ public final class StringUtils {
     }
 
     public static boolean emptyOrNull(String string) {
-        return ( string == null || "".equals(string));
+        return (string == null || "".equals(string));
     }
 }

@@ -22,9 +22,12 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.IssueEstimation;
+import org.jboss.set.aphrodite.domain.FlagStatus;
+import org.jboss.set.aphrodite.domain.Flag;
 
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
@@ -33,8 +36,7 @@ rule "BZShouldHaveTimeEstimate_PostOrModified"
 	salience 0
     dialect "mvel"
     when
-      $candidate : Candidate($status: bug.status, bug.estimatedTime == 0.0,
-      				bug.status == "POST" || bug.status == "MODIFIED", filtered == false);
+      $candidate : Candidate($status: bug.status, bug.estimation.get().initialEstimate == 0.0, bug.status.toString == "POST" || bug.status.toString == "MODIFIED", filtered == false);
     then
       insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but has no estimated time associated.", Level.WARNING));
 end
@@ -43,8 +45,7 @@ rule "BZShouldHaveTimeEstimate_DevAcked"
 	salience 0
     dialect "mvel"
     when
-      $candidate : Candidate(bug.estimatedTime == 0.0, filtered == false);
-      Flag(name == "devel_ack" ) from $candidate.bug.flags;
+      $candidate : Candidate(bug.getEstimation().get().initialEstimate == 0.0,  bug.stage.getStateMap.get(Flag.DEV).toString == "ACCEPTED" || bug.stage.getStateMap.get(Flag.DEV).toString == "SET", filtered == false);
     then
       insert(new Violation($candidate, drools.getRule().getName(), "BZ has been dev acked, but has no estimated time associated.", Level.WARNING));
 end

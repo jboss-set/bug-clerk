@@ -21,7 +21,6 @@
  */
 package org.jboss.jbossset.bugclerk;
 
-
 public class Violation {
 
     private final Candidate candidate;
@@ -46,7 +45,7 @@ public class Violation {
     }
 
     public Violation(Candidate candidate, String checkName, String message, Level level) {
-        this(candidate,checkName,message);
+        this(candidate, checkName, message);
         this.level = level;
     }
 

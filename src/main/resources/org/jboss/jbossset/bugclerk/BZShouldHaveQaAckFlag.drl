@@ -22,9 +22,11 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.FlagStatus;
+import org.jboss.set.aphrodite.domain.Flag;
 
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
@@ -33,8 +35,7 @@ rule "BZShouldHaveQaAckFlag"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate(bug.status == "VERIFIED", $status : bug.status, $flags : bug.flags , filtered == false);
-    not Flag(name == "qa_ack" ) from $flags;
+    $candidate : Candidate(bug.status.toString == "VERIFIED", $status : bug.status.toString , bug.stage.getStateMap.get(Flag.QE).toString == "NO_SET", filtered == false);
   then
     insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no qa flag set.", Level.ERROR));
 end

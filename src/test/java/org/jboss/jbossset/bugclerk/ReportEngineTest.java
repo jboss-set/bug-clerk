@@ -12,11 +12,12 @@ public class ReportEngineTest {
     @Test
     public void test() {
         final String dummyUrl = "http://dummy.url/";
-        final int bugId = 1;
+        final String bugId = "168875";
         final String checkname = "checkname";
 
         ReportEngine<String> engine = new StringReportEngine(dummyUrl);
-        String report = engine.createReport(CollectionUtils.indexedViolationsByBugId(MockUtils.mockViolationsListWithOneItem(bugId, checkname)));
+        String report = engine.createReport(CollectionUtils.indexedViolationsByBugId(MockUtils.mockViolationsListWithOneItem(
+                bugId, checkname)));
         assertTrue(report.contains(dummyUrl));
         assertTrue(report.contains(checkname));
     }

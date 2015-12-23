@@ -24,18 +24,13 @@ Of course, if you do find some tools or library that , please feel free to updat
 
 ### Component / Frameworks
 
-* [jboss-set/pull-shared &middot; GitHub](https://github.com/jboss-set/pull-shared "https://github.com/jboss-set/pull-shared")&zwnj;
-* [jboss-set/pull-request-processor &middot; GitHub](https://github.com/jboss-set/pull-request-processor "https://github.com/jboss-set/pull-request-processor")
+* [jboss-set/aphrodite &middot; GitHub](https://github.com/jboss-set/aphrodite "https://github.com/jboss-set/aphrodite")&zwnj;
 * [Drools - Drools - Business Rules Management System (Java&trade;, Open Source)](http://www.drools.org/ "http://www.drools.org/")
 * [Java A&zwnj;PI to acess Bugzilla](http://stackoverflow.com/questions/630095/is-there-a-java-api-to-access-bugzilla)
 
 ## How to run it ?
 
-You need to have credentials to access BugZilla and file it in the provided example file (remove the .example) extension.
-
-You also need to add the file 'org/jboss/jbossset/bugclerk/smtp/config.properties' to your classpath to configure sending report email. If not the properties are missing, BugClerk will simply NOT send email.
-
-Once you have all of this here is how you can run BugClerk on a specific Bugzilla entry:
+You need to have credentials to access BugZilla.
 
 $ java -cp ${BUGCLERK_HOME}/bugclerk-${VERSION}.jar org.jboss.jbossset.bugclerk.cli.BugClerkCLI 1199194  -u 'https://bugzilla.redhat.com/show_bug.cgi?id='
 
@@ -71,4 +66,3 @@ _Pretty much like a [Checkstyle]() or [PMD](http://github.com/pmd/pmd) configura
 * [PostMissingPR](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/PostMissingPR.drl)
 * [ReleaseVersionMismatch](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ReleaseVersionMismatch.drl)
 * [RemoveViolationIfCheckIsIgnored](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/RemoveViolationIfCheckIsIgnored.drl)
-* [TargetRelease](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/TargetRelease.drl)

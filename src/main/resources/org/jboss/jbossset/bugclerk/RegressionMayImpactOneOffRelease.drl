@@ -22,8 +22,8 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
 
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
@@ -34,9 +34,9 @@ rule "RegressionMayImpactOneOffRelease"
   salience 0
   dialect "mvel"
   when
-    $one_off : Candidate(bug.type == "Support Patch", bug.blocks.size() > 0 , $id : bug.id, filtered == false);
-    $original : Candidate( bug.dependsOn.contains($id), $comments : comments);
-    Comment( text.contains("regression")  || text.contains("Regression")   ) from $comments;
+    $original : Candidate(bug.type.toString == "SUPPORT_PATCH" , bug.dependsOn.size() > 0 , $id : bug.getURL, $comments : bug.comments, filtered == false);
+    $one_off : Candidate( bug.type.toString == "ONE_OFF", bug.blocks.contains($id) );
+    Comment( body.contains("regression")  || body.contains("Regression")   ) from $comments;
   then
-    insert( new Violation($one_off, drools.getRule().getName(), "Regression reported in a dependency, BZ" + $id + ", it may impact this one-off."  , Level.ERROR) );
+    insert( new Violation($original, drools.getRule().getName(), "Regression reported in a dependency, BZ" + $id + ", it may impact this one-off."  , Level.ERROR) );
 end

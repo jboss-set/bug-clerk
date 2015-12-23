@@ -7,5 +7,5 @@ import org.jboss.jbossset.bugclerk.Violation;
 
 public interface ReportEngine<T> {
 
-    T createReport(Map<Integer, List<Violation>> violationByBugId);
+    T createReport(Map<String, List<Violation>> violationByBugId);
 }

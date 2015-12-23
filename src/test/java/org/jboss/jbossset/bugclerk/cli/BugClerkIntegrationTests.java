@@ -22,9 +22,9 @@ public class BugClerkIntegrationTests {
     @BeforeClass
     public static void checkIfCredentialFileExists() {
         File credential = new File(BZ_SERVER_CREDENTIALS_FILE);
-        if ( credential == null || ! credential.exists() )
+        if (credential == null || !credential.exists())
             throw new IllegalStateException("No credential file:" + BZ_SERVER_CREDENTIALS_FILE);
-        if ( ! credential.canRead() )
+        if (!credential.canRead())
             throw new IllegalStateException("Credential file exists, but can't be read:" + BZ_SERVER_CREDENTIALS_FILE);
     }
 
@@ -41,10 +41,11 @@ public class BugClerkIntegrationTests {
 
     @Test
     public void runOnPotentialSETIssue() {
-        final String filterName = REDHAT_BZ_SERVER_URL + "/buglist.cgi?cmdtype=dorem&list_id=3394903&namedcmd=Potential JBoss SET EAP 6 issues&remaction=run&sharer_id=213224&ctype=csv";
+        final String filterName = REDHAT_BZ_SERVER_URL
+                + "/buglist.cgi?cmdtype=dorem&list_id=3394903&namedcmd=Potential JBoss SET EAP 6 issues&remaction=run&sharer_id=213224&ctype=csv";
         runBugClerkWithFiltername(reportFilename, filterName);
         File file = new File(reportFilename);
-        if ( ! file.exists() )
+        if (!file.exists())
             fail("No report generated.");
     }
 
@@ -58,26 +59,26 @@ public class BugClerkIntegrationTests {
 
     @Test
     public void runOnSeveralBZs() {
-        final String[] firstSetOfArgs = { "1187026","1187027","1185118","-u",URL_TO_REDHAT_BZ };
+        final String[] firstSetOfArgs = { "1187026", "1187027", "1185118", "-u", URL_TO_REDHAT_BZ };
         runBugClerk(firstSetOfArgs);
-        final String[] secondSetOfArgs = { "1039989", "1039989","1185118","-u",URL_TO_REDHAT_BZ };
+        final String[] secondSetOfArgs = { "1039989", "1039989", "1185118", "-u", URL_TO_REDHAT_BZ };
         runBugClerk(secondSetOfArgs);
     }
 
     @Test
     public void runOnBZ1203181() {
-        String[] args = { "1203181","-u",URL_TO_REDHAT_BZ };
+        String[] args = { "1203181", "-u", URL_TO_REDHAT_BZ };
         runBugClerk(args);
     }
 
     @Test
     public void runOnClosedBZ() {
-        String[] args = { "1199194", "-u",URL_TO_REDHAT_BZ};
+        String[] args = { "1199194", "-u", URL_TO_REDHAT_BZ };
         runBugClerk(args);
     }
 
     private static void runBugClerkWithFiltername(String reportFilename, String filtername) {
-        String[] args = { "-H",REDHAT_BZ_SERVER_INDEX,"-h",reportFilename,"-f",filtername};
+        String[] args = { "-H", REDHAT_BZ_SERVER_INDEX, "-h", reportFilename, "-f", filtername };
         try {
             BugClerkWithFilterCLI.main(args);
         } catch (Exception e) {

@@ -22,9 +22,11 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.Flag;
+import org.jboss.set.aphrodite.domain.FlagStatus;
 
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
@@ -33,8 +35,9 @@ rule "BZShouldHaveDevAckFlag"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate(bug.status == "POST" || bug.status == "MODIFIED", $status : bug.status, $flags : bug.flags , filtered == false);
-    not Flag(name == "devel_ack" ) from $flags;
+    $candidate : Candidate(bug.status == IssueStatus.POST || bug.status == IssueStatus.MODIFIED, $status : bug.status.toString(),
+            $flag : bug.stage.getStateMap.get(Flag.DEV).toString == "NO_SET",
+            /*bug.stage.getStateMap.get(Flag.DEV).toString.toUpperCase == "NOT_SET",*/ filtered == false);
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no dev flag set.", Level.ERROR));
+    insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no dev flag set:" + $flag, Level.ERROR));
 end

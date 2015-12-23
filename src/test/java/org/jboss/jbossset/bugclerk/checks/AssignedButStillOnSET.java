@@ -23,36 +23,46 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 
-import java.util.TreeSet;
+import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class AssignedButStillOnSET extends AbstractCheckRunner {
 
-    private final int bugId = 143794;
+    private final String bugId = "143794";
+    private final String JBOSS_SET = "jboss-set@redhat.com";
 
     @Test
     public void violationIfPostAndThreeWeeksAgo() {
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock(Status.ASSIGNED,"jboss-set@redhat.com"),new TreeSet<Comment>())) ), checkName, bugId );
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName,
+                CollectionUtils.asSetOf(new Candidate(prepareMock(IssueStatus.ASSIGNED, JBOSS_SET)))),
+                checkName, bugId);
     }
 
     @Test
     public void noViolationIfAssigned() {
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock(Status.ASSIGNED,"romain@redhat.com"),new TreeSet<Comment>())) ), checkName, bugId,0);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock(
+                IssueStatus.ASSIGNED, "romain@redhat.com")))), checkName, bugId, 0);
     }
 
-    protected Bug prepareMock(Status status, String assignedTo) {
-        final Bug mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getStatus()).thenReturn(status.toString());
-        Mockito.when(mock.getAssignedTo()).thenReturn(assignedTo);
+    @Test
+    public void noViolationIfNotAssigned() {
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName,
+                CollectionUtils.asSetOf(new Candidate(prepareMock(IssueStatus.NEW, JBOSS_SET)))),
+                checkName, bugId, 0);
+    }
+
+    protected Issue prepareMock(IssueStatus status, String assignedTo) {
+        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        Mockito.when(mock.getStatus()).thenReturn(status);
+        Mockito.when(mock.getAssignee()).thenReturn(Optional.of(assignedTo));
         return mock;
     }
 

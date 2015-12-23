@@ -24,8 +24,11 @@ package org.jboss.jbossset.bugclerk;
 
 import java.util.Date;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueType;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.Flag;
+import org.jboss.set.aphrodite.domain.FlagStatus;
 
 import org.jboss.jbossset.bugclerk.Violation;
 
@@ -33,8 +36,7 @@ rule "PostMissingPmAck"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate( bug.status == "POST", $flags : bug.flags, filtered == false, bug.lastModified before[15d] new Date());
-    not Flag(name == "pm_ack" ) from $flags;
+    $candidate : Candidate( bug.status.toString == "POST", bug.stage.getStateMap().get(Flag.PM).toString == "NO_SET", bug.lastUpdated.get before[15d] new Date(), filtered == false);
   then
     insert( new Violation($candidate, drools.getRule().getName(), "BZ status is POST over two weeks, but PM ack is missing") );
 end

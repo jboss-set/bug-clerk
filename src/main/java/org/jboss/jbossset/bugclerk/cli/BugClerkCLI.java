@@ -22,6 +22,8 @@
 package org.jboss.jbossset.bugclerk.cli;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeParameters;
 
 public class BugClerkCLI extends AbstractCommandLineInterface {
 
@@ -29,12 +31,18 @@ public class BugClerkCLI extends AbstractCommandLineInterface {
 
     public static void main(String[] args) {
         try {
-            new BugClerk().run(BugClerkArguments.validateArgs(extractParameters(new BugClerkArguments(),args)));
+            BugClerkArguments arguments = extractParameters(new BugClerkArguments(), args);
+            new BugClerk(new AphroditeClient(buildAphroditeParameters(arguments))).runAndReturnsViolations(BugClerkArguments
+                    .validateArgs(arguments));
         } catch (Throwable t) {
             System.out.println(t.getMessage());
             if (t.getCause() != null)
                 System.out.println(t.getCause().getMessage());
             System.exit(PROGRAM_THROWN_EXCEPTION);
         }
+    }
+
+    protected static AphroditeParameters buildAphroditeParameters(BugClerkArguments arguments) {
+        return new AphroditeParameters(arguments.getUrlPrefix(), arguments.getUrlPrefix(), arguments.getPassword());
     }
 }

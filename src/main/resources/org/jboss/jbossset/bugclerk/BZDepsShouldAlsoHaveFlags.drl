@@ -22,9 +22,9 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.jboss.pull.shared.connectors.common.Flag;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.IssueStatus;
 
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Level;
@@ -33,14 +33,15 @@ rule "BZDepsShouldAlsoHaveFlags"
   salience 0
   dialect "mvel"
   when
-    $payload : Candidate($id : bug.id , $depends : bug.dependsOn, $flags : bug.flags , filtered == false);
-    Flag(name == "devel_ack", status == Flag.Status.POSITIVE ) from $flags;
-    Flag(name == "qa_ack" , status == Flag.Status.POSITIVE ) from $flags;
-    Flag(name == "pm_ack", status == Flag.Status.POSITIVE ) from $flags;
-    $dependency : Candidate($depends.contains(bug.id), $flags_dep : bug.flags , filtered == false);
-    not Flag(name == "devel_ack", status == Flag.Status.POSITIVE ) from $flags_dep or
-    not Flag(name == "qa_ack", status == Flag.Status.POSITIVE ) from $flags_dep or
-    not Flag(name == "pm_ack", status == Flag.Status.POSITIVE ) from $flags_dep;
+    $payload : Candidate($id : bug.getURL() , $dependsOn : bug.dependsOn,
+                            bug.stage.getStatus(Flag.DEV).toString == "ACCEPTED" ,
+                            bug.stage.getStatus(Flag.PM).toString == "ACCEPTED",
+                            bug.stage.getStatus(Flag.QE).toString == "ACCEPTED",
+                            $trackerId: bug.getTrackerId.get, filtered == false);
+    $dependency : Candidate($dependsOn.contains(bug.getURL),
+                            bug.stage.getStatus(Flag.DEV).toString != "ACCEPTED" ||
+                            bug.stage.getStatus(Flag.PM).toString != "ACCEPTED" ||
+                            bug.stage.getStatus(Flag.QE).toString != "ACCEPTED", filtered == false);
   then
-    insertLogical(new Violation($dependency, drools.getRule().getName(), "is referenced by BZ" + $id + ", which has all qa+,pm+ and dev flag+ - but not this BZ.", Level.ERROR));
+    insertLogical(new Violation($payload, drools.getRule().getName(), "is referenced by BZ" + $trackerId + ", which has all qa+,pm+ and dev flag+ - but not this BZ.", Level.ERROR));
 end

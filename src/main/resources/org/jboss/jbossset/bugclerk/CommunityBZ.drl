@@ -22,17 +22,16 @@
 
 package org.jboss.jbossset.bugclerk;
 
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+
 import org.jboss.jbossset.bugclerk.Level;
-
-
 import org.jboss.jbossset.bugclerk.Violation;
 
 rule "CommunityBZ"
   dialect "mvel"
   when
-    $candidate : Candidate($creator : bug.creator, bug.creator not contains "@redhat.com", filtered == false);
+    $candidate : Candidate($creator : bug.reporter.get, bug.reporter.get not contains "@redhat.com", filtered == false);
   then
     insert( new Violation($candidate, drools.getRule().getName(), "BZ was created by '" + $creator + "' which is a non Red Hat email address. Double check if it has been processed/acknowledged properly.", Level.WARNING) );
 end

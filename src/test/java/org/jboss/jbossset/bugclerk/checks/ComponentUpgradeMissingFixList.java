@@ -23,29 +23,31 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 
-import java.util.HashSet;
-import java.util.TreeSet;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class ComponentUpgradeMissingFixList extends AbstractCheckRunner {
 
-    private final String TYPE = "Component Upgrade";
+    private final IssueType TYPE = IssueType.UPGRADE;
 
     @Test
     public void violationIfNoDependsOnAndComponentUpgradeType() {
-        final int bugId = 143794;
-        final Bug mock = MockUtils.mockBug(bugId, "summary");
+        final String bugId = "143794";
+        final Issue mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(TYPE);
-        Mockito.when(mock.getDependsOn()).thenReturn(new HashSet<Integer>());
+        Mockito.when(mock.getDependsOn()).thenReturn(new ArrayList<URL>());
 
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))),checkName,bugId);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
+                checkName, bugId);
     }
 }

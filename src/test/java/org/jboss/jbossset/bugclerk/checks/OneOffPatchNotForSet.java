@@ -23,41 +23,44 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
-import static org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils.asSetOf;
 import static org.junit.Assert.assertTrue;
-
-import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
-import org.junit.Before;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueType;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class OneOffPatchNotForSet extends AbstractCheckRunner {
 
-    private Bug mock;
+    private Issue mock;
+    private static final String bugId = "143794";
 
-    @Before
-    public void testSpecificStubbingForBug() {
-        mock = MockUtils.mockBug(143794, "summary");
-        Mockito.when(mock.getAssignedTo()).thenReturn("jboss-set@redhat.com");
-        Mockito.when(mock.getType()).thenReturn("Support Patch");
-        Mockito.when(mock.getTargetRelease()).thenReturn(asSetOf("One-off"));
+    @Test
+    public void violationIfOneOff() {
+        mock = MockUtils.mockBug(bugId, "summary");
+        Mockito.when(mock.getType()).thenReturn(IssueType.ONE_OFF);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, "comment")), checkName,
+                bugId);
     }
 
     @Test
-    public void simpleTestCase() {
-        final int bugId = 143794;
-        assertResultsIsAsExpected( engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, "comment")), checkName, bugId );
+    public void violationIfSupportPatch() {
+        mock = MockUtils.mockBug(bugId, "summary");
+        Mockito.when(mock.getType()).thenReturn(IssueType.SUPPORT_PATCH);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, "comment")), checkName,
+                bugId);
     }
 
     @Test
     public void falsePositive() {
-        assertTrue(engine.runCheckOnBugs(checkName,CollectionUtils.asSetOf(new Candidate(MockUtils.mockBug(123, "summary"),new TreeSet<Comment>()))).isEmpty() );
+        mock = MockUtils.mockBug(bugId, "summary");
+        Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
+
+        assertTrue(engine.runCheckOnBugs(checkName,
+                CollectionUtils.asSetOf(new Candidate(MockUtils.mockBug("123", "summary")))).isEmpty());
     }
 }

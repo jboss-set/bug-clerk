@@ -1,4 +1,4 @@
-package org.jboss.jbossset.bugclerk.reports;
+package org.jboss.jbossset.bugclerk.reports.xml;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
@@ -12,6 +12,7 @@ public class ViolationDescription {
     public String getCheckname() {
         return checkname;
     }
+
     public void setCheckname(String checkname) {
         this.checkname = checkname;
     }
@@ -20,6 +21,7 @@ public class ViolationDescription {
     public String getMessage() {
         return message;
     }
+
     public void setMessage(String message) {
         this.message = message;
     }
@@ -28,6 +30,7 @@ public class ViolationDescription {
     public String getSeverity() {
         return severity;
     }
+
     public void setSeverity(String severity) {
         this.severity = severity;
     }

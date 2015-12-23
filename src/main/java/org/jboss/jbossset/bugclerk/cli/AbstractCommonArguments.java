@@ -16,6 +16,12 @@ public abstract class AbstractCommonArguments {
     @Parameter(names = { "-h", "--html-report" }, description = "Create an html report, on top of the XML one", required = false)
     private String htmlReportFilename;
 
+    @Parameter(names = { "-u", "--username" }, description = "username for bugzilla's connection - overload data from property file", required = false)
+    private String username;
+
+    @Parameter(names = { "-p", "--password" }, description = "password for bugzilla's connection - overload data from property file", required = false)
+    private String password;
+
     public boolean isDebug() {
         return debug;
     }
@@ -49,11 +55,27 @@ public abstract class AbstractCommonArguments {
     }
 
     public boolean isXMLReport() {
-        return ! (this.xmlReportFilename == null || "".equals(this.xmlReportFilename));
+        return !(this.xmlReportFilename == null || "".equals(this.xmlReportFilename));
     }
 
     public boolean isHtmlReport() {
-        return ! (this.htmlReportFilename == null || "".equals(this.htmlReportFilename));
+        return !(this.htmlReportFilename == null || "".equals(this.htmlReportFilename));
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -61,6 +83,5 @@ public abstract class AbstractCommonArguments {
         return "AbstractCommonArguments [help=" + help + ", debug=" + debug + ", xmlReportFilename=" + xmlReportFilename
                 + ", htmlReportFilename=" + htmlReportFilename + "]";
     }
-
 
 }

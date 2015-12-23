@@ -24,85 +24,88 @@ package org.jboss.jbossset.bugclerk.checks;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.pull.shared.connectors.bugzilla.Bug;
-import org.jboss.pull.shared.connectors.bugzilla.Bug.Status;
-import org.jboss.pull.shared.connectors.bugzilla.Comment;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.IssueType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class FilterIssueEntries extends AbstractCheckRunner {
 
-    private Bug mock;
-    private final int bugId = 143794;
+    private Issue mock;
+    private final String bugId = "143794";
 
     @Before
     public void prepareBugMock() {
         mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getType()).thenReturn("Documentation");
+        Mockito.when(mock.getType()).thenReturn(IssueType.UNDEFINED);
     }
 
     @Test
     public void ignoreDocFeatureBZ() {
-        Mockito.when(mock.getSummary()).thenReturn("[Doc Feature] Something doc changes to implement.");
+        Mockito.when(mock.getSummary()).thenReturn(Optional.of("[Doc Feature] Something doc changes to implement."));
         assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreDocFeatureBZ",
-                CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))));
+                CollectionUtils.asSetOf(new Candidate(mock))));
 
     }
 
     @Test
     public void ignoreDocumentationTypeBZ() {
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.UNDEFINED);
         assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreDocumentationTypeBZ",
-                CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))));
+                CollectionUtils.asSetOf(new Candidate(mock))));
 
     }
 
     @Test
     public void ignoreClosedBZ() {
-        Mockito.when(mock.getStatus()).thenReturn(Status.CLOSED.toString());
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.CLOSED);
         assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreClosedBZ",
-                CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))));
+                CollectionUtils.asSetOf(new Candidate(mock))));
 
     }
 
-    @Test
-    public void ignoreDuplicateBZ() {
-        Mockito.when(mock.getResolution()).thenReturn("DUPLICATE");
-        assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreDuplicateBZ",
-                CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))));
-    }
+    /*
+     * FIXME: needs fix into Aphrodite or delete checks
+     * 
+     * @Test public void ignoreDuplicateBZ() { Mockito.when(mock.getStage().).thenReturn("DUPLICATE");
+     * assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreDuplicateBZ", CollectionUtils.asSetOf(new Candidate(mock, new
+     * TreeSet<Comment>())))); }
+     */
 
     @Test
-    public void ignoreRpmsBZ() {
-        Mockito.when(mock.getSummary()).thenReturn("[RPMs] Something doc changes to implement.");
-
+    public void ignoreRpmsBZ() throws MalformedURLException {
+        Mockito.when(mock.getSummary()).thenReturn(Optional.of("[RPMs] Something doc changes to implement."));
         assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreRpmsBZ",
-                CollectionUtils.asSetOf(new Candidate(mock, new TreeSet<Comment>()))));
+                CollectionUtils.asSetOf(new Candidate(mock))));
     }
 
     @Test
     public void setIgnoreFlags() {
         final String NO_PR = "PostMissingPR";
         final String COMMUNITY_BZ = "CommunityBZ";
-        SortedSet<Comment> comments = new TreeSet<Comment>();
-        comments.add(MockUtils.mockComment(1, "BugClerk#" + NO_PR, mock.getId()));
-        comments.add(MockUtils.mockComment(2, "BugClerk#" + COMMUNITY_BZ, mock.getId()));
-
-        Collection<Candidate> candidates = engine.filterBugs("SetIgnoreFlags",
-                CollectionUtils.asSetOf(new Candidate(mock, comments)));
+        List<Comment> comments = new ArrayList<Comment>();
+        comments.add(MockUtils.mockComment("1", "BugClerk#" + NO_PR, mock.getTrackerId().get()));
+        comments.add(MockUtils.mockComment("2", "BugClerk#" + COMMUNITY_BZ, mock.getTrackerId().get()));
+        Mockito.when(mock.getComments()).thenReturn(comments);
+        Collection<Candidate> candidates = engine.filterBugs("SetIgnoreFlags", CollectionUtils.asSetOf(new Candidate(mock)));
         assertThat(candidates.size(), is(1));
         Set<String> metas = candidates.iterator().next().getChecksToBeIgnored();
         assertThat(metas.size(), is(2));
-        assertThat(metas.contains(NO_PR), is( true));
+        assertThat(metas.contains(NO_PR), is(true));
         assertThat(metas.contains(COMMUNITY_BZ), is(true));
     }
 
@@ -112,6 +115,6 @@ public class FilterIssueEntries extends AbstractCheckRunner {
     }
 
     private static void assertThatFilterWorksAsExpected(Collection<Candidate> candidates) {
-        assertThatFilterWorksAsExpected(candidates,true);
+        assertThatFilterWorksAsExpected(candidates, true);
     }
 }

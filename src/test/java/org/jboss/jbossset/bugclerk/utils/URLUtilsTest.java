@@ -15,7 +15,7 @@ public class URLUtilsTest {
         try {
             URLUtils.createURLFromString("invalidURl");
         } catch (IllegalArgumentException e) {
-            return; //pass
+            return; // pass
         }
         fail("should have thrown an instance of " + IllegalArgumentException.class);
     }
