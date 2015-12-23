@@ -37,20 +37,19 @@ import org.jboss.set.aphrodite.domain.Stage;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-
 public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
 
     @Test
     public void bzOnModifiedAndHasDevFlag() {
         final String dependencyId = "14380";
-        
+
         Issue dependency = MockUtils.mockBug(dependencyId, "dependency payload");
         Mockito.when(dependency.getStage()).thenReturn(buildStageMapForDeps());
-        
+
         Issue payload = MockUtils.mockBug("143794", "payload bug");
         payload.getDependsOn().add(dependency.getURL());
         Mockito.when(payload.getStage()).thenReturn(buildStageMapForPayload());
-        
+
         Collection<Candidate> mocks = buildCollectionOfCandidates(payload, dependency);
         Mockito.when(payload.getDependsOn()).thenReturn(MockUtils.idsAsURLs(dependencyId, "158690"));
         assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(1));
@@ -58,15 +57,15 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
 
     private static Stage buildStageMapForDeps() {
         Stage stage = new Stage();
-        for ( Flag flag : Flag.values() )
-            stage.getStateMap().put(flag,FlagStatus.NO_SET);
+        for (Flag flag : Flag.values())
+            stage.getStateMap().put(flag, FlagStatus.NO_SET);
         return stage;
     }
 
     private static Stage buildStageMapForPayload() {
         Stage stage = new Stage();
-        for ( Flag flag : Flag.values() )
-            stage.getStateMap().put(flag,FlagStatus.ACCEPTED);
+        for (Flag flag : Flag.values())
+            stage.getStateMap().put(flag, FlagStatus.ACCEPTED);
         return stage;
     }
 

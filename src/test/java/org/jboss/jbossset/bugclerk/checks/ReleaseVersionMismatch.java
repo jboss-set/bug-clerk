@@ -60,8 +60,7 @@ public class ReleaseVersionMismatch extends AbstractCheckRunner {
         Mockito.when(mock.getDescription()).thenReturn(Optional.of(summary));
         // Mockito.when(mock.getFlags()).thenReturn(flags);
         // flags.add(new Flag("jboss-eap-6.3.0", "setter?", Flag.Status.POSITIVE));
-        assertThat(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock)))
-                .size(), is(0));
+        assertThat(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))).size(), is(0));
     }
 
 }

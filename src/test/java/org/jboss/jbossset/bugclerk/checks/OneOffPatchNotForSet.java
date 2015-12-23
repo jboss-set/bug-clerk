@@ -60,7 +60,8 @@ public class OneOffPatchNotForSet extends AbstractCheckRunner {
         mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
 
-        assertTrue(engine.runCheckOnBugs(checkName,
-                CollectionUtils.asSetOf(new Candidate(MockUtils.mockBug("123", "summary")))).isEmpty());
+        assertTrue(engine
+                .runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(MockUtils.mockBug("123", "summary"))))
+                .isEmpty());
     }
 }

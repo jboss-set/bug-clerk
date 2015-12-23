@@ -41,22 +41,24 @@ public class AssignedButStillOnSET extends AbstractCheckRunner {
 
     @Test
     public void violationIfPostAndThreeWeeksAgo() {
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName,
-                CollectionUtils.asSetOf(new Candidate(prepareMock(IssueStatus.ASSIGNED, JBOSS_SET)))),
-                checkName, bugId);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName,
+                        CollectionUtils.asSetOf(new Candidate(prepareMock(IssueStatus.ASSIGNED, JBOSS_SET)))), checkName, bugId);
     }
 
     @Test
     public void noViolationIfAssigned() {
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock(
-                IssueStatus.ASSIGNED, "romain@redhat.com")))), checkName, bugId, 0);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName,
+                        CollectionUtils.asSetOf(new Candidate(prepareMock(IssueStatus.ASSIGNED, "romain@redhat.com")))),
+                checkName, bugId, 0);
     }
 
     @Test
     public void noViolationIfNotAssigned() {
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName,
-                CollectionUtils.asSetOf(new Candidate(prepareMock(IssueStatus.NEW, JBOSS_SET)))),
-                checkName, bugId, 0);
+        assertResultsIsAsExpected(
+                engine.runCheckOnBugs(checkName,
+                        CollectionUtils.asSetOf(new Candidate(prepareMock(IssueStatus.NEW, JBOSS_SET)))), checkName, bugId, 0);
     }
 
     protected Issue prepareMock(IssueStatus status, String assignedTo) {

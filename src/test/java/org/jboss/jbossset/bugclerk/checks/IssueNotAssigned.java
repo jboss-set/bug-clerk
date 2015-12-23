@@ -51,8 +51,8 @@ public class IssueNotAssigned extends AbstractCheckRunner {
     @Test
     public void violationBZOlderThanAMonth() {
         assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName + "_CreationDate",
-                        CollectionUtils.asSetOf(new Candidate(mock))), checkName, bugId);
+                engine.runCheckOnBugs(checkName + "_CreationDate", CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+                bugId);
     }
 
     @Test
@@ -75,8 +75,7 @@ public class IssueNotAssigned extends AbstractCheckRunner {
     public void bzLessThanAMonthNoViolation() {
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.NEW);
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(new Date()));
-        assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
-                checkName, bugId, 0);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+                bugId, 0);
     }
 }

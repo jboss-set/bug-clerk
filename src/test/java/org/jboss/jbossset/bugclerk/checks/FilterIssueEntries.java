@@ -57,8 +57,7 @@ public class FilterIssueEntries extends AbstractCheckRunner {
     @Test
     public void ignoreDocFeatureBZ() {
         Mockito.when(mock.getSummary()).thenReturn(Optional.of("[Doc Feature] Something doc changes to implement."));
-        assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreDocFeatureBZ",
-                CollectionUtils.asSetOf(new Candidate(mock))));
+        assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreDocFeatureBZ", CollectionUtils.asSetOf(new Candidate(mock))));
 
     }
 
@@ -73,8 +72,7 @@ public class FilterIssueEntries extends AbstractCheckRunner {
     @Test
     public void ignoreClosedBZ() {
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.CLOSED);
-        assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreClosedBZ",
-                CollectionUtils.asSetOf(new Candidate(mock))));
+        assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreClosedBZ", CollectionUtils.asSetOf(new Candidate(mock))));
 
     }
 
@@ -89,8 +87,7 @@ public class FilterIssueEntries extends AbstractCheckRunner {
     @Test
     public void ignoreRpmsBZ() throws MalformedURLException {
         Mockito.when(mock.getSummary()).thenReturn(Optional.of("[RPMs] Something doc changes to implement."));
-        assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreRpmsBZ",
-                CollectionUtils.asSetOf(new Candidate(mock))));
+        assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreRpmsBZ", CollectionUtils.asSetOf(new Candidate(mock))));
     }
 
     @Test

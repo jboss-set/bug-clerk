@@ -48,9 +48,8 @@ public class PostMissingPR extends AbstractCheckRunner {
         final Issue mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
-        assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
-                checkName, bugId);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+                bugId);
     }
 
     @Test

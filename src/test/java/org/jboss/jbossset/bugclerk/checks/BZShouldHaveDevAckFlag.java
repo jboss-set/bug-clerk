@@ -46,9 +46,8 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
 
     @Test
     public void bzOnPostButNoDevFlag() {
-        assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
-                checkName, mock.getTrackerId().get());
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+                mock.getTrackerId().get());
     }
 
     @Test

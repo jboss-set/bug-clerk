@@ -46,8 +46,7 @@ public class ComponentUpgradeMissingFixList extends AbstractCheckRunner {
         Mockito.when(mock.getType()).thenReturn(TYPE);
         Mockito.when(mock.getDependsOn()).thenReturn(new ArrayList<URL>());
 
-        assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))),
-                checkName, bugId);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+                bugId);
     }
 }
