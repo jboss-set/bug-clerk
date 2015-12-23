@@ -18,8 +18,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
     <checkstyle.plugin.version>2.11</checkstyle.plugin.version>
     <mockito.version>1.9.5</mockito.version>
     <org.jboss.jbossset.pull-shared.version>0.5.3</org.jboss.jbossset.pull-shared.version>
