@@ -47,4 +47,16 @@ public final class AphroditeClient {
         for (Entry<Issue, Comment> entry : comments.entrySet())
             aphrodite.postCommentOnIssue(entry.getKey(), entry.getValue());
     }
+
+    public List<Issue> loadIssues(List<String> ids) {
+        // FIXME: add bulk method in Aprhodite
+        List<Issue> issues = new ArrayList<Issue>(ids.size());
+        for ( String id : ids )
+            try {
+                aphrodite.getIssue(URLUtils.createURLFromString(id));
+            } catch (NotFoundException e) {
+                throw new IllegalArgumentException(e);
+            }
+        return issues;
+    }
 }

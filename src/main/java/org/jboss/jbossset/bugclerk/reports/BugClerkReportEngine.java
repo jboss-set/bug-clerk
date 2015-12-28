@@ -15,19 +15,12 @@ import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.reports.xml.BugClerkReport;
 import org.jboss.jbossset.bugclerk.reports.xml.BugReport;
 import org.jboss.jbossset.bugclerk.reports.xml.ViolationDescription;
-import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.domain.Flag;
 import org.jboss.set.aphrodite.domain.Issue;
 
 public final class BugClerkReportEngine implements ReportEngine<BugClerkReport> {
 
-    private final String urlPrefix;
-
     public static final String XSLT_FILENAME = "/xslt/stylesheet.xsl";
-
-    public BugClerkReportEngine(String urlPrefix) {
-        this.urlPrefix = urlPrefix;
-    }
 
     @Override
     public BugClerkReport createReport(Map<Issue, List<Violation>> violationByBugId) {
@@ -40,7 +33,7 @@ public final class BugClerkReportEngine implements ReportEngine<BugClerkReport> 
             bugReport.setBugId(bug.getTrackerId().get());
             bugReport.setStatus(bug.getStatus().toString());
             bugReport.setAckFlags(getAckFlags(candidate));
-            bugReport.setLink(URLUtils.createURLFromString(urlPrefix + entry.getKey()));
+            bugReport.setLink(entry.getKey().getURL());
             List<ViolationDescription> violations = new ArrayList<ViolationDescription>(entry.getValue().size());
             for (Violation violation : entry.getValue()) {
                 ViolationDescription desc = new ViolationDescription();

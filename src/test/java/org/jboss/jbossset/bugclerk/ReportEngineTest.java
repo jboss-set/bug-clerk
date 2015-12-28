@@ -11,11 +11,11 @@ public class ReportEngineTest {
 
     @Test
     public void test() {
-        final String dummyUrl = "http://dummy.url/";
+        final String dummyUrl = "https://bugzilla.redhat.com/show_bug.cgi?id=168875";
         final String bugId = "168875";
         final String checkname = "checkname";
 
-        ReportEngine<String> engine = new StringReportEngine(dummyUrl);
+        ReportEngine<String> engine = new StringReportEngine();
         String report = engine.createReport(CollectionUtils.indexedViolationsByBugId(MockUtils.mockViolationsListWithOneItem(
                 bugId, checkname)));
         assertTrue(report.contains(dummyUrl));

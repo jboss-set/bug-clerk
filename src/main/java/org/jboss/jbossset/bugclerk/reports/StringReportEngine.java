@@ -33,12 +33,6 @@ import org.jboss.set.aphrodite.domain.Issue;
 
 public class StringReportEngine implements ReportEngine<String> {
 
-    private final String urlPrefix;
-
-    public StringReportEngine(String urlPrefix) {
-        this.urlPrefix = urlPrefix;
-    }
-
     @Override
     public String createReport(Map<Issue, List<Violation>> violationByBugId) {
         String reportString = "";
@@ -53,8 +47,8 @@ public class StringReportEngine implements ReportEngine<String> {
     }
 
     private StringBuffer format(List<Violation> violations, StringBuffer report) {
-        String bugId = violations.get(0).getCandidate().getBug().getTrackerId().get();
-        report.append("BZ").append(bugId).append(" - ").append(this.urlPrefix + bugId).append(EOL)
+        final String bugId = violations.get(0).getCandidate().getBug().getURL().toString();
+        report.append("BZ: ").append(bugId).append(EOL)
                 .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
         int violationId = 1;
         for (Violation violation : violations)

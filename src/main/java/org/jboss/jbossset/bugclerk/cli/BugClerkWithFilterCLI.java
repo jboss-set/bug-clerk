@@ -68,10 +68,9 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
 
     private static BugClerkArguments buildArgumentsFrom(BugClerkInvocatioWithFilterArguments arguments) {
         BugClerkArguments bcArgs = new BugClerkArguments();
-        bcArgs.setReportToBz(arguments.isCommentOnBZEnabled());
+        bcArgs.setReportToBz(arguments.isReportToBz());
         bcArgs.setXmlReportFilename(arguments.getXmlReportFilename());
         bcArgs.setHtmlReportFilename(arguments.getHtmlReportFilename());
-        bcArgs.setUrlPrefix(URLUtils.buildBzUrlPrefix(URLUtils.createURLFromString(arguments.getFilterURL())));
         return bcArgs;
     }
 }

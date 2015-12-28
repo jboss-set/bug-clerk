@@ -32,14 +32,8 @@ import com.beust.jcommander.Parameter;
 
 public class BugClerkArguments extends AbstractCommonArguments implements IVariableArity {
 
-    @Parameter(names = { "-u", "--url-prefix" }, description = "URL prefix (before the issue ID)", required = true)
-    private String urlPrefix;
-
-    @Parameter(description = "Issue IDs", variableArity = true)
+    @Parameter(description = "Issue IDs", variableArity = true, required = true)
     private final List<String> ids = new ArrayList<String>();
-
-    @Parameter(names = { "-c", "--comment-on-bz" }, description = "add a comment to a BZ featuring violations, default is false", required = false)
-    private boolean reportToBz = false;
 
     private List<Issue> issues;
 
@@ -52,28 +46,11 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
     }
 
     public static BugClerkArguments validateArgs(BugClerkArguments arguments) {
-        // TODO !
         return arguments;
-    }
-
-    public String getUrlPrefix() {
-        return urlPrefix;
-    }
-
-    public void setUrlPrefix(String urlPrefix) {
-        this.urlPrefix = urlPrefix;
     }
 
     public List<String> getIds() {
         return ids;
-    }
-
-    public boolean isReportToBz() {
-        return reportToBz;
-    }
-
-    public void setReportToBz(boolean reportToBz) {
-        this.reportToBz = reportToBz;
     }
 
     @Override
@@ -89,6 +66,6 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
 
     @Override
     public String toString() {
-        return "BugClerkArguments [urlPrefix=" + urlPrefix + ", ids=" + ids + ", reportToBz=" + reportToBz + super.toString();
+        return "BugClerkArguments [ids=" + ids + "," +  super.toString() + "]";
     }
 }

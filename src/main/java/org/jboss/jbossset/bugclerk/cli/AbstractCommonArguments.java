@@ -16,12 +16,18 @@ public abstract class AbstractCommonArguments {
     @Parameter(names = { "-h", "--html-report" }, description = "Create an html report, on top of the XML one", required = false)
     private String htmlReportFilename;
 
-    @Parameter(names = { "-u", "--username" }, description = "username for bugzilla's connection - overload data from property file", required = false)
+    @Parameter(names = { "-u", "--username" }, description = "username for bugzilla's connection - overload data from property file", required = true)
     private String username;
 
-    @Parameter(names = { "-p", "--password" }, description = "password for bugzilla's connection - overload data from property file", required = false)
+    @Parameter(names = { "-p", "--password" }, description = "password for bugzilla's connection - overload data from property file", required = true)
     private String password;
+    
+    @Parameter(names = { "-c", "--comment-on-bz" }, description = "add a comment to a BZ featuring violations, default is false", required = false)
+    private boolean reportToBz = false;
 
+    @Parameter(names = { "-F", "--fail-on-violation" }, description = "exit program with status equals to number of violations", required = false)
+    private boolean failOnViolation = false;
+        
     public boolean isDebug() {
         return debug;
     }
@@ -78,10 +84,25 @@ public abstract class AbstractCommonArguments {
         this.password = password;
     }
 
+    public boolean isReportToBz() {
+        return reportToBz;
+    }
+
+    public void setReportToBz(boolean reportToBz) {
+        this.reportToBz = reportToBz;
+    }
+
+    public boolean isFailOnViolation() {
+        return failOnViolation;
+    }
+
+    public void setFailOnViolation(boolean isFailOnViolation) {
+        this.failOnViolation = isFailOnViolation;
+    }
+    
     @Override
     public String toString() {
         return "AbstractCommonArguments [help=" + help + ", debug=" + debug + ", xmlReportFilename=" + xmlReportFilename
-                + ", htmlReportFilename=" + htmlReportFilename + "]";
+                + ", htmlReportFilename=" + htmlReportFilename + ", reportToBZ=" + reportToBz + ", failOnViolation=" + failOnViolation + "]";
     }
-
 }

@@ -62,13 +62,13 @@ public class BugClerk {
         return globalsMap;
     }
 
-    protected String buildReport(Map<Issue, List<Violation>> violationByBugId, String urlPrefix) {
-        ReportEngine<String> reportEngine = new StringReportEngine(urlPrefix);
+    protected String buildReport(Map<Issue, List<Violation>> violationByBugId) {
+        ReportEngine<String> reportEngine = new StringReportEngine();
         return reportEngine.createReport(violationByBugId);
     }
 
-    protected BugClerkReport buildBugClerkReport(Map<Issue, List<Violation>> violationByBugId, String urlPrefix) {
-        ReportEngine<BugClerkReport> reportEngine = new BugClerkReportEngine(urlPrefix);
+    protected BugClerkReport buildBugClerkReport(Map<Issue, List<Violation>> violationByBugId) {
+        ReportEngine<BugClerkReport> reportEngine = new BugClerkReportEngine();
         return reportEngine.createReport(violationByBugId);
     }
 
@@ -82,7 +82,7 @@ public class BugClerk {
         Collection<Violation> violations = processEntriesAndReportViolations(candidates);
         Map<Issue, List<Violation>> violationByBugId = indexedViolationsByBugId(violations);
         LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
-        String report = buildReport(violationByBugId, arguments.getUrlPrefix());
+        String report = buildReport(violationByBugId);
 
         LoggingUtils.getLogger().fine("Report produced, running post analysis actions");
         postAnalysisActions(arguments, violationByBugId, report);
@@ -116,7 +116,7 @@ public class BugClerk {
 
     protected void reportsGeneration(BugClerkArguments arguments, Map<Issue, List<Violation>> violationByBugId) {
         if (arguments.isXMLReport() || arguments.isHtmlReport()) {
-            BugClerkReport xmlReport = buildBugClerkReport(violationByBugId, arguments.getUrlPrefix());
+            BugClerkReport xmlReport = buildBugClerkReport(violationByBugId);
             if (arguments.isXMLReport())
                 BugClerkReportEngine.printXmlReport(xmlReport,
                         StreamUtils.getOutputStreamForFile(arguments.getXmlReportFilename()));
