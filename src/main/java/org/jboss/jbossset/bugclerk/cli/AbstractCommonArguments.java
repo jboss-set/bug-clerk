@@ -21,13 +21,13 @@ public abstract class AbstractCommonArguments {
 
     @Parameter(names = { "-p", "--password" }, description = "password for bugzilla's connection - overload data from property file", required = true)
     private String password;
-    
+
     @Parameter(names = { "-c", "--comment-on-bz" }, description = "add a comment to a BZ featuring violations, default is false", required = false)
     private boolean reportToBz = false;
 
     @Parameter(names = { "-F", "--fail-on-violation" }, description = "exit program with status equals to number of violations", required = false)
     private boolean failOnViolation = false;
-        
+
     public boolean isDebug() {
         return debug;
     }
@@ -99,7 +99,7 @@ public abstract class AbstractCommonArguments {
     public void setFailOnViolation(boolean isFailOnViolation) {
         this.failOnViolation = isFailOnViolation;
     }
-    
+
     @Override
     public String toString() {
         return "AbstractCommonArguments [help=" + help + ", debug=" + debug + ", xmlReportFilename=" + xmlReportFilename
