@@ -31,7 +31,7 @@ import org.jboss.jbossset.bugclerk.Violation;
 rule "CommunityBZ"
   dialect "mvel"
   when
-    $candidate : Candidate($creator : bug.reporter.get, bug.reporter.get not contains "@redhat.com", filtered == false);
+    $candidate : Candidate($creator : bug.reporter.get,  bug.reporter.get.contains("@redhat.com") == false, filtered == false);
   then
     insert( new Violation($candidate, drools.getRule().getName(), "BZ was created by '" + $creator + "' which is a non Red Hat email address. Double check if it has been processed/acknowledged properly.", Level.WARNING) );
 end
