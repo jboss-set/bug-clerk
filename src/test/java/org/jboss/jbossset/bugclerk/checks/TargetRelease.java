@@ -24,34 +24,39 @@ package org.jboss.jbossset.bugclerk.checks;
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
+import org.jboss.jbossset.bugclerk.Candidate;
+import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueType;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class TargetRelease extends AbstractCheckRunner {
 
+    private Map<String,FlagStatus> stream;
+    
     @Test
-    @Ignore
-    // TODO
     public void violationIfNoDependsOnAndComponentUpgradeType() {
         final String payload = "Well; it does seems like one forgot the PR here.";
         final String bugId = "143794";
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(bugId, payload)), checkName,
+        Collection<Candidate> candidates = buildTestSubjectWithComment(bugId, payload);
+        Issue mock = candidates.iterator().next().getBug();
+        Mockito.when(mock.getType()).thenReturn(IssueType.UPGRADE);
+        stream = new HashMap<String, FlagStatus>();
+        stream.put("jboss‑eap‑6.4.z", FlagStatus.ACCEPTED);
+        stream.put("jboss‑eap‑6.3.z", FlagStatus.ACCEPTED);
+        Mockito.when(mock.getStreamStatus()).thenReturn(stream);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, candidates), checkName,
                 bugId);
     }
 
-    // private final String TYPE = "Component Upgrade";
     protected Issue testSpecificStubbingForBug(Issue mock) {
-        Mockito.when(mock.getType()).thenReturn(IssueType.UPGRADE);
-
-        // List<Flag> flags = new ArrayList<Flag>(1);
-        // Flag flag = new Flag("jboss-eap-6.4.0", "setter?", Flag.Status.POSITIVE);
-        // flags.add(flag);
-
-        // Mockito.when(mock.getFlags()).thenReturn(flags);
+        
         return mock;
     }
 

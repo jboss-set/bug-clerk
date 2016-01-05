@@ -29,13 +29,25 @@ import org.jboss.set.aphrodite.domain.FlagStatus;
 
 import org.jboss.jbossset.bugclerk.Violation;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+// Apparently can't type collections arguments in Drools function...
+function int flagsWithPrefix(String prefix, Map stream) {
+  Map<String, FlagStatus> matches = new HashMap<String, FlagStatus>(stream.size());
+  for ( Entry<String, FlagStatus> entry : ((Map<String,FlagStatus>)stream).entrySet() )
+      if ( entry.getKey().contains(prefix) )
+          matches.put(entry.getKey(),entry.getValue());
+  return matches.size();
+}
+
 rule "TargetRelease"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate($description: bug.description.get, bug.streamStatus.size() > 0,  $streamStatus : bug.streamStatus.values() , filtered == false);
-    $numberOfReleasesFlag : Number() from accumulate(i: FlagStatus(/*FIXME: FlagStatus.ACCEPTED*/) from $streamStatus , count(i) );
-    eval( $numberOfReleasesFlag > 1 )
+    $candidate : Candidate(bug.streamStatus.size() > 0 , bug.getType().toString == "UPGRADE" , $streamStatus : bug.streamStatus , filtered == false);
+    eval( flagsWithPrefix("jboss", $streamStatus) > 1);
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "Invalid number of flag Release: " + $numberOfReleasesFlag + " - only is one should be set. Flags are: " +/*FIXME: $candidate.getFlagNamesContaining("jboss-eap") + */ "."));
+    insert(new Violation($candidate, drools.getRule().getName(), "More than one release is set on this BZ !"));
 end
