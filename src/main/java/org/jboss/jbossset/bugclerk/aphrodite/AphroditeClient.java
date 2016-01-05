@@ -3,7 +3,6 @@ package org.jboss.jbossset.bugclerk.aphrodite;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.Aphrodite;
@@ -43,13 +42,11 @@ public final class AphroditeClient {
     }
 
     public void addComments(Map<Issue, Comment> comments) {
-        // FIXME: add a bulk method in Aphrodite
-        for (Entry<Issue, Comment> entry : comments.entrySet())
-            aphrodite.postCommentOnIssue(entry.getKey(), entry.getValue());
+        aphrodite.addCommentToIssue(comments);
     }
 
     public List<Issue> loadIssues(List<String> ids) {
-        // FIXME: add bulk method in Aprhodite
+        // FIXME: add bulk method in Aphrodite
         List<Issue> issues = new ArrayList<Issue>(ids.size());
         for ( String id : ids )
             try {
