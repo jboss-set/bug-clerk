@@ -33,8 +33,9 @@ rule "ReleaseVersionMismatch"
   dialect "mvel"
   when
     // FIXME: enhance pattern matching on summary
-    $candidate : Candidate( bug.summary.get.contains("(6.4.0)"), $release : bug.release.version.get , $summary : bug.summary.get, filtered == false);
-  //  eval( NOT $candidate.bug.summary.get.contains($release));
+    $candidate : Candidate( bug.release.version.isPresent == true, $release : bug.release.version.get(), $summary : bug.summary.get() , filtered == false);
+    eval ( $summary.matches("^.*6\\.[0-9]\\.[0-9].*$"))  // only go further if summmary DOES contains a version number
+    eval(  $summary.contains($release) == false); // violation only if summary does NOT contains the right version number
   then
     insert( new Violation($candidate,drools.getRule().getName(), "Release in title does not match actual release (" + $release  + "]:" + $summary) );
 end
