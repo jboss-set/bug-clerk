@@ -53,7 +53,7 @@ public final class AphroditeClient {
         List<Issue> issues = new ArrayList<Issue>(ids.size());
         for ( String id : ids )
             try {
-                aphrodite.getIssue(URLUtils.createURLFromString(id));
+                issues.add(aphrodite.getIssue(URLUtils.createURLFromString(id)));
             } catch (NotFoundException e) {
                 throw new IllegalArgumentException(e);
             }
