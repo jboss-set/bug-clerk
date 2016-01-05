@@ -4,28 +4,47 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/*
+ * Can only be run if a .bugzillarc file exists and contains username's password.
+ */
 public class BugClerkIntegrationTests {
 
-    private final static String BZ_SERVER_CREDENTIALS_FILE = "bugclerk.properties";
     private final static String REDHAT_BZ_SERVER_URL = "https://bugzilla.redhat.com";
-    private final static String REDHAT_BZ_SERVER_INDEX = REDHAT_BZ_SERVER_URL + "/index.cgi";
     private final static String URL_TO_REDHAT_BZ = REDHAT_BZ_SERVER_URL + "/show_bug.cgi?id=";
+
+    private static String username = "rpelisse@redhat.com";
+    private static String password;
 
     private String reportFilename;
 
+    private static String readPasswordFromBugzillaRCFile(String folder, String filename) throws IOException {
+        final Optional<String> hasPassword = xxx(folder, filename);
+        if(hasPassword.isPresent())
+                return hasPassword.get().split(" = ")[1];
+        throw new IllegalStateException("Can't find username's password.");
+    }
+
+    private static Optional<String> xxx(String folder, String filename) throws IOException {
+            Stream<String> lines = Files.lines(Paths.get(folder,filename));
+            Optional<String> passwordLine = lines.filter(s -> s.startsWith("password")).findFirst();
+            lines.close();
+            return passwordLine;
+    }
+
     @BeforeClass
-    public static void checkIfCredentialFileExists() {
-        File credential = new File(BZ_SERVER_CREDENTIALS_FILE);
-        if (credential == null || !credential.exists())
-            throw new IllegalStateException("No credential file:" + BZ_SERVER_CREDENTIALS_FILE);
-        if (!credential.canRead())
-            throw new IllegalStateException("Credential file exists, but can't be read:" + BZ_SERVER_CREDENTIALS_FILE);
+    public static void loadPassword() throws IOException, URISyntaxException {
+        password = readPasswordFromBugzillaRCFile(System.getProperty("user.home"), ".bugzillarc");
     }
 
     @Before
@@ -59,31 +78,52 @@ public class BugClerkIntegrationTests {
 
     @Test
     public void runOnSeveralBZs() {
-        final String[] firstSetOfArgs = { "1187026", "1187027", "1185118", "-u", URL_TO_REDHAT_BZ };
-        runBugClerk(firstSetOfArgs);
-        final String[] secondSetOfArgs = { "1039989", "1039989", "1185118", "-u", URL_TO_REDHAT_BZ };
-        runBugClerk(secondSetOfArgs);
+        runBugClerk(argsWithIds("1187026", "1187027", "1185118"));
+        runBugClerk(argsWithIds("1039989", "1039989", "1185118"));
     }
 
     @Test
-    public void runOnBZ1203181() {
-        String[] args = { "1203181", "-u", URL_TO_REDHAT_BZ };
-        runBugClerk(args);
+    public void runOnBZ1184440() {
+        runBugClerk(argsWithIds("1184440"));
     }
 
     @Test
     public void runOnClosedBZ() {
-        String[] args = { "1199194", "-u", URL_TO_REDHAT_BZ };
-        runBugClerk(args);
+        runBugClerk(argsWithIds("1199194"));
+    }
+
+    private static String[] addAuthParameters(String[] args) {
+        int i = 0;
+        args[i++] = "-u";
+        args[i++] = username;
+        args[i++] = "-p";
+        args[i++] = password;
+        return args;
+    }
+
+
+    private static String[] argsWithIds(String... ids) {
+        int pos = 4;
+        String[] args = new String[pos + ids.length];
+        args = addAuthParameters(args);
+        for ( String id : ids )
+            args[pos++] = URL_TO_REDHAT_BZ + id;
+        return args;
     }
 
     private static void runBugClerkWithFiltername(String reportFilename, String filtername) {
-        String[] args = { "-H", REDHAT_BZ_SERVER_INDEX, "-h", reportFilename, "-f", filtername };
+        int pos = 4;
+        String[] args = new String[pos + 4];
+        args = addAuthParameters(args);
+        args[pos++] = "-f";
+        args[pos++] = filtername;
+        args[pos++] = "-h";
+        args[pos++] = reportFilename;
+
         try {
             BugClerkWithFilterCLI.main(args);
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
-
 }
