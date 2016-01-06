@@ -14,6 +14,7 @@ import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueEstimation;
 import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.jboss.set.aphrodite.domain.IssueType;
+import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.domain.Stage;
 import org.mockito.Mockito;
 
@@ -67,6 +68,8 @@ public final class MockUtils {
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(DateUtils.threeMonthAgo()));
         Mockito.when(mock.getAssignee()).thenReturn(Optional.of("jboss-set@redhat.com"));
         Mockito.when(mock.getReporter()).thenReturn(Optional.of("Romain Pelisse <belaran@redhat.com>"));
+        Release release = new Release("6.4.0","");
+        Mockito.when(mock.getRelease()).thenReturn(release);
         return mock;
     }
 
