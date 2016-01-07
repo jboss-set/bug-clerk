@@ -36,5 +36,5 @@ rule "AssignedButStillOnSET"
   when
     $candidate : Candidate(bug.status.toString.toUpperCase == "ASSIGNED" ,bug.assignee.get == "jboss-set@redhat.com" ,filtered == false);
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "status is ASSIGNED while BZ is still assigned to JBoss SET (and not a proper assignee)." + $candidate.bug.status , Level.ERROR) );
+    insert( new Violation($candidate, drools.getRule().getName(), "status is ASSIGNED while BZ is still assigned to JBoss SET (and not a member of the team)", Level.ERROR) );
 end
