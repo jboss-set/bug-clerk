@@ -146,9 +146,6 @@
         <configuration>
           <excludes>
             <exclude>org/jboss/jbossset/bugclerk/TestSuite.java</exclude>
-            <exclude>org/jboss/jbossset/bugclerk/cli/*.java</exclude>
-            <!-- FIXME: Bizarrely fails with Maven -->
-            <exclude>org/jboss/jbossset/bugclerk/checks/CommunityBZ.java</exclude>
           </excludes>
           <includes>
             <!-- Some internal tests -->
@@ -158,6 +155,8 @@
             <include>org/jboss/jbossset/bugclerk/comments/CommentPatternMatcherTest.java</include>
             <!-- All tests based on checks -->
             <include>org/jboss/jbossset/bugclerk/checks/*.java</include>
+            <!-- Integration tests - fired only if -Dbugclerk.run.cli.tests=true is passed to mvn -->
+            <include>org/jboss/jbossset/bugclerk/cli/*.java</include>
           </includes>
         </configuration>
       </plugin>
