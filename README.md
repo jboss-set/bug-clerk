@@ -42,7 +42,21 @@ For commodity purpose, some launch scripts have been provided in src/main/bash.
 
 ## How to build it ?
 
-As usual, just run "mvn install".
+As usual, just run "mvn install". If you are using the 'bugzilla' command line tool, you can even run a some additional tests, checking the proper behavior of Bugclerk's command lines tool, by adding the following toogle:
+
+```
+$ mvn clean package test -Dbugclerk.run.cli.tests=true
+```
+Note that the tests are using the .bugzillarc file used by the 'bugzilla' command line tool just for
+commodity purpose. File syntax is pretty easy to implement if you are not using this tool:
+
+```
+$ cat ~/.bugzillarc
+...
+user = rpelisse@redhat.com
+password = ********
+...
+```
 
 ## How to release ?
 
@@ -66,3 +80,4 @@ _Pretty much like a [Checkstyle]() or [PMD](http://github.com/pmd/pmd) configura
 * [PostMissingPR](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/PostMissingPR.drl)
 * [ReleaseVersionMismatch](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ReleaseVersionMismatch.drl)
 * [RemoveViolationIfCheckIsIgnored](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/RemoveViolationIfCheckIsIgnored.drl)
+mvn clean package test -Dbugclerk.run.cli.tests=true
