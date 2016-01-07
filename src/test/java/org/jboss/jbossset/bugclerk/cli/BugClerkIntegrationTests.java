@@ -17,34 +17,49 @@ import org.junit.Test;
 
 /*
  * Can only be run if a .bugzillarc file exists and contains username's password.
+ * File syntax is :
+ *
+ * user = rpelisse@redhat.com
+ * password = ********
+ *
+ *
  */
 public class BugClerkIntegrationTests {
 
     private final static String REDHAT_BZ_SERVER_URL = "https://bugzilla.redhat.com";
     private final static String URL_TO_REDHAT_BZ = REDHAT_BZ_SERVER_URL + "/show_bug.cgi?id=";
 
-    private static String username = "rpelisse@redhat.com";
+    private static String username;
     private static String password;
+
+    private static final String USER_PROPERTY_NAME = "user";
+    private static final String PASSWORD_PROPERTY_NAME = "password";
 
     private String reportFilename;
 
-    private static String readPasswordFromBugzillaRCFile(String folder, String filename) throws IOException {
-        final Optional<String> hasPassword = xxx(folder, filename);
-        if(hasPassword.isPresent())
-                return hasPassword.get().split(" = ")[1];
-        throw new IllegalStateException("Can't find username's password.");
+    private static String readEntryFromBugzillaRCFile(String propertyName, String folder, String filename) throws IOException {
+        final Optional<String> hasProperty = extractValueFromLine(propertyName, folder, filename);
+        if(hasProperty.isPresent())
+                return hasProperty.get().split(" = ")[1];
+        throw new IllegalStateException("Can't find the following property '" + propertyName + "' in config file:" + folder + File.pathSeparator + filename);
     }
 
-    private static Optional<String> xxx(String folder, String filename) throws IOException {
+    private static Optional<String> extractValueFromLine(String propertyName, String folder, String filename) throws IOException {
             Stream<String> lines = Files.lines(Paths.get(folder,filename));
-            Optional<String> passwordLine = lines.filter(s -> s.startsWith("password")).findFirst();
+            Optional<String> passwordLine = lines.filter(s -> s.startsWith(propertyName)).findFirst();
             lines.close();
             return passwordLine;
     }
 
     @BeforeClass
     public static void loadPassword() throws IOException, URISyntaxException {
-        password = readPasswordFromBugzillaRCFile(System.getProperty("user.home"), ".bugzillarc");
+        org.junit.Assume.assumeTrue(areCliTestsActivated());
+        username = readEntryFromBugzillaRCFile(USER_PROPERTY_NAME, System.getProperty("user.home"), ".bugzillarc");
+        password = readEntryFromBugzillaRCFile(PASSWORD_PROPERTY_NAME, System.getProperty("user.home"), ".bugzillarc");
+    }
+
+    private static boolean areCliTestsActivated() {
+        return "true".equals(System.getProperty("bugclerk.run.cli.tests"));
     }
 
     @Before
