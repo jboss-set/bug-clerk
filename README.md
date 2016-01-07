@@ -75,9 +75,10 @@ _Pretty much like a [Checkstyle]() or [PMD](http://github.com/pmd/pmd) configura
 * [ComponentUpgradeMissingFixList](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ComponentUpgradeMissingFixList.drl)
 * [IssueNotAssigned](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/IssueNotAssigned.drl)
 * [OneOffPatchNotForSet](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/OneOffPatchNotForSet.drl)
-* [OneReleaseMustOfPatchType](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/OneReleaseMustOfPatchType.drl)
 * [PostMissingPmAck](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/PostMissingPmAck.drl)
 * [PostMissingPR](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/PostMissingPR.drl)
+* [RegressionMayImpactOneOffRelease](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/RegressionMayImpactOneOffRelease.drl)
 * [ReleaseVersionMismatch](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/ReleaseVersionMismatch.drl)
 * [RemoveViolationIfCheckIsIgnored](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/RemoveViolationIfCheckIsIgnored.drl)
-mvn clean package test -Dbugclerk.run.cli.tests=true
+* [SummaryContainsPatchButTypeIsNotSupportPatch](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/SummaryContainsPatchButTypeIsNotSupportPatch.drl)
+* [TargetRelease](https://github.com/jboss-set/bug-clerk/tree/master/src/main/resources/org/jboss/jbossset/bugclerk/TargetRelease.drl)
