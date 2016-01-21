@@ -26,8 +26,6 @@ import java.util.List;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
-import org.jboss.jbossset.bugclerk.aphrodite.AphroditeParameters;
-import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.spi.AphroditeException;
 import org.jboss.set.aphrodite.spi.NotFoundException;
@@ -36,13 +34,8 @@ public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
 
     public static void main(String[] args) throws MalformedURLException, AphroditeException, NotFoundException {
         BugClerkInvocatioWithFilterArguments arguments = extractParameters(new BugClerkInvocatioWithFilterArguments(), args);
-        final String trackerUrl = URLUtils.getServerUrl(arguments.getFilterURL());
-        System.out.print("Connection to BZ with URL " + arguments.getFilterURL() + " with username:" + arguments.getUsername()
-                + " ... ");
-        AphroditeClient client = new AphroditeClient(new AphroditeParameters(trackerUrl, arguments.getUsername(),
-                arguments.getPassword()));
-        System.out.print("Loading data from filter:" + URLUtils.extractFilterNameOrReturnFilterURL(arguments.getFilterURL())
-                + " ... ");
+        AphroditeClient client = new AphroditeClient(AbstractCommandLineInterface.buildTrackerConfig(arguments,
+                arguments.getFilterURL()));
         final List<Issue> issues = client.retrievePayload(arguments.getFilterURL());
 
         if (!issues.isEmpty())

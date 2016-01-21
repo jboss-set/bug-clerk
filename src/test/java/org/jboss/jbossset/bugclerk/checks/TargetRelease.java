@@ -38,8 +38,8 @@ import org.mockito.Mockito;
 
 public class TargetRelease extends AbstractCheckRunner {
 
-    private Map<String,FlagStatus> stream;
-    
+    private Map<String, FlagStatus> stream;
+
     @Test
     public void violationIfNoDependsOnAndComponentUpgradeType() {
         final String payload = "Well; it does seems like one forgot the PR here.";
@@ -51,12 +51,11 @@ public class TargetRelease extends AbstractCheckRunner {
         stream.put("jboss‑eap‑6.4.z", FlagStatus.ACCEPTED);
         stream.put("jboss‑eap‑6.3.z", FlagStatus.ACCEPTED);
         Mockito.when(mock.getStreamStatus()).thenReturn(stream);
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, candidates), checkName,
-                bugId);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, candidates), checkName, bugId);
     }
 
     protected Issue testSpecificStubbingForBug(Issue mock) {
-        
+
         return mock;
     }
 

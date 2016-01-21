@@ -58,7 +58,7 @@ public class ViolationsReportAsCommentBuilder {
         Map<Issue, Comment> commentsToAddToIssues = new HashMap<Issue, Comment>();
         violationByBugId.forEach((k, violations) -> {
             Comment comment = buildCommentReportIfNotAlreadyReported(violations);
-            if ( comment != null )
+            if (comment != null)
                 commentsToAddToIssues.put(k, comment);
         });
         return commentsToAddToIssues;
@@ -76,7 +76,7 @@ public class ViolationsReportAsCommentBuilder {
     private Comment buildReportComment(List<Violation> newViolationToReport) {
         if (!newViolationToReport.isEmpty())
             return new Comment(messageBody(newViolationToReport, new StringBuffer(COMMENT_MESSSAGE_HEADER)).append(
-                            COMMENT_MESSAGE_FOOTER).toString(), true);
+                    COMMENT_MESSAGE_FOOTER).toString(), true);
         return null;
     }
 

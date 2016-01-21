@@ -25,42 +25,42 @@ public class BuildReportToUpdateTracker {
 
     private Map<Issue, List<Violation>> mockLoadedResults = new HashMap<Issue, List<Violation>>(1);
     private Issue mock;
-    
+
     @After
     public void emptyMocks() {
         mock = null;
         mockLoadedResults.clear();
     }
-    
+
     @Before
     public void prepareMocks() {
         List<Comment> mockComments = MockUtils.mockCommentsWithOneItem("1", text, bugId);
         List<Violation> violations = MockUtils.mockViolationsListWithOneItem(bugId, checkname);
-        
+
         mock = MockUtils.mockBug(bugId, checkname);
         Mockito.when(mock.getComments()).thenReturn(mockComments);
-                
+
         mockLoadedResults = new HashMap<Issue, List<Violation>>(1);
-        mockLoadedResults.put(mock, violations);        
+        mockLoadedResults.put(mock, violations);
     }
-    
+
     @Test
-    public void ignoreWarningLevelChecks() {    
+    public void ignoreWarningLevelChecks() {
         Map<Issue, Comment> map = new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(mockLoadedResults);
         assertTrue(map.isEmpty());
     }
-    
+
     @Test
     public void reportIfErrorLevelChecks() {
-        Mockito.when(mockLoadedResults.get(mock).get(0).getLevel()).thenReturn(Level.ERROR);              
+        Mockito.when(mockLoadedResults.get(mock).get(0).getLevel()).thenReturn(Level.ERROR);
         Map<Issue, Comment> map = new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(mockLoadedResults);
-        assertTrue(! map.isEmpty());
+        assertTrue(!map.isEmpty());
         assertTrue(map.size() == 1);
         assertTrue(map.get(mock).getBody().contains(checkname));
     }
-    
+
     @Test
-    public void noReportIfChecknameAlreadyPresentInCommentsList() {    
+    public void noReportIfChecknameAlreadyPresentInCommentsList() {
         List<Comment> mockComments = MockUtils.mockCommentsWithOneItem("1", checkname, bugId);
         Mockito.when(mock.getComments()).thenReturn(mockComments);
         Map<Issue, Comment> map = new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(mockLoadedResults);

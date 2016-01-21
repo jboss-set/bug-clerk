@@ -1,5 +1,7 @@
 package org.jboss.jbossset.bugclerk.cli;
 
+import org.jboss.set.aphrodite.config.TrackerType;
+
 import com.beust.jcommander.Parameter;
 
 public abstract class AbstractCommonArguments {
@@ -16,10 +18,10 @@ public abstract class AbstractCommonArguments {
     @Parameter(names = { "-h", "--html-report" }, description = "Create an html report, on top of the XML one", required = false)
     private String htmlReportFilename;
 
-    @Parameter(names = { "-u", "--username" }, description = "username for bugzilla's connection - overload data from property file", required = true)
+    @Parameter(names = { "-u", "--bugzilla-username" }, description = "username for tracker's authentification", required = true)
     private String username;
 
-    @Parameter(names = { "-p", "--password" }, description = "password for bugzilla's connection - overload data from property file", required = true)
+    @Parameter(names = { "-p", "--bugzilla-password" }, description = "password for tracker's authentification", required = true)
     private String password;
 
     @Parameter(names = { "-c", "--comment-on-bz" }, description = "add a comment to a BZ featuring violations, default is false", required = false)
@@ -27,6 +29,9 @@ public abstract class AbstractCommonArguments {
 
     @Parameter(names = { "-F", "--fail-on-violation" }, description = "exit program with status equals to number of violations", required = false)
     private boolean failOnViolation = false;
+
+    @Parameter(names = { "-t", "--tracker-type" }, description = "Tracker type (true for bugzilla, false for JIRA)", converter = TrackerTypeConverter.class)
+    private TrackerType trackerType = TrackerType.BUGZILLA;
 
     public boolean isDebug() {
         return debug;
@@ -100,9 +105,18 @@ public abstract class AbstractCommonArguments {
         this.failOnViolation = isFailOnViolation;
     }
 
+    public TrackerType getTrackerType() {
+        return trackerType;
+    }
+
+    public void setTrackerType(TrackerType trackerType) {
+        this.trackerType = trackerType;
+    }
+
     @Override
     public String toString() {
         return "AbstractCommonArguments [help=" + help + ", debug=" + debug + ", xmlReportFilename=" + xmlReportFilename
-                + ", htmlReportFilename=" + htmlReportFilename + ", reportToBZ=" + reportToBz + ", failOnViolation=" + failOnViolation + "]";
+                + ", htmlReportFilename=" + htmlReportFilename + ", username=" + username + ", password=" + password
+                + ", reportToBz=" + reportToBz + ", failOnViolation=" + failOnViolation + ", trackerType=" + trackerType + "]";
     }
 }

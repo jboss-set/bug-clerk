@@ -18,19 +18,16 @@ public final class AphroditeClient {
 
     private final Aphrodite aphrodite;
 
-    public AphroditeClient(AphroditeParameters parameters) {
+    private static final int DEFAULT_ISSUE_LIMIT = 500;
+
+    public AphroditeClient(IssueTrackerConfig issueTrackerConfig) {
         try {
-            aphrodite = Aphrodite.instance(buildAphroditeConfig(parameters.getTrackerUrl(), parameters.getUsername(),
-                    parameters.getPassword()));
+            List<IssueTrackerConfig> issueTrackerConfigs = new ArrayList<IssueTrackerConfig>(1);
+            issueTrackerConfigs.add(issueTrackerConfig);
+            aphrodite = Aphrodite.instance(AphroditeConfig.issueTrackersOnly(issueTrackerConfigs));
         } catch (AphroditeException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private static AphroditeConfig buildAphroditeConfig(String trackerUrl, String username, String password) {
-        List<IssueTrackerConfig> issueTrackerConfigs = new ArrayList<>();
-        issueTrackerConfigs.add(new IssueTrackerConfig(trackerUrl, username, password, TrackerType.BUGZILLA, 1000));
-        return AphroditeConfig.issueTrackersOnly(issueTrackerConfigs);
     }
 
     public List<Issue> retrievePayload(String filterUrl) {
@@ -48,12 +45,16 @@ public final class AphroditeClient {
     public List<Issue> loadIssues(List<String> ids) {
         // FIXME: add bulk method in Aphrodite
         List<Issue> issues = new ArrayList<Issue>(ids.size());
-        for ( String id : ids )
+        for (String id : ids)
             try {
                 issues.add(aphrodite.getIssue(URLUtils.createURLFromString(id)));
             } catch (NotFoundException e) {
                 throw new IllegalArgumentException(e);
             }
         return issues;
+    }
+
+    public static IssueTrackerConfig buildTrackerConfig(String trackerUrl, String username, String password, TrackerType type) {
+        return new IssueTrackerConfig(URLUtils.getServerUrl(trackerUrl), username, password, type, DEFAULT_ISSUE_LIMIT);
     }
 }

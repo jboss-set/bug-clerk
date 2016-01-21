@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 
 public class BugClerkInvocatioWithFilterArguments extends AbstractCommonArguments {
 
-    @Parameter(names = { "-f", "--filter-url" }, description = "URL to search filter")
+    @Parameter(names = { "-f", "--filter-url" }, description = "Tracker filter URL")
     private String filterURL;
 
     public String getFilterURL() {
@@ -14,4 +14,5 @@ public class BugClerkInvocatioWithFilterArguments extends AbstractCommonArgument
     public void setFilterURL(String filterURL) {
         this.filterURL = filterURL;
     }
+
 }

@@ -39,16 +39,18 @@ public class BugClerkIntegrationTests {
 
     private static String readEntryFromBugzillaRCFile(String propertyName, String folder, String filename) throws IOException {
         final Optional<String> hasProperty = extractValueFromLine(propertyName, folder, filename);
-        if(hasProperty.isPresent())
-                return hasProperty.get().split(" = ")[1];
-        throw new IllegalStateException("Can't find the following property '" + propertyName + "' in config file:" + folder + File.pathSeparator + filename);
+        if (hasProperty.isPresent())
+            return hasProperty.get().split(" = ")[1];
+        throw new IllegalStateException("Can't find the following property '" + propertyName + "' in config file:" + folder
+                + File.pathSeparator + filename);
     }
 
-    private static Optional<String> extractValueFromLine(String propertyName, String folder, String filename) throws IOException {
-            Stream<String> lines = Files.lines(Paths.get(folder,filename));
-            Optional<String> passwordLine = lines.filter(s -> s.startsWith(propertyName)).findFirst();
-            lines.close();
-            return passwordLine;
+    private static Optional<String> extractValueFromLine(String propertyName, String folder, String filename)
+            throws IOException {
+        Stream<String> lines = Files.lines(Paths.get(folder, filename));
+        Optional<String> passwordLine = lines.filter(s -> s.startsWith(propertyName)).findFirst();
+        lines.close();
+        return passwordLine;
     }
 
     @BeforeClass
@@ -116,12 +118,11 @@ public class BugClerkIntegrationTests {
         return args;
     }
 
-
     private static String[] argsWithIds(String... ids) {
         int pos = 4;
         String[] args = new String[pos + ids.length];
         args = addAuthParameters(args);
-        for ( String id : ids )
+        for (String id : ids)
             args[pos++] = URL_TO_REDHAT_BZ + id;
         return args;
     }

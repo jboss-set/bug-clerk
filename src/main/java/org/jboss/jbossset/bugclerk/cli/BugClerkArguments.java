@@ -66,6 +66,6 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
 
     @Override
     public String toString() {
-        return "BugClerkArguments [ids=" + ids + "," +  super.toString() + "]";
+        return "BugClerkArguments [ids=" + ids + "," + super.toString() + "]";
     }
 }

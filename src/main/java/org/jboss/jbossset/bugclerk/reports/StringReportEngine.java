@@ -48,8 +48,8 @@ public class StringReportEngine implements ReportEngine<String> {
 
     private StringBuffer format(List<Violation> violations, StringBuffer report) {
         final String bugId = violations.get(0).getCandidate().getBug().getURL().toString();
-        report.append("BZ: ").append(bugId).append(EOL)
-                .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
+        report.append("BZ: ").append(bugId).append(EOL).append("\t has the following violations (" + violations.size() + "):")
+                .append(EOL).append(EOL);
         int violationId = 1;
         for (Violation violation : violations)
             report.append(violationId++).append(ITEM_ID_SEPARATOR).append(" (" + violation.getLevel() + ") ")
