@@ -3,7 +3,6 @@ package org.jboss.jbossset.bugclerk.utils;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.util.JAXBSource;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -18,11 +17,7 @@ public final class XMLUtils {
         try {
             TransformerFactory.newInstance().newTransformer(xslt)
                     .transform(new JAXBSource(JAXBContext.newInstance(catalog.getClass()), catalog), result);
-        } catch (TransformerConfigurationException e) {
-            throw new IllegalStateException(e);
-        } catch (JAXBException e) {
-            throw new IllegalStateException(e);
-        } catch (TransformerException e) {
+        } catch (JAXBException | TransformerException e) {
             throw new IllegalStateException(e);
         }
     }

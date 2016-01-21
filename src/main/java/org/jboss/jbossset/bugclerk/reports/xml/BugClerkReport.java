@@ -13,6 +13,10 @@ public class BugClerkReport {
     public BugClerkReport() {
     }
 
+    public BugClerkReport(List<BugReport> reports) {
+        this.bugs = reports;
+    }
+
     @XmlElement(name = "bz")
     public List<BugReport> getBugs() {
         return bugs;

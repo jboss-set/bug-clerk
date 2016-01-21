@@ -1,9 +1,9 @@
 package org.jboss.jbossset.bugclerk.aphrodite;
 
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.Aphrodite;
@@ -23,9 +23,7 @@ public final class AphroditeClient {
 
     public AphroditeClient(IssueTrackerConfig issueTrackerConfig) {
         try {
-            List<IssueTrackerConfig> issueTrackerConfigs = new ArrayList<IssueTrackerConfig>(1);
-            issueTrackerConfigs.add(issueTrackerConfig);
-            aphrodite = Aphrodite.instance(AphroditeConfig.issueTrackersOnly(issueTrackerConfigs));
+            aphrodite = Aphrodite.instance(AphroditeConfig.issueTrackersOnly(Collections.singletonList(issueTrackerConfig)));
         } catch (AphroditeException e) {
             throw new IllegalStateException(e);
         }
@@ -44,10 +42,8 @@ public final class AphroditeClient {
     }
 
     public List<Issue> loadIssues(List<String> ids) {
-        List<URL> issues = new ArrayList<URL>(ids.size());
-        for (String id : ids)
-            issues.add(URLUtils.createURLFromString(id));
-        return aphrodite.getIssues(issues);
+        return aphrodite.getIssues(ids.parallelStream().map(id -> URLUtils.createURLFromString(id))
+                .collect(Collectors.toList()));
     }
 
     public static IssueTrackerConfig buildTrackerConfig(String trackerUrl, String username, String password, TrackerType type) {

@@ -21,11 +21,11 @@
  */
 package org.jboss.jbossset.bugclerk;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -76,11 +76,13 @@ public class BugClerk {
         LoggingUtils.configureLogger(arguments.isDebug());
 
         LoggingUtils.getLogger().info("Loading data for " + arguments.getIds().size() + " issues.");
-        List<Candidate> candidates = loadCandidates(arguments.getIssues());
+        List<Candidate> candidates = arguments.getIssues().parallelStream().map(issue -> new Candidate(issue))
+                .collect(Collectors.toList());
         LoggingUtils.getLogger().info("Loading data from tracker took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
         Collection<Violation> violations = processEntriesAndReportViolations(candidates);
-        Map<Issue, List<Violation>> violationByBugId = indexedViolationsByBugId(violations);
+        Map<Issue, List<Violation>> violationByBugId = violations.stream().collect(
+                Collectors.groupingBy(v -> v.getCandidate().getBug()));
         LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
         String report = buildReport(violationByBugId);
 
@@ -93,25 +95,6 @@ public class BugClerk {
         reportsGeneration(arguments, violationByBugId);
         LoggingUtils.getLogger().fine("Generating XML/HTML Report:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         return violationByBugId.size();
-    }
-
-    private Map<Issue, List<Violation>> indexedViolationsByBugId(Collection<Violation> violations) {
-        Map<Issue, List<Violation>> map = new HashMap<Issue, List<Violation>>();
-        violations.forEach(item -> {
-            Issue id = item.getCandidate().getBug();
-            if (!map.containsKey(id))
-                map.put(id, new ArrayList<Violation>(1));
-            map.get(id).add(item);
-        });
-        return map;
-    }
-
-    private List<Candidate> loadCandidates(List<Issue> issues) {
-        final List<Candidate> candidates = new ArrayList<>(issues.size());
-        issues.forEach((issue) -> {
-            candidates.add(new Candidate(issue));
-        });
-        return candidates;
     }
 
     protected void reportsGeneration(BugClerkArguments arguments, Map<Issue, List<Violation>> violationByBugId) {
@@ -128,9 +111,8 @@ public class BugClerk {
     }
 
     protected static String getXmlReportFilename(BugClerkArguments arguments) {
-        if (arguments.getXmlReportFilename() != null)
-            return arguments.getXmlReportFilename();
-        return arguments.getHtmlReportFilename() + ".xml";
+        return arguments.getXmlReportFilename() != null ? arguments.getXmlReportFilename() : arguments.getHtmlReportFilename()
+                + ".xml";
     }
 
     protected void postAnalysisActions(BugClerkArguments arguments, Map<Issue, List<Violation>> violationByBugId, String report) {

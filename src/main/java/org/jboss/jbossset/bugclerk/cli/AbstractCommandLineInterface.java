@@ -3,7 +3,6 @@ package org.jboss.jbossset.bugclerk.cli;
 import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.config.IssueTrackerConfig;
-import org.jboss.set.aphrodite.config.TrackerType;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;

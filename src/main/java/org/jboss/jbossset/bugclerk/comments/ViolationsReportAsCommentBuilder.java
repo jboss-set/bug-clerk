@@ -22,7 +22,6 @@
 
 package org.jboss.jbossset.bugclerk.comments;
 
-import static org.jboss.jbossset.bugclerk.utils.StringUtils.ITEM_ID_SEPARATOR;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.formatCheckname;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 
@@ -84,6 +83,7 @@ public class ViolationsReportAsCommentBuilder {
         List<Violation> violationsToReport = new ArrayList<>(violations.size());
         Map<String, Violation> indexedByCheckname = violations.stream().collect(
                 Collectors.toMap(k -> ((Violation) k).getCheckName(), v -> v));
+
         indexedByCheckname.forEach((k, v) -> {
             addViolationToReportIfNotAlreadyReported(formatCheckname(k), v.getCandidate().getBug().getComments(),
                     violationsToReport, v);
@@ -101,14 +101,13 @@ public class ViolationsReportAsCommentBuilder {
     private StringBuffer messageBody(List<Violation> violations, StringBuffer text) {
         if (violations == null || violations.isEmpty() || "".equals(text))
             throw new IllegalArgumentException("No violations or text empty");
-        int violationId = 1;
-        for (Violation violation : violations)
-            addViolationToCommentReport(text, violationId++, violation);
-        return text;
+
+        return text
+                .append(violations.stream().map(v -> addViolationToCommentReport(text, v)).reduce((s1, s2) -> s1.append(s2)));
     }
 
-    private void addViolationToCommentReport(StringBuffer text, int violationId, Violation violation) {
-        text.append(violationId).append(ITEM_ID_SEPARATOR).append(formatCheckname(violation.getCheckName())).append(" ")
-                .append(violation.getMessage()).append(twoEOLs());
+    private StringBuffer addViolationToCommentReport(StringBuffer text, Violation violation) {
+        return text.append("[").append(formatCheckname(violation.getCheckName())).append("] ").append(violation.getMessage())
+                .append(twoEOLs());
     }
 }

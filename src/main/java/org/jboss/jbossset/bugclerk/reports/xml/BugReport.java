@@ -19,6 +19,14 @@ public class BugReport {
     public BugReport() {
     } // required by JAXB
 
+    public BugReport(String bugId, String status, String ackFlags, URL link, List<ViolationDescription> violations) {
+        this.bugId = bugId;
+        this.status = status;
+        this.ackFlags = ackFlags;
+        this.link = link;
+        this.violations = violations;
+    }
+
     @XmlAttribute(name = "id")
     public String getBugId() {
         return bugId;

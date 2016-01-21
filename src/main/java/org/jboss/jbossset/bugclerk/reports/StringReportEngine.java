@@ -25,6 +25,7 @@ import static org.jboss.jbossset.bugclerk.utils.StringUtils.EOL;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.ITEM_ID_SEPARATOR;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,25 +36,28 @@ public class StringReportEngine implements ReportEngine<String> {
 
     @Override
     public String createReport(Map<Issue, List<Violation>> violationByBugId) {
-        String reportString = "";
-        if (!violationByBugId.isEmpty()) {
-            StringBuffer report = new StringBuffer();
-            for (List<Violation> violationBug : violationByBugId.values()) {
-                report = format(violationBug, report);
-            }
-            reportString = report.toString();
-        }
-        return reportString;
+        return !violationByBugId.isEmpty() ? buildReportAsString(violationByBugId.values()) : "";
     }
 
-    private StringBuffer format(List<Violation> violations, StringBuffer report) {
-        final String bugId = violations.get(0).getCandidate().getBug().getURL().toString();
-        report.append("BZ: ").append(bugId).append(EOL).append("\t has the following violations (" + violations.size() + "):")
-                .append(EOL).append(EOL);
-        int violationId = 1;
-        for (Violation violation : violations)
-            report.append(violationId++).append(ITEM_ID_SEPARATOR).append(" (" + violation.getLevel() + ") ")
-                    .append(violation.getMessage()).append(EOL);
-        return report.append(twoEOLs());
+    private static String buildReportAsString(Collection<List<Violation>> values) {
+        return values.stream().map(violations -> format(violations, new StringBuffer())).reduce((s1, s2) -> s1.append(s2))
+                .get().toString();
+    }
+
+    private static String getBugId(List<Violation> violations) {
+        return violations.get(0).getCandidate().getBug().getURL().toString();
+    }
+
+    private static StringBuffer reportViolations(List<Violation> violations, StringBuffer report) {
+        return violations
+                .stream()
+                .map(v -> report.append(v.getCheckName()).append(ITEM_ID_SEPARATOR).append(" (" + v.getLevel() + ") ")
+                        .append(v.getMessage()).append(EOL)).reduce((s1, s2) -> s1.append(s2)).get();
+    }
+
+    private static StringBuffer format(List<Violation> violations, StringBuffer report) {
+        report.append("Issue: ").append(getBugId(violations)).append(EOL)
+                .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
+        return report.append(reportViolations(violations, report)).append(twoEOLs());
     }
 }

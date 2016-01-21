@@ -8,6 +8,15 @@ public class ViolationDescription {
     private String message;
     private String severity;
 
+    public ViolationDescription() {
+    }
+
+    public ViolationDescription(String checkname, String message, String severity) {
+        this.checkname = checkname;
+        this.message = message;
+        this.severity = severity;
+    }
+
     @XmlAttribute
     public String getCheckname() {
         return checkname;
