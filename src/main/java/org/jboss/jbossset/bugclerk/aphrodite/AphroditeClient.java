@@ -1,5 +1,6 @@
 package org.jboss.jbossset.bugclerk.aphrodite;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,15 +44,10 @@ public final class AphroditeClient {
     }
 
     public List<Issue> loadIssues(List<String> ids) {
-        // FIXME: add bulk method in Aphrodite
-        List<Issue> issues = new ArrayList<Issue>(ids.size());
+        List<URL> issues = new ArrayList<URL>(ids.size());
         for (String id : ids)
-            try {
-                issues.add(aphrodite.getIssue(URLUtils.createURLFromString(id)));
-            } catch (NotFoundException e) {
-                throw new IllegalArgumentException(e);
-            }
-        return issues;
+            issues.add(URLUtils.createURLFromString(id));
+        return aphrodite.getIssues(issues);
     }
 
     public static IssueTrackerConfig buildTrackerConfig(String trackerUrl, String username, String password, TrackerType type) {
