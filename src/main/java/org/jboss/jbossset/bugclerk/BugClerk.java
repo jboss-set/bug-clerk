@@ -37,7 +37,7 @@ import org.jboss.jbossset.bugclerk.reports.ReportEngine;
 import org.jboss.jbossset.bugclerk.reports.StringReportEngine;
 import org.jboss.jbossset.bugclerk.reports.xml.BugClerkReport;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
-import org.jboss.jbossset.bugclerk.utils.StreamUtils;
+import org.jboss.jbossset.bugclerk.utils.OutputInputStreamUtils;
 import org.jboss.jbossset.bugclerk.utils.XMLUtils;
 import org.jboss.set.aphrodite.domain.Issue;
 
@@ -102,11 +102,11 @@ public class BugClerk {
             BugClerkReport xmlReport = buildBugClerkReport(violationByBugId);
             if (arguments.isXMLReport())
                 BugClerkReportEngine.printXmlReport(xmlReport,
-                        StreamUtils.getOutputStreamForFile(arguments.getXmlReportFilename()));
+                        OutputInputStreamUtils.getOutputStreamForFile(arguments.getXmlReportFilename()));
             if (arguments.isHtmlReport())
                 XMLUtils.xmlToXhtml(xmlReport,
                         new StreamSource(this.getClass().getResourceAsStream(BugClerkReportEngine.XSLT_FILENAME)),
-                        StreamUtils.getStreamResultForFile(arguments.getHtmlReportFilename()));
+                        OutputInputStreamUtils.getStreamResultForFile(arguments.getHtmlReportFilename()));
         }
     }
 

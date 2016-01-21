@@ -7,9 +7,9 @@ import java.io.OutputStream;
 
 import javax.xml.transform.stream.StreamResult;
 
-public final class StreamUtils {
+public final class OutputInputStreamUtils {
 
-    private StreamUtils() {
+    private OutputInputStreamUtils() {
     }
 
     public static OutputStream getOutputStreamForFile(String filename) {
