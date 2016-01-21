@@ -76,14 +76,6 @@ public class FilterIssueEntries extends AbstractCheckRunner {
 
     }
 
-    /*
-     * FIXME: needs fix into Aphrodite or delete checks
-     * 
-     * @Test public void ignoreDuplicateBZ() { Mockito.when(mock.getStage().).thenReturn("DUPLICATE");
-     * assertThatFilterWorksAsExpected(engine.filterBugs("IgnoreDuplicateBZ", CollectionUtils.asSetOf(new Candidate(mock, new
-     * TreeSet<Comment>())))); }
-     */
-
     @Test
     public void ignoreRpmsBZ() throws MalformedURLException {
         Mockito.when(mock.getSummary()).thenReturn(Optional.of("[RPMs] Something doc changes to implement."));
