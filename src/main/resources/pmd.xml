@@ -4,10 +4,47 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
-    <description>
-        Example pmd custom ruleset
-    </description>
+    <description>BugClerk specific PMD rulesets</description>
 
-    <!-- Insert your custom rules here-->
+	<rule ref="rulesets/java/basic.xml">
+    	<exclude name="CollapsibleIfStatements"/>
+	</rule>
+
+    <rule ref="rulesets/java/design.xml">
+		<exclude name="SimpleDateFormatNeedsLocale"/>
+		<exclude name="UncommentedEmptyConstructor"/>
+        <exclude name="UncommentedEmptyMethodBody"/>
+        <exclude name="UseVarargs"/>
+    </rule>
+
+    <rule ref="rulesets/java/coupling.xml">
+        <exclude name="LawOfDemeter"/>
+    </rule>
+
+	<rule ref="rulesets/java/finalizers.xml"/>
+
+	<rule ref="rulesets/java/imports.xml"/>
+
+    <rule ref="rulesets/java/naming.xml">
+        <exclude name="ShortVariable"/> <!-- no longer relevant since Java 8 -->
+        <exclude name="LongVariable"/>
+    </rule>
+
+    <rule ref="rulesets/java/optimizations.xml">
+        <exclude name="MethodArgumentCouldBeFinal"/>
+        <exclude name="LocalVariableCouldBeFinal"/>
+        <exclude name="LongVariable"/>
+    </rule>
+
+    <rule ref="rulesets/java/strictexception.xml"/>
+
+	<rule ref="rulesets/java/strings.xml"/>
+
+	<rule ref="rulesets/java/unnecessary.xml"/>
+
+	<rule ref="rulesets/java/unusedcode.xml">
+		<exclude name="UnusedFormalParameter"/>
+		<exclude name="UnusedPrivateField"/>
+	</rule>
 
 </ruleset>

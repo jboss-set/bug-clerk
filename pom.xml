@@ -266,9 +266,6 @@
               <linkXref>true</linkXref>²
               <sourceEncoding>utf-8</sourceEncoding>
               <rulesets>
-                <ruleset>rulesets/java/basic.xml</ruleset>
-                <ruleset>rulesets/java/design.xml</ruleset>
-                <!--BugClerk specific rules-->
                 <ruleset>/src/main/resources/pmd.xml</ruleset>
               </rulesets>
             </configuration>
