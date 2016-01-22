@@ -30,11 +30,15 @@ import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.spi.AphroditeException;
 import org.jboss.set.aphrodite.spi.NotFoundException;
 
-public class BugClerkWithFilterCLI extends AbstractCommandLineInterface {
+public final class BugClerkWithFilterCLI {
+
+    private BugClerkWithFilterCLI() {
+    }
 
     public static void main(String[] args) throws MalformedURLException, AphroditeException, NotFoundException {
-        BugClerkInvocatioWithFilterArguments arguments = extractParameters(new BugClerkInvocatioWithFilterArguments(), args);
-        AphroditeClient client = new AphroditeClient(AbstractCommandLineInterface.buildTrackerConfig(arguments,
+        BugClerkInvocatioWithFilterArguments arguments = CommandLineInterfaceUtils.extractParameters(
+                new BugClerkInvocatioWithFilterArguments(), args);
+        AphroditeClient client = new AphroditeClient(CommandLineInterfaceUtils.buildTrackerConfig(arguments,
                 arguments.getFilterURL()));
         final List<Issue> issues = client.retrievePayload(arguments.getFilterURL());
 

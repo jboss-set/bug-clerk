@@ -30,7 +30,7 @@ import org.jboss.set.aphrodite.domain.Issue;
 import com.beust.jcommander.IVariableArity;
 import com.beust.jcommander.Parameter;
 
-public class BugClerkArguments extends AbstractCommonArguments implements IVariableArity {
+public class BugClerkArguments extends CommonArguments implements IVariableArity {
 
     @Parameter(description = "Issue IDs", variableArity = true, required = true)
     private final List<String> ids = new ArrayList<String>();
@@ -54,7 +54,7 @@ public class BugClerkArguments extends AbstractCommonArguments implements IVaria
     }
 
     @Override
-    public int processVariableArity(String optionName, String[] options) {
+    public int processVariableArity(String optionName, String[] options) { // NOPMD
         if ("-i".equals(optionName) || "--ids".equals(optionName)) {
             for (String id : options) {
                 this.ids.add(id);

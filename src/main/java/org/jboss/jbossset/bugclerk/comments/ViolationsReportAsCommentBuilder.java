@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,8 @@ import org.jboss.set.aphrodite.domain.Issue;
 
 public class ViolationsReportAsCommentBuilder {
 
-    private static final String NOW = new SimpleDateFormat("yyyy/MM/dd - HH:mm").format(Calendar.getInstance().getTime());
+    private static final String NOW = new SimpleDateFormat("yyyy/MM/dd - HH:mm", Locale.getDefault()).format(Calendar
+            .getInstance().getTime());
 
     private static final String BUGCLERK_ISSUES_TRACKER = "https://github.com/jboss-set/bug-clerk/issues";
 

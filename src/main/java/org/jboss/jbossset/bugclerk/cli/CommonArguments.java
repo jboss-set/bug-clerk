@@ -4,7 +4,7 @@ import org.jboss.set.aphrodite.config.TrackerType;
 
 import com.beust.jcommander.Parameter;
 
-public abstract class AbstractCommonArguments {
+public class CommonArguments {
 
     @Parameter(names = { "-?", "--help" }, description = "print help text", required = false)
     private boolean help = false;

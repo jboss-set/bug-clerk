@@ -28,10 +28,10 @@ import org.jboss.jbossset.bugclerk.BugClerk;
 
 public final class LoggingUtils {
 
+    private static final String BUG_CLERK_LOGGER_NAME = BugClerk.class.getCanonicalName();
+
     private LoggingUtils() {
     }
-
-    private static final String BUG_CLERK_LOGGER_NAME = BugClerk.class.getCanonicalName();
 
     public static Logger getLogger() {
         return Logger.getLogger(BUG_CLERK_LOGGER_NAME);

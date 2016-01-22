@@ -24,18 +24,21 @@ package org.jboss.jbossset.bugclerk.cli;
 import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 
-public class BugClerkCLI extends AbstractCommandLineInterface {
+public final class BugClerkCLI {
 
     private static final int PROGRAM_THROWN_EXCEPTION = 3;
 
+    private BugClerkCLI() {
+    }
+
     public static void main(String[] args) {
         try {
-            BugClerkArguments arguments = extractParameters(new BugClerkArguments(), args);
+            BugClerkArguments arguments = CommandLineInterfaceUtils.extractParameters(new BugClerkArguments(), args);
             if (arguments.getIds().isEmpty())
                 throw new IllegalArgumentException("No IDs provided.");
 
-            AphroditeClient aphrodite = new AphroditeClient(AbstractCommandLineInterface.buildTrackerConfig(arguments,
-                    arguments.getIds().get(0)));
+            AphroditeClient aphrodite = new AphroditeClient(CommandLineInterfaceUtils.buildTrackerConfig(arguments, arguments
+                    .getIds().get(0)));
             arguments.setIssues(aphrodite.loadIssues(arguments.getIds()));
             new BugClerk(aphrodite).runAndReturnsViolations(BugClerkArguments.validateArgs(arguments));
         } catch (Throwable t) {

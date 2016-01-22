@@ -58,8 +58,7 @@ public class BugClerk {
     }
 
     protected Map<String, Object> buildGlobalsMap() {
-        Map<String, Object> globalsMap = new HashMap<String, Object>(1);
-        return globalsMap;
+        return new HashMap<String, Object>(1);
     }
 
     protected String buildReport(Map<Issue, List<Violation>> violationByBugId) {
@@ -111,8 +110,8 @@ public class BugClerk {
     }
 
     protected static String getXmlReportFilename(BugClerkArguments arguments) {
-        return arguments.getXmlReportFilename() != null ? arguments.getXmlReportFilename() : arguments.getHtmlReportFilename()
-                + ".xml";
+        return arguments.getXmlReportFilename() == null ? arguments.getHtmlReportFilename() + ".xml" : arguments
+                .getXmlReportFilename();
     }
 
     protected void postAnalysisActions(BugClerkArguments arguments, Map<Issue, List<Violation>> violationByBugId, String report) {

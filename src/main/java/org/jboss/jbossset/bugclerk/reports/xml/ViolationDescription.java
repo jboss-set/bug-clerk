@@ -8,7 +8,10 @@ public class ViolationDescription {
     private String message;
     private String severity;
 
-    public ViolationDescription() {
+    /**
+     * Empty constructor is required by JAX-B
+     */
+    public ViolationDescription() {     //NOPMD
     }
 
     public ViolationDescription(String checkname, String message, String severity) {

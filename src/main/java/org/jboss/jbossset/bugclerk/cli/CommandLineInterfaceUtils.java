@@ -7,11 +7,14 @@ import org.jboss.set.aphrodite.config.IssueTrackerConfig;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-public class AbstractCommandLineInterface {
+public final class CommandLineInterfaceUtils {
 
     private static final int INVALID_COMMAND_INPUT = 1;
 
-    protected static <T extends AbstractCommonArguments> T extractParameters(T arguments, String[] args) {
+    private CommandLineInterfaceUtils() {
+    }
+
+    public static <T extends CommonArguments> T extractParameters(T arguments, String... args) {
         JCommander jcommander = null;
         try {
             jcommander = new JCommander(arguments, args);
@@ -28,7 +31,7 @@ public class AbstractCommandLineInterface {
         return arguments;
     }
 
-    protected static IssueTrackerConfig buildTrackerConfig(AbstractCommonArguments arguments, String trackerUrl) {
+    public static IssueTrackerConfig buildTrackerConfig(CommonArguments arguments, String trackerUrl) {
         return AphroditeClient.buildTrackerConfig(trackerUrl, arguments.getUsername(), arguments.getPassword(),
                 arguments.getTrackerType());
     }

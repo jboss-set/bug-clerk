@@ -16,8 +16,11 @@ public class BugReport {
 
     private List<ViolationDescription> violations;
 
-    public BugReport() {
-    } // required by JAXB
+    /**
+     * Empty constructor is required by JAX-B
+     */
+    public BugReport() { //NOPMD
+    }
 
     public BugReport(String bugId, String status, String ackFlags, URL link, List<ViolationDescription> violations) {
         this.bugId = bugId;

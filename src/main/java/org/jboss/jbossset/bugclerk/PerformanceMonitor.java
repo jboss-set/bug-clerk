@@ -38,6 +38,6 @@ public class PerformanceMonitor {
     }
 
     public double timeSpentInSecondsSince() {
-        return ((System.currentTimeMillis() - startTime) / (UNIT_SHIFT * UNIT_SHIFT * UNIT_SHIFT));
+        return (System.currentTimeMillis() - startTime) / (UNIT_SHIFT * UNIT_SHIFT * UNIT_SHIFT);
     }
 }

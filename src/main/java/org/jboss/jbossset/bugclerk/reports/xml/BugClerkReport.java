@@ -10,7 +10,10 @@ public class BugClerkReport {
 
     private List<BugReport> bugs;
 
-    public BugClerkReport() {
+    /**
+     * Empty constructor is required by JAX-B
+     */
+    public BugClerkReport() { //NOPMD
     }
 
     public BugClerkReport(List<BugReport> reports) {

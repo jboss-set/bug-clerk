@@ -36,7 +36,7 @@ public class StringReportEngine implements ReportEngine<String> {
 
     @Override
     public String createReport(Map<Issue, List<Violation>> violationByBugId) {
-        return !violationByBugId.isEmpty() ? buildReportAsString(violationByBugId.values()) : "";
+        return violationByBugId.isEmpty() ? "" : buildReportAsString(violationByBugId.values());
     }
 
     private static String buildReportAsString(Collection<List<Violation>> values) {

@@ -24,14 +24,14 @@ package org.jboss.jbossset.bugclerk.utils;
 
 public final class StringUtils {
 
-    private StringUtils() {
-    }
-
     public static final String EOL = "\n";
     public static final String ITEM_ID_SEPARATOR = ") ";
 
     public static final String OPEN_ID_SEPARATOR = "[";
     public static final String CLOSE_ID_SEPARATOR = "]";
+
+    private StringUtils() {
+    }
 
     public static String formatCheckname(String checkname) {
         return OPEN_ID_SEPARATOR + checkname + CLOSE_ID_SEPARATOR;
@@ -42,6 +42,6 @@ public final class StringUtils {
     }
 
     public static boolean emptyOrNull(String string) {
-        return (string == null || "".equals(string));
+        return string == null || "".equals(string);
     }
 }

@@ -30,6 +30,10 @@ import java.util.regex.Pattern;
 
 public final class URLUtils {
 
+    private static final String SLASH = "/";
+
+    private static final String BZ_FILTERNAME_URL_PARAMNAME = "namedcmd=";
+
     private URLUtils() {
     }
 
@@ -69,7 +73,6 @@ public final class URLUtils {
         return subString.substring(param.length(), indexEndOfParam);
     }
 
-    private static final String SLASH = "/";
 
     public static String getServerUrl(URL tracker) {
         return tracker.getProtocol() + ":" + SLASH + SLASH + tracker.getHost() + SLASH;
@@ -78,8 +81,6 @@ public final class URLUtils {
     public static String getServerUrl(String url) {
         return getServerUrl(createURLFromString(url));
     }
-
-    private static final String BZ_FILTERNAME_URL_PARAMNAME = "namedcmd=";
 
     public static String extractFilterNameOrReturnFilterURL(String url) throws MalformedURLException {
         String filterName = URLUtils.extractParameterValueIfAny(new URL(url), BZ_FILTERNAME_URL_PARAMNAME);

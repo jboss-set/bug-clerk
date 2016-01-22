@@ -2,7 +2,7 @@ package org.jboss.jbossset.bugclerk.cli;
 
 import com.beust.jcommander.Parameter;
 
-public class BugClerkInvocatioWithFilterArguments extends AbstractCommonArguments {
+public class BugClerkInvocatioWithFilterArguments extends CommonArguments {
 
     @Parameter(names = { "-f", "--filter-url" }, description = "Tracker filter URL")
     private String filterURL;
