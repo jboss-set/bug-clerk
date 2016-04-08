@@ -90,7 +90,8 @@ public class RuleEngine {
         if (ksession == null)
             throw new IllegalStateException("Instance of " + this.getClass()
                     + " was not properly initiated, or is dirty: KSession pointer is 'null'.");
-        else
-            ksession.dispose();
+        else {
+            ksession.destroy();
+        }
     }
 }
