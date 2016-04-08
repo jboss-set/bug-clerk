@@ -40,7 +40,7 @@ public class StringReportEngine implements ReportEngine<String> {
     }
 
     private static String buildReportAsString(Collection<List<Violation>> values) {
-        return values.stream().map(violations -> format(violations, new StringBuffer())).reduce((s1, s2) -> s1.append(s2))
+        return values.stream().map(violations -> format(violations)).reduce((s1, s2) -> s1.append(s2))
                 .get().toString();
     }
 
@@ -48,16 +48,24 @@ public class StringReportEngine implements ReportEngine<String> {
         return violations.get(0).getCandidate().getBug().getURL().toString();
     }
 
-    private static StringBuffer reportViolations(List<Violation> violations, StringBuffer report) {
+    private static StringBuffer reportViolations(List<Violation> violations) {
+        StringBuffer report = new StringBuffer();
         return violations
                 .stream()
-                .map(v -> report.append(v.getCheckName()).append(ITEM_ID_SEPARATOR).append(" (" + v.getLevel() + ") ")
-                        .append(v.getMessage()).append(EOL)).reduce((s1, s2) -> s1.append(s2)).get();
+                .map(v -> formatViolation(v)).reduce((s1, s2) -> s1.append(s2)).get();
     }
 
-    private static StringBuffer format(List<Violation> violations, StringBuffer report) {
+    private static StringBuffer formatViolation(Violation v) {
+        StringBuffer report = new StringBuffer();
+        report.append(v.getCheckName()).append(ITEM_ID_SEPARATOR).append(" (" + v.getLevel() + ") ")
+                .append(v.getMessage()).append(EOL);
+        return report;
+    }
+
+    private static StringBuffer format(List<Violation> violations) {
+        StringBuffer report = new StringBuffer();
         report.append("Issue: ").append(getBugId(violations)).append(EOL)
                 .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
-        return report.append(reportViolations(violations, report)).append(twoEOLs());
+        return report.append(reportViolations(violations)).append(twoEOLs());
     }
 }
