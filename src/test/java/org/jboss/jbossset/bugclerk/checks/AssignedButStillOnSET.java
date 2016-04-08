@@ -31,6 +31,7 @@ import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.User;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -64,7 +65,7 @@ public class AssignedButStillOnSET extends AbstractCheckRunner {
     protected Issue prepareMock(IssueStatus status, String assignedTo) {
         final Issue mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(status);
-        Mockito.when(mock.getAssignee()).thenReturn(Optional.of(assignedTo));
+        Mockito.when(mock.getAssignee()).thenReturn(Optional.of(User.createWithEmail(assignedTo)));
         return mock;
     }
 

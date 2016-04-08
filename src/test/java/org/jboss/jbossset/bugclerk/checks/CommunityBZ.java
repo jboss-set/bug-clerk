@@ -32,6 +32,7 @@ import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.User;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -41,7 +42,7 @@ public class CommunityBZ extends AbstractCheckRunner {
     public void violationIfCreatorEmailIsNotFromRedHat() {
         final String bugId = "123466";
         Issue mock = MockUtils.mockBug(bugId, "summary");
-        Mockito.when(mock.getReporter()).thenReturn(Optional.of("Romain Pelisse <belaran@gmail.com>"));
+        Mockito.when(mock.getReporter()).thenReturn(Optional.of(User.createWithEmail("Romain Pelisse <belaran@gmail.com>")));
         assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
                 bugId);
     }
