@@ -38,5 +38,5 @@ rule "PostMissingPmAck"
   when
     $candidate : Candidate( bug.status.toString == "POST", bug.stage.getStateMap().get(Flag.PM).toString == "NO_SET", bug.lastUpdated.get before[15d] new Date(), filtered == false);
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "BZ status is POST over two weeks, but PM ack is missing") );
+    insert( new Violation($candidate, drools.getRule().getName(), "Issue status is POST over two weeks, but PM ack is missing") );
 end

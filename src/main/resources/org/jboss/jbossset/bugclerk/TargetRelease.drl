@@ -49,5 +49,5 @@ rule "TargetRelease"
     $candidate : Candidate(bug.streamStatus.size() > 0 , bug.getType().toString == "UPGRADE" , $streamStatus : bug.streamStatus , filtered == false);
     eval( flagsWithPrefix("jboss", $streamStatus) > 1);
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "More than one release is set on this BZ !"));
+    insert(new Violation($candidate, drools.getRule().getName(), "More than one release is set for this Issue."));
 end

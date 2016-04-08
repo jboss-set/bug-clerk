@@ -38,5 +38,5 @@ rule "RegressionMayImpactOneOffRelease"
     $one_off : Candidate( bug.type.toString == "ONE_OFF", bug.blocks.contains($id) );
     Comment( body.contains("regression")  || body.contains("Regression")   ) from $comments;
   then
-    insert( new Violation($original, drools.getRule().getName(), "Regression reported in a dependency, BZ" + $id + ", it may impact this one-off."  , Level.ERROR) );
+    insert( new Violation($original, drools.getRule().getName(), "Regression reported in a dependency of " + $id + " - it may impact this one-off."  , Level.ERROR) );
 end

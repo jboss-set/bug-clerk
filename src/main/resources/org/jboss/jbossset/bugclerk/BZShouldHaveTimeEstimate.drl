@@ -38,7 +38,7 @@ rule "BZShouldHaveTimeEstimate_PostOrModified"
     when
       $candidate : Candidate($status: bug.status, ! bug.estimation.isPresent() || bug.estimation.get.initialEstimate == 0.0, bug.status.toString == "POST" || bug.status.toString == "MODIFIED", filtered == false);
     then
-      insertLogical(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but has no estimated time associated.", Level.WARNING));
+      insertLogical(new Violation($candidate, drools.getRule().getName(), "Issue has status " + $status + " but has no estimated time associated.", Level.WARNING));
 end
 
 rule "BZShouldHaveTimeEstimate_DevAcked"
@@ -47,5 +47,5 @@ rule "BZShouldHaveTimeEstimate_DevAcked"
     when
       $candidate : Candidate(! bug.estimation.isPresent() || bug.estimation.get.initialEstimate == 0.0,  bug.stage.getStateMap.get(Flag.DEV).toString == "ACCEPTED" || bug.stage.getStateMap.get(Flag.DEV).toString == "SET", filtered == false);
     then
-      insertLogical(new Violation($candidate, drools.getRule().getName(), "BZ has been dev acked, but has no estimated time associated.", Level.WARNING));
+      insertLogical(new Violation($candidate, drools.getRule().getName(), "Issue has been dev acked, but has no estimated time associated.", Level.WARNING));
 end

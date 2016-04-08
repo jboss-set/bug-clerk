@@ -33,5 +33,5 @@ rule "CommunityBZ"
   when
     $candidate : Candidate($creator : bug.reporter.get().getEmail().get(),  $creator.contains("@redhat.com") == false, filtered == false);
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "BZ was created by '" + $creator + "' which is a non Red Hat email address. Double check if it has been processed/acknowledged properly.", Level.WARNING) );
+    insert( new Violation($candidate, drools.getRule().getName(), "Issue was reported by '" + $creator + "' which is a non Red Hat email address. Double check if it has been processed/acknowledged properly.", Level.WARNING) );
 end

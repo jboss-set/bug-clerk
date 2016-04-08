@@ -39,5 +39,5 @@ rule "BZShouldHaveDevAckFlag"
             $flag : bug.stage.getStateMap.get(Flag.DEV).toString == "NO_SET",
             /*bug.stage.getStateMap.get(Flag.DEV).toString.toUpperCase == "NOT_SET",*/ filtered == false);
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "BZ has status " + $status + " but no dev flag set:" + $flag, Level.ERROR));
+    insert(new Violation($candidate, drools.getRule().getName(), "Issue has status " + $status + " but no dev flag set:" + $flag, Level.ERROR));
 end
