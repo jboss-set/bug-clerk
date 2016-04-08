@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
+import org.jboss.set.aphrodite.config.TrackerType;
 import org.jboss.set.aphrodite.domain.*;
 import org.mockito.Mockito;
 
@@ -53,6 +54,7 @@ public final class MockUtils {
 
         Mockito.when(mock.getURL()).thenReturn(buildURL(bugId));
         Mockito.when(mock.getTrackerId()).thenReturn(Optional.of(bugId));
+        Mockito.when(mock.getTrackerType()).thenReturn(TrackerType.BUGZILLA);
         Mockito.when(mock.getSummary()).thenReturn(Optional.of(summary));
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getEstimation()).thenReturn(estimation);
