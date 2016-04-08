@@ -41,6 +41,7 @@ public final class BugClerkWithFilterCLI {
         AphroditeClient client = new AphroditeClient(CommandLineInterfaceUtils.buildTrackerConfig(arguments,
                 arguments.getFilterURL()));
         final List<Issue> issues = client.retrievePayload(arguments.getFilterURL());
+        client.close();
 
         if (!issues.isEmpty())
             endProgram(arguments, runBugClerk(issues, client, arguments));

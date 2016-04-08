@@ -49,4 +49,12 @@ public final class AphroditeClient {
     public static IssueTrackerConfig buildTrackerConfig(String trackerUrl, String username, String password, TrackerType type) {
         return new IssueTrackerConfig(URLUtils.getServerUrl(trackerUrl), username, password, type, DEFAULT_ISSUE_LIMIT);
     }
+
+    public void close()  {
+        try {
+            aphrodite.close();
+        } catch ( Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }
