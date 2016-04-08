@@ -31,7 +31,8 @@ rule "PostMissingPR"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate( bug.status.toString == "POST", $status : bug.status.toString, $comments : bug.comments, filtered == false);
+    // We ignore issue starting
+    $candidate : Candidate( bug.status.toString == "POST", ! bug.trackerId.get.startsWith("JBEAP-"), $status : bug.status.toString, $comments : bug.comments, filtered == false);
     not Comment( body.contains("github.com"), body.contains("/pull/") || body.contains("/commit/")  ) from $comments;
   then
     insert( new Violation($candidate, drools.getRule().getName(), "BZ status is " + $status + ", but PR is missing") );
