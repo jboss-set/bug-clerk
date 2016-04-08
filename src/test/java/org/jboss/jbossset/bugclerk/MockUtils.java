@@ -7,15 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
-import org.jboss.set.aphrodite.domain.Comment;
-import org.jboss.set.aphrodite.domain.Flag;
-import org.jboss.set.aphrodite.domain.FlagStatus;
-import org.jboss.set.aphrodite.domain.Issue;
-import org.jboss.set.aphrodite.domain.IssueEstimation;
-import org.jboss.set.aphrodite.domain.IssueStatus;
-import org.jboss.set.aphrodite.domain.IssueType;
-import org.jboss.set.aphrodite.domain.Release;
-import org.jboss.set.aphrodite.domain.Stage;
+import org.jboss.set.aphrodite.domain.*;
 import org.mockito.Mockito;
 
 public final class MockUtils {
@@ -57,6 +49,8 @@ public final class MockUtils {
     public static Issue mockBug(String bugId, String summary) {
         final Optional<IssueEstimation> estimation = Optional.of(mockEstimation(8));
         Issue mock = Mockito.mock(Issue.class);
+        List<Release> releases = mockReleases("6.4.0","");
+
         Mockito.when(mock.getURL()).thenReturn(buildURL(bugId));
         Mockito.when(mock.getTrackerId()).thenReturn(Optional.of(bugId));
         Mockito.when(mock.getSummary()).thenReturn(Optional.of(summary));
@@ -66,11 +60,16 @@ public final class MockUtils {
         Mockito.when(mock.getStage()).thenReturn(mockStage());
         Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(DateUtils.threeWeeksAgo()));
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(DateUtils.threeMonthAgo()));
-        Mockito.when(mock.getAssignee()).thenReturn(Optional.of("jboss-set@redhat.com"));
-        Mockito.when(mock.getReporter()).thenReturn(Optional.of("Romain Pelisse <belaran@redhat.com>"));
-        Release release = new Release("6.4.0", "");
-        Mockito.when(mock.getRelease()).thenReturn(release);
+        Mockito.when(mock.getAssignee()).thenReturn(Optional.of(User.createWithEmail("jboss-set@redhat.com")));
+        Mockito.when(mock.getReporter()).thenReturn(Optional.of(User.createWithEmail("Romain Pelisse <belaran@redhat.com>")));
+        Mockito.when(mock.getReleases()).thenReturn(releases);
         return mock;
+    }
+
+    public static List<Release> mockReleases(String releaseVersion, String milestone) {
+        List<Release> releases = new ArrayList<Release>(1);
+        releases.add(new Release(releaseVersion,milestone));
+        return releases;
     }
 
     private static Stage mockStage() {
