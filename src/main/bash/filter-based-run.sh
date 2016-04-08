@@ -1,7 +1,8 @@
 #!/bin/bash
 
-readonly BZ_USERNAME=${BZ_USERNAME}
-readonly BZ_PASSWORD=${BZ_PASSWORD}
+readonly TRACKER_USERNAME=${TRACKER_USERNAME}
+readonly TRACKER_PASSWORD=${TRACKER_PASSWORD}
+readonly TRACKER_TYPE=${TRACKER_TYPE:-'bugzilla'}
 
 readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'.'}
 readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-${project.version}}
@@ -15,12 +16,12 @@ usage() {
   echo ''
 }
 
-if [ -z "${BZ_USERNAME}" ]; then
+if [ -z "${TRACKER_USERNAME}" ]; then
   echo "Missing Bugzilla Username"
   exit 1
 fi
 
-if [ -z "${BZ_PASSWORD}" ]; then
+if [ -z "${TRACKER_PASSWORD}" ]; then
   echo "Missing Bugzilla Password"
   exit 2
 fi
@@ -38,8 +39,9 @@ fi
 cd "${BUGCLERK_HOME}"
 java -jar ./bugclerk-${BUGCLERK_VERSION}.jar \
      -f "${FILTER_URL}" \
-     -u "${BZ_USERNAME}" \
-     -p "${BZ_PASSWORD}" \
+     -t "${TRACKER_TYPE}"\
+     -u "${TRACKER_USERNAME}" \
+     -p "${TRACKER_PASSWORD}" \
      ${@}
 readonly STATUS=${?}
 cd - > /dev/null
