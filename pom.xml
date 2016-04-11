@@ -11,7 +11,7 @@
 
   <groupId>org.jboss.jbossset</groupId>
   <artifactId>bugclerk</artifactId>
-  <version>0.8.2.Final</version>
+  <version>0.8.3-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Bug Clerk</name>
   <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
@@ -34,7 +34,7 @@
     <connection>scm:git:github.com/jboss-set/bug-clerk</connection>
     <developerConnection>scm:git:git@github.com:jboss-set/bug-clerk</developerConnection>
     <url>https://github.com/jboss-set/pull-request-processor</url>
-    <tag>bugclerk-0.8.2.Final</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencies>
