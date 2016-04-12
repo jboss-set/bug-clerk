@@ -83,13 +83,8 @@ public class ViolationsReportAsCommentBuilder {
 
     private List<Violation> filterViolationsAlreadyReported(List<Violation> violations) {
         List<Violation> violationsToReport = new ArrayList<>(violations.size());
-        Map<String, Violation> indexedByCheckname = violations.stream().collect(
-                Collectors.toMap(k -> ((Violation) k).getCheckName(), v -> v));
-
-        indexedByCheckname.forEach((k, v) -> {
-            addViolationToReportIfNotAlreadyReported(formatCheckname(k), v.getCandidate().getBug().getComments(),
-                    violationsToReport, v);
-        });
+        violations.stream().forEach( (v) ->             addViolationToReportIfNotAlreadyReported(
+                formatCheckname(v.getCheckName()), v.getCandidate().getBug().getComments(), violationsToReport, v));
         return violationsToReport;
     }
 
@@ -103,13 +98,12 @@ public class ViolationsReportAsCommentBuilder {
     private StringBuffer messageBody(List<Violation> violations, StringBuffer text) {
         if (violations == null || violations.isEmpty() || "".equals(text))
             throw new IllegalArgumentException("No violations or text empty");
-
-        return text
-                .append(violations.stream().map(v -> addViolationToCommentReport(text, v)).reduce((s1, s2) -> s1.append(s2)));
+        violations.stream().forEach( (v) -> text.append(addViolationToCommentReport(v)));
+        return text;
     }
 
-    private StringBuffer addViolationToCommentReport(StringBuffer text, Violation violation) {
-        return text.append("[").append(formatCheckname(violation.getCheckName())).append("] ").append(violation.getMessage())
+    private StringBuffer addViolationToCommentReport(Violation violation) {
+        return new StringBuffer(formatCheckname(violation.getCheckName())).append(" ").append(violation.getMessage())
                 .append(twoEOLs());
     }
 }
