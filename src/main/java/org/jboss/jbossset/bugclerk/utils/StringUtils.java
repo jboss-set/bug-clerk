@@ -44,4 +44,18 @@ public final class StringUtils {
     public static boolean emptyOrNull(String string) {
         return string == null || "".equals(string);
     }
+
+    public static int occurencesInString(String pattern, String text) {
+        int lastIndex = 0;
+        int count = 0;
+
+        while(lastIndex != -1){
+            lastIndex = text.indexOf(pattern,lastIndex);
+            if(lastIndex != -1){
+                count ++;
+                lastIndex += pattern.length();
+            }
+        }
+        return count;
+    }
 }
