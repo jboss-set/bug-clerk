@@ -83,12 +83,12 @@ public class ViolationsReportAsCommentBuilder {
 
     private List<Violation> filterViolationsAlreadyReported(List<Violation> violations) {
         List<Violation> violationsToReport = new ArrayList<>(violations.size());
-        violations.stream().forEach( (v) ->             addViolationToReportIfNotAlreadyReported(
+        violations.stream().forEach( (v) ->  addViolationToReportIfNotAlreadyReported(
                 formatCheckname(v.getCheckName()), v.getCandidate().getBug().getComments(), violationsToReport, v));
         return violationsToReport;
     }
 
-    private void addViolationToReportIfNotAlreadyReported(String checkname, List<Comment> comments,
+    public void addViolationToReportIfNotAlreadyReported(String checkname, List<Comment> comments,
             List<Violation> violationsToReport, Violation v) {
         CommentPatternMatcher matcher = new CommentPatternMatcher(checkname);
         if (!matcher.containsPattern(comments))
