@@ -43,5 +43,5 @@ rule "BZDepsShouldAlsoHaveFlags"
                             bug.stage.getStatus(Flag.PM).toString != "ACCEPTED" ||
                             bug.stage.getStatus(Flag.QE).toString != "ACCEPTED", filtered == false);
   then
-    insertLogical(new Violation($payload, drools.getRule().getName(), "This issue is referenced by " + $depId + ", which has all qa+,pm+ and dev flag+ - but not this issue." , Level.ERROR));
+    insertLogical(new Violation($payload, drools.getRule().getName(), "Issue " + $depId + " is referenced by " + $trackerId + ", which has all qa+,pm+ and dev flag+ - but not this issue." , Level.ERROR));
 end
