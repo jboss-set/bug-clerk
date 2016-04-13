@@ -38,7 +38,10 @@ public final class AphroditeClient {
     }
 
     public void addComments(Map<Issue, Comment> comments) {
-        aphrodite.addCommentToIssue(comments);
+        if ( ! Boolean.valueOf(System.getProperty("bugclerk.comments.dryRun")) )
+            aphrodite.addCommentToIssue(comments);
+        else
+            System.out.println("Updating comment is disable (dry run enabled), thus " + comments.size() + " issues were NOT updated with Bugclerk messages.");
     }
 
     public List<Issue> loadIssues(List<String> ids) {
