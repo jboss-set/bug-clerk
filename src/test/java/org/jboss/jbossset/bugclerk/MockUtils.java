@@ -2,9 +2,7 @@ package org.jboss.jbossset.bugclerk;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
 import org.jboss.set.aphrodite.config.TrackerType;
@@ -88,8 +86,8 @@ public final class MockUtils {
         Mockito.when(mock.getCandidate()).thenReturn(Mockito.mock(Candidate.class));
         Mockito.when(mock.getCandidate().getBug()).thenReturn(bug);
         Mockito.when(mock.getCheckName()).thenReturn(checkname);
-        Mockito.when(mock.getMessage()).thenReturn(checkname);
-        Mockito.when(mock.getLevel()).thenReturn(Level.WARNING);
+        Mockito.when(mock.getMessage()).thenReturn("Message for " + checkname + ".");
+        Mockito.when(mock.getLevel()).thenReturn(Level.ERROR);
         return mock;
     }
 
@@ -111,5 +109,19 @@ public final class MockUtils {
             urls.add(buildUrlFromIssueId(id));
         }
         return urls;
+    }
+
+    public static  List<Issue> generateMockIssues(int nbIssue, String idPrefix, String summaryPrefix) {
+       List<Issue> issues = new ArrayList<>(nbIssue);
+        for ( int i = 1; i < (nbIssue + 1); i++ )
+            issues.add(MockUtils.mockBug(idPrefix + i, summaryPrefix + i));
+        return issues;
+    }
+
+    public static List<Violation> generateMockViolationsForIssue(String bugId, String... checknames) {
+        List<Violation> violations = new ArrayList<Violation>(checknames.length);
+        for ( String checkname : checknames )
+            violations.add(mockViolation(bugId, checkname));
+        return violations;
     }
 }
