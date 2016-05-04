@@ -8,6 +8,10 @@ public final class DateUtils {
     private static final int NB_DAYS_BY_WEEK = 7;
     private static final int NB_HOURS_BY_DAY = 24;
 
+    private static final int LAST_WEEK = 1;
+    private static final int TWO_WEEKS_AGO = 2;
+    private static final int THREE_WEEKS_AGO = 3;
+
     private DateUtils() {
     }
 
@@ -26,7 +30,7 @@ public final class DateUtils {
     }
 
     public static Date twoWeeksAgo() {
-        return someWeeksAgo(2);
+        return someWeeksAgo(TWO_WEEKS_AGO);
     }
 
     private static Date someWeeksAgo(final int nbWeek) {
@@ -37,7 +41,11 @@ public final class DateUtils {
     }
 
     public static Date threeWeeksAgo() {
-        return someWeeksAgo(3);
+        return someWeeksAgo(THREE_WEEKS_AGO);
+    }
+
+    public static Date lastWeek() {
+        return someWeeksAgo(LAST_WEEK);
     }
 
 }
