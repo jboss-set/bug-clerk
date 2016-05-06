@@ -53,13 +53,13 @@ public class HighPriorityIssueNotAssigned extends AbstractCheckRunner {
     @Test
     public void violationIssueOverTwoWeeksWithHighPriority() {
         assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,bugId);
+                engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,bugId);
     }
 
     @Test
     public void noViolationIssueLowerThanHighPriority() {
         Mockito.when(mock.getPriority()).thenReturn(IssuePriority.MINOR);
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId, 0);
     }
     
@@ -67,14 +67,14 @@ public class HighPriorityIssueNotAssigned extends AbstractCheckRunner {
     public void noViolationIssueHighPriorityButLessThanTwoWeeks() {
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(DateUtils.lastWeek()));
         System.out.println(mock.getCreationTime().get());
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId, 0);
     }
     
     @Test
     public void noViolationIfIssueAssigned() {
         Mockito.when(mock.getAssignee()).thenReturn(Optional.of(new User("rpelisse@redhat.com", "Romain Pelisse")));
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId, 0);
     }
 }

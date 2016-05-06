@@ -51,23 +51,23 @@ public class IssueNotAssigned extends AbstractCheckRunner {
     @Test
     public void violationBZOlderThanAMonth() {
         assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName + "_CreationDate", CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+                engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + "_CreationDate"), checkName,
                 bugId);
     }
 
     @Test
     public void bzHasAlreadyFiveComments() {
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(new Date()));
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName + "_CommentSize",
-                buildTestSubjectWithComments(mock, "first comment", "second one", "third one", "fourth one", "fifth one")),
+        assertResultsIsAsExpected(engine.runCheckOnBugs(buildTestSubjectWithComments(mock, "first comment", "second one", "third one", "fourth one", "fifth one"),
+                checkName + "_CommentSize"),
                 checkName, bugId);
     }
 
     @Test
     public void bzHasAlreadyPR() {
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(new Date()));
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName + "_PR",
-                buildTestSubjectWithComments(mock, "first comment", "has PR: https://github.com/jbossas/jboss-eap/pull/1640")),
+        assertResultsIsAsExpected(engine.runCheckOnBugs(buildTestSubjectWithComments(mock, "first comment", "has PR: https://github.com/jbossas/jboss-eap/pull/1640"),
+                checkName + "_PR"),
                 checkName, bugId);
     }
 
@@ -75,7 +75,7 @@ public class IssueNotAssigned extends AbstractCheckRunner {
     public void bzLessThanAMonthNoViolation() {
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.NEW);
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(new Date()));
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId, 0);
     }
 }

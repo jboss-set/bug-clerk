@@ -48,18 +48,18 @@ public class RegressionMayImpactOneOffRelease extends AbstractCheckRunner {
 
     @Test
     public void oneOffBZWithRegressionInBlocksList() {
-        assertOneViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("Regression here...")), checkName,
+        assertOneViolationFound(engine.runCheckOnBugs(prepareCandidates("Regression here..."), checkName), checkName,
                 originalBugId);
     }
 
     @Test
     public void oneOffBZWithRegressionLowerCaseInBlocksList() {
-        assertOneViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("Appears to be a regression here...")),
+        assertOneViolationFound(engine.runCheckOnBugs(prepareCandidates("Appears to be a regression here..."), checkName),
                 checkName, originalBugId);
     }
 
     public void oneOffButNoRegression() {
-        assertNoViolationFound(engine.runCheckOnBugs(checkName, prepareCandidates("New bug ?")), checkName, oneOffBugId);
+        assertNoViolationFound(engine.runCheckOnBugs(prepareCandidates("New bug ?"), checkName), checkName, oneOffBugId);
     }
 
     protected Collection<Candidate> prepareCandidates(String regressionText) {

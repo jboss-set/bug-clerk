@@ -48,7 +48,7 @@ public class PostMissingPR extends AbstractCheckRunner {
         final Issue mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId);
     }
 
@@ -59,7 +59,7 @@ public class PostMissingPR extends AbstractCheckRunner {
         final Issue mock = MockUtils.mockBug("143794", "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
-        assertThat(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload)).size(), is(0));
+        assertThat(engine.runCheckOnBugs(buildTestSubjectWithComment(mock, payload), checkName).size(), is(0));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class PostMissingPR extends AbstractCheckRunner {
         final Issue mock = MockUtils.mockBug("143794", "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
-        assertThat(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload)).size(), is(0));
+        assertThat(engine.runCheckOnBugs(buildTestSubjectWithComment(mock, payload), checkName).size(), is(0));
     }
 
 }

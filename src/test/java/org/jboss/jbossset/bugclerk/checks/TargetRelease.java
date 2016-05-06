@@ -51,7 +51,7 @@ public class TargetRelease extends AbstractCheckRunner {
         stream.put("jboss‑eap‑6.4.z", FlagStatus.ACCEPTED);
         stream.put("jboss‑eap‑6.3.z", FlagStatus.ACCEPTED);
         Mockito.when(mock.getStreamStatus()).thenReturn(stream);
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, candidates), checkName, bugId);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(candidates, checkName), checkName, bugId);
     }
 
     protected Issue testSpecificStubbingForBug(Issue mock) {

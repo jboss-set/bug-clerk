@@ -50,7 +50,7 @@ public class PostMissingPmAck extends AbstractCheckRunner {
         final Issue mock = MockUtils.mockBug(bugId, "summary");
 
         assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock)))),
+                engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock))), checkName),
                 checkName, bugId);
     }
 
@@ -61,7 +61,7 @@ public class PostMissingPmAck extends AbstractCheckRunner {
         Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(DateUtils.twoWeeksAgo()));
 
         assertResultsIsAsExpected(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock)))),
+                engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock))), checkName),
                 checkName, bugId, 0);
     }
 
@@ -71,7 +71,7 @@ public class PostMissingPmAck extends AbstractCheckRunner {
         final Issue mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(DateUtils.threeWeeksAgo()));
 
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId, 0);
     }
 
@@ -81,7 +81,7 @@ public class PostMissingPmAck extends AbstractCheckRunner {
         final Issue mock = MockUtils.mockBug(bugId, "summary");
         mock.getStage().getStateMap().put(Flag.PM, FlagStatus.ACCEPTED);
 
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId, 0);
     }
 }

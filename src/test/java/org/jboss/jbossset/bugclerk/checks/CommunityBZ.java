@@ -43,13 +43,13 @@ public class CommunityBZ extends AbstractCheckRunner {
         final String bugId = "123466";
         Issue mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getReporter()).thenReturn(Optional.of(User.createWithEmail("Romain Pelisse <belaran@gmail.com>")));
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId);
     }
 
     @Test
     public void noViolationIfEmailIsFromRedHat() {
         Issue mock = MockUtils.mockBug("123466", "summary");
-        assertThat(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))).size(), is(0));
+        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
     }
 }

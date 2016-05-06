@@ -46,7 +46,7 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
 
     @Test
     public void bzOnPostButNoDevFlag() {
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(mock))), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 mock.getTrackerId().get());
     }
 
@@ -57,7 +57,7 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         mocks.iterator().next().getBug().getStage().getStateMap().put(Flag.QE, FlagStatus.NO_SET);
         Mockito.when(mocks.iterator().next().getBug().getStatus()).thenReturn(IssueStatus.MODIFIED);
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, mocks), checkName, bugId);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(mocks, checkName), checkName, bugId);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         mocks.iterator().next().getBug().getStage().getStateMap().put(Flag.DEV, FlagStatus.ACCEPTED);
         Mockito.when(mocks.iterator().next().getBug().getStatus()).thenReturn(IssueStatus.MODIFIED);
-        assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
+        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(0));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
         final String bugId = "143794";
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         Mockito.when(mocks.iterator().next().getBug().getStatus()).thenReturn(IssueStatus.MODIFIED);
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, mocks), checkName, bugId);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(mocks, checkName), checkName, bugId);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
         Collection<Candidate> mocks = buildTestSubjectWithComment("143794", payload);
         mocks.iterator().next().getBug().getStage().getStateMap().put(Flag.DEV, FlagStatus.ACCEPTED);
         Mockito.when(mocks.iterator().next().getBug().getStatus()).thenReturn(IssueStatus.POST);
-        assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
+        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(0));
     }
 
     @Before

@@ -50,7 +50,7 @@ public class BZShouldHaveTimeEstimate extends AbstractCheckRunner {
     public void devFlagSetButNoTimeEstimate() {
         mock.getStage().getStateMap().put(Flag.DEV, FlagStatus.SET);
         noTimeEstimate();
-        assertThat(engine.runCheckOnBugs(checkName + DEV_ACKED, CollectionUtils.asSetOf(new Candidate(mock))).size(), is(1));
+        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + DEV_ACKED).size(), is(1));
     }
 
     private void noTimeEstimate() {
@@ -61,20 +61,20 @@ public class BZShouldHaveTimeEstimate extends AbstractCheckRunner {
     public void postButNoTimeEstimate() {
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
         noTimeEstimate();
-        assertThat(engine.runCheckOnBugs(checkName + POST_OR_MODIFIED, CollectionUtils.asSetOf(new Candidate(mock))).size(),
+        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + POST_OR_MODIFIED).size(),
                 is(1));
     }
 
     @Test
     public void falsePositiveWithPost() {
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
-        assertThat(engine.runCheckOnBugs(checkName + POST_OR_MODIFIED, CollectionUtils.asSetOf(new Candidate(mock))).size(),
+        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + POST_OR_MODIFIED).size(),
                 is(0));
     }
 
     @Test
     public void falsePositiveWithDevAck() {
-        assertThat(engine.runCheckOnBugs(checkName + DEV_ACK_FLAG, CollectionUtils.asSetOf(new Candidate(mock))).size(), is(0));
+        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + DEV_ACK_FLAG).size(), is(0));
     }
 
     @Before

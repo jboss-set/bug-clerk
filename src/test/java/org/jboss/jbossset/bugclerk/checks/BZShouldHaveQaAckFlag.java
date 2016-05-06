@@ -48,7 +48,7 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
     @Test
     public void bzOnVerifiedButNoQaFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-        Collection<Violation> v = engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, payload));
+        Collection<Violation> v = engine.runCheckOnBugs(buildTestSubjectWithComment(mock, payload), checkName);
         assertResultsIsAsExpected(v, checkName, bugId);
     }
 
@@ -58,7 +58,7 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.VERIFIED);
         mock.getStage().getStateMap().put(Flag.QE, FlagStatus.NO_SET);
-        assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
+        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(0));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
         final String payload = "Well; it does seems like one forgot the PR here.";
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         mock.getStage().getStateMap().put(Flag.QE, FlagStatus.NO_SET);
-        assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
+        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(0));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
         final String payload = "Well; it does seems like one forgot the PR here.";
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         mock.getStage().getStateMap().put(Flag.QE, FlagStatus.ACCEPTED);
-        assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(0));
+        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(0));
     }
 
     @Before

@@ -38,15 +38,15 @@ public class SummaryContainsPatchButTypeIsNotSupportPatch extends AbstractCheckR
 
     @Test
     public void noViolationIfCorrectBugType() {
-        assertNoViolationFound(engine.runCheckOnBugs(checkName,
-                CollectionUtils.asSetOf(new Candidate(prepareMock("summary with Patch in it", IssueType.SUPPORT_PATCH)))),
+        assertNoViolationFound(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(prepareMock("summary with Patch in it", IssueType.SUPPORT_PATCH))),
+                checkName),
                 checkName, bugId);
     }
 
     @Test
     public void noViolationIfNoPatchInDesc() {
         assertNoViolationFound(
-                engine.runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(prepareMock("Summary", IssueType.BUG)))),
+                engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(prepareMock("Summary", IssueType.BUG))), checkName),
                 checkName, bugId);
     }
 

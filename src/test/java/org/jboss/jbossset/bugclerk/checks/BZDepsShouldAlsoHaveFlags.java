@@ -52,7 +52,7 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
 
         Collection<Candidate> mocks = buildCollectionOfCandidates(payload, dependency);
         Mockito.when(payload.getDependsOn()).thenReturn(MockUtils.idsAsURLs(dependencyId, "158690"));
-        assertThat(engine.runCheckOnBugs(checkName, mocks).size(), is(1));
+        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(1));
     }
 
     private static Stage buildStageMapForDeps() {

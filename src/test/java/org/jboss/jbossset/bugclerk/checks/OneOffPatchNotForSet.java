@@ -43,7 +43,7 @@ public class OneOffPatchNotForSet extends AbstractCheckRunner {
     public void violationIfOneOff() {
         mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(IssueType.ONE_OFF);
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, "comment")), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(buildTestSubjectWithComment(mock, "comment"), checkName), checkName,
                 bugId);
     }
 
@@ -51,7 +51,7 @@ public class OneOffPatchNotForSet extends AbstractCheckRunner {
     public void violationIfSupportPatch() {
         mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(IssueType.SUPPORT_PATCH);
-        assertResultsIsAsExpected(engine.runCheckOnBugs(checkName, buildTestSubjectWithComment(mock, "comment")), checkName,
+        assertResultsIsAsExpected(engine.runCheckOnBugs(buildTestSubjectWithComment(mock, "comment"), checkName), checkName,
                 bugId);
     }
 
@@ -61,7 +61,7 @@ public class OneOffPatchNotForSet extends AbstractCheckRunner {
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
 
         assertTrue(engine
-                .runCheckOnBugs(checkName, CollectionUtils.asSetOf(new Candidate(MockUtils.mockBug("123", "summary"))))
+                .runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(MockUtils.mockBug("123", "summary"))), checkName)
                 .isEmpty());
     }
 }
