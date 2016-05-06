@@ -11,7 +11,7 @@
 
   <groupId>org.jboss.jbossset</groupId>
   <artifactId>bugclerk</artifactId>
-  <version>0.8.5-SNAPSHOT</version>
+  <version>0.9.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Bug Clerk</name>
   <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
