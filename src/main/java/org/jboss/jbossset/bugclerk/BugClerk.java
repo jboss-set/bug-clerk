@@ -51,14 +51,10 @@ public class BugClerk {
     }
 
     protected Collection<Violation> processEntriesAndReportViolations(List<Candidate> candidates) {
-        RuleEngine ruleEngine = new RuleEngine(buildGlobalsMap());
+        RuleEngine ruleEngine = new RuleEngine(new HashMap<String, Object>(0));
         Collection<Violation> violations = ruleEngine.processBugEntry(candidates);
         ruleEngine.shutdownRuleEngine();
         return violations;
-    }
-
-    protected Map<String, Object> buildGlobalsMap() {
-        return new HashMap<String, Object>(1);
     }
 
     protected String buildReport(Map<Issue, List<Violation>> violationByBugId) {

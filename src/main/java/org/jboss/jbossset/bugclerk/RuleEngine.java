@@ -21,10 +21,14 @@
  */
 package org.jboss.jbossset.bugclerk;
 
+import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.drools.core.ClassObjectFilter;
+import org.jboss.set.aphrodite.domain.Issue;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.AgendaFilter;
@@ -35,9 +39,19 @@ public class RuleEngine {
     private final KieSession ksession;
     static final String KIE_SESSION = "BzCheck";
 
-    public RuleEngine(Map<String, Object> globals) {
+    public RuleEngine(Map<String, Object> externalGlobals) {
+        Map<String, Object> globals = buildGlobalsMap();
+        if (! externalGlobals.isEmpty() )
+            globals.putAll(externalGlobals);
         ksession = createKSession(KIE_SESSION);
         globals.entrySet().forEach(e -> ksession.getGlobals().set(e.getKey(), e.getValue()));
+    }
+
+    protected Map<String, Object> buildGlobalsMap() {
+        Map<String, Object> globalsMaps = new HashMap<String, Object>(2);
+        globalsMaps.put("issuesIndexedByURL", new HashMap<URL,Issue>());
+        globalsMaps.put("payloadTrackerIndexedByURL", new HashMap<URL,Issue>());
+        return globalsMaps;
     }
 
     public static KieSession createKSession(final String sessionName) {
@@ -63,26 +77,29 @@ public class RuleEngine {
         candidates.forEach(c -> ksession.insert(c));
     }
 
-    private AgendaFilter createAgendaForCheck(final String checkname) {
+    private AgendaFilter createAgendaForCheck(final Collection<String> checknames) {
         return new AgendaFilter() {
             @Override
             public boolean accept(Match match) {
-                return match.getRule().getName().equals(checkname);
+                return checknames.contains(match.getRule().getName());
             }
         };
-
     }
 
-    public Collection<Violation> runCheckOnBugs(final String checkname, Collection<Candidate> candidates) {
+    public Collection<Violation> runChecksOnBugs(Collection<Candidate> candidates, final Collection<String> checknames) {
         addCandidatesToFacts(candidates);
-        ksession.fireAllRules(createAgendaForCheck(checkname));
+        ksession.fireAllRules(createAgendaForCheck(checknames));
         return retrieveViolationsFromKSession(ksession);
+    }
+
+    public Collection<Violation> runCheckOnBugs(Collection<Candidate> candidates, final String checkname) {
+        return runChecksOnBugs(candidates, Arrays.asList(checkname));
     }
 
     @SuppressWarnings("unchecked")
     public Collection<Candidate> filterBugs(final String checkname, Collection<Candidate> candidates) {
         addCandidatesToFacts(candidates);
-        ksession.fireAllRules(createAgendaForCheck(checkname));
+        ksession.fireAllRules(createAgendaForCheck(Arrays.asList(checkname)));
         return (Collection<Candidate>) ksession.getObjects(new ClassObjectFilter(Candidate.class));
     }
 

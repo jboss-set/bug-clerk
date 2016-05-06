@@ -22,7 +22,6 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -40,6 +39,9 @@ public abstract class AbstractCheckRunner {
     protected static final String QA_ACK_FLAG = "qa_ack";
     protected static final String PM_ACK_FLAG = "pm_ack";
 
+    protected static final String INDEX_PAYLOAD_RULE = "IndexPayloadTrackerByURL";
+    protected static final String INDEX_ISSUE_RULE = "IndexIssueByURL";
+
     protected static final SortedSet<Comment> NO_COMMENTS = new TreeSet<Comment>();
 
     public AbstractCheckRunner() {
@@ -48,8 +50,7 @@ public abstract class AbstractCheckRunner {
 
     @Before
     public void initRuleEngine() {
-        Map<String, Object> globals = new HashMap<String, Object>(1);
-        this.engine = new RuleEngine(globals);
+        this.engine = new RuleEngine(new HashMap<String, Object>(0));
     }
 
     @Before
