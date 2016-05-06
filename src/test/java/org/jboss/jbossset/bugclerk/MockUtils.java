@@ -37,7 +37,7 @@ public final class MockUtils {
         return comments;
     }
 
-    private static URL buildURL(String id) {
+    public static URL buildURL(String id) {
         try {
             return new URL(TRACKER_URL_PREFIX + id);
         } catch (MalformedURLException e) {
@@ -46,12 +46,16 @@ public final class MockUtils {
     }
 
     public static Issue mockBug(String bugId, String summary) {
+        return mockBug(buildURL(bugId), summary);
+    }
+
+    public static Issue mockBug(URL bugId, String summary) {
         final Optional<IssueEstimation> estimation = Optional.of(mockEstimation(8));
         Issue mock = Mockito.mock(Issue.class);
         List<Release> releases = mockReleases("6.4.0","");
 
-        Mockito.when(mock.getURL()).thenReturn(buildURL(bugId));
-        Mockito.when(mock.getTrackerId()).thenReturn(Optional.of(bugId));
+        Mockito.when(mock.getURL()).thenReturn(bugId);
+        Mockito.when(mock.getTrackerId()).thenReturn(Optional.of(bugId.getQuery().split("=")[1]));
         Mockito.when(mock.getTrackerType()).thenReturn(TrackerType.BUGZILLA);
         Mockito.when(mock.getSummary()).thenReturn(Optional.of(summary));
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
