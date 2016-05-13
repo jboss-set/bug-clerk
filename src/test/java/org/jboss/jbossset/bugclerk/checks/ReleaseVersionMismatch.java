@@ -29,7 +29,6 @@ import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Issue;
-import org.jboss.set.aphrodite.domain.Release;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
