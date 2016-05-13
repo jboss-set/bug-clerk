@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueType;
+
 import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
 /**
  * Regroups a set of static method used by some checks.</p>
@@ -31,6 +33,15 @@ public final class RulesHelper {
         for ( URL block : issues ) {
             Issue issue = issuesIndexedByURL.get(block);
             if ( issue != null && issue.getType().equals(UPGRADE) )
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean doesAnIssueBelongToPayloadTracker(List<URL> issues, Map<URL, Issue> issuesIndexedByURL, Map<URL, Issue> payloadTrackerIndexedByURL) {
+        for ( URL url : issues ) {
+            Issue issue = issuesIndexedByURL.get(url);
+            if ( issue != null && issue.getType().equals(IssueType.BUG) && payloadTrackerIndexedByURL.containsKey(url) )
                 return true;
         }
         return false;

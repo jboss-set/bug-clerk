@@ -35,15 +35,16 @@ import org.jboss.set.aphrodite.domain.IssueType;
 global java.util.Map issuesIndexedByURL;
 global java.util.Map payloadTrackerIndexedByURL;
 
-rule "PayloadFixesMustHaveComponentUpgrade"
+rule "PayloadComponentUpgradeShouldHaveAFix"
   salience 0
   dialect "mvel"
   when
-    // does this issue "block" (thus belong to) a Payload Tracker ? (And not an upgrade)
-    $candidate : Candidate( $issue: bug, $url: bug.getURL, ! bug.getType().toString().equalsIgnoreCase(IssueType.UPGRADE.toString()), filtered == false);
-    eval(RulesHelper.isOneOfThoseIssueAPayload($issue.getBlocks(), payloadTrackerIndexedByURL) == true)
-    // if so, does this fix blocks a component upgrade ?
-    eval(RulesHelper.isOneOfThoseIssueAComponentUpgrade($issue.getBlocks(),issuesIndexedByURL) == false)
+    // Is this a component upgrade ?
+    $candidate : Candidate( $issue: bug, $url: bug.getURL, bug.getType().toString().equalsIgnoreCase(IssueType.UPGRADE.toString()), ! filtered);
+    // Does this component upgrade blocks a payload ?
+    eval ( RulesHelper.isOneOfThoseIssueAPayload($issue.getBlocks(), payloadTrackerIndexedByURL) == true );
+    // Does it has a dependency to a fix that belong to the payload tracker ?
+    eval ( RulesHelper.doesAnIssueBelongToPayloadTracker( $issue.getDependsOn() , issuesIndexedByURL, payloadTrackerIndexedByURL) == false );
   then
     insert(new Violation($candidate, drools.getRule().getName(), "The following issue belong to one or payload tracker, but has no component fix:" + $issue.getTrackerId().get() ));
 end
