@@ -9,9 +9,9 @@ import org.jboss.set.aphrodite.domain.IssueType;
 
 import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
 /**
- * Regroups a set of static method used by some checks.</p>
+ * <p>Regroups a set of static method used by some checks.</p>
  *
- * @author Romain Pelisse <belaran@redhat.com>
+ * @author Romain Pelisse - belaran@redhat.com
  *
  */
 public final class RulesHelper {
