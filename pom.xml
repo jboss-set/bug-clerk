@@ -33,7 +33,7 @@
   <scm>
     <connection>scm:git:github.com/jboss-set/bug-clerk</connection>
     <developerConnection>scm:git:git@github.com:jboss-set/bug-clerk</developerConnection>
-    <url>https://github.com/jboss-set/pull-request-processor</url>
+    <url>https://github.com/jboss-set/bug-clerk</url>
     <tag>HEAD</tag>
   </scm>
 
