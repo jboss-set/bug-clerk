@@ -49,9 +49,18 @@ public final class MockUtils {
         return mockBug(buildURL(bugId), summary);
     }
 
+    public static <T extends Issue> T mockBug(URL bugId, String summary, Class<T> clazz) {
+        T mock = Mockito.mock(clazz);
+        return (T) populateMock(bugId, summary, mock);
+    }
+    
     public static Issue mockBug(URL bugId, String summary) {
-        final Optional<IssueEstimation> estimation = Optional.of(mockEstimation(8));
         Issue mock = Mockito.mock(Issue.class);
+        return populateMock(bugId, summary, mock);
+    }
+    
+    public static <T extends Issue> T populateMock(URL bugId, String summary, T mock) {
+        final Optional<IssueEstimation> estimation = Optional.of(mockEstimation(8));
         List<Release> releases = mockReleases("6.4.0","");
 
         Mockito.when(mock.getURL()).thenReturn(bugId);
