@@ -39,16 +39,17 @@ rule "SprintVersionMismatch"
                             filtered == false);
     $wrongRelease : Release( version.isPresent(), ! version.get().contains($sprintRelease) ) from $candidate.bug.releases;
   then
-    insert( new Violation($candidate,drools.getRule().getName(), "Sprint version does not match any of the actual release(s) (" + $wrongRelease  + "):" + $sprintRelease) );
+    insert(new Violation($candidate,drools.getRule().getName(), "Sprint version does not match any of the actual release(s) (" + $wrongRelease  + "):" + $sprintRelease, Level.WARNING));
 end
 
 rule "SprintVersionMismatch_NoRelease"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate( $sprintRelease: bug#JiraIssue.getSprintRelease,
+    $candidate : Candidate( bug#JiraIssue.getSprintRelease != "",
+                            $sprintRelease: bug#JiraIssue.getSprintRelease,
                             bug.releases.isEmpty,
                             filtered == false);
   then
-    insert( new Violation($candidate,drools.getRule().getName(), "Sprint release is specified (" + $sprintRelease + ") but there is no releases associated to the issue." ) );
+    insert(new Violation($candidate,drools.getRule().getName(), "Sprint release is specified (" + $sprintRelease + ") but there is no releases associated to the issue.", Level.WARNING));
 end
