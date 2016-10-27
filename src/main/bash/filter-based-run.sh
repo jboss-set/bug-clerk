@@ -34,6 +34,11 @@ if [ ! -d "${BUGCLERK_HOME}" ]; then
   exit 3
 fi
 
+if [ -z "${BUGCLERK_VERSION}" ]; then
+  echo "BUGCLERK_VERSION has not been defined !${BUGCLERK_VERSION}"
+  exit 4
+fi
+
 if [ ! -e "${BUGCLERK_HOME}/${JAR_NAME}-${BUGCLERK_VERSION}.jar" ]; then
   echo "No jar file in directory: ${BUGCLERK_HOME}."
   exit 4
