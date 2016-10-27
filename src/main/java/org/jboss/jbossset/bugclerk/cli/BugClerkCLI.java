@@ -41,6 +41,7 @@ public final class BugClerkCLI {
                     .getIds().get(0)));
             arguments.setIssues(aphrodite.loadIssues(arguments.getIds()));
             new BugClerk(aphrodite).runAndReturnsViolations(BugClerkArguments.validateArgs(arguments));
+            aphrodite.close();
         } catch (Throwable t) {
             System.out.println(t.getMessage());
             if (t.getCause() != null)
