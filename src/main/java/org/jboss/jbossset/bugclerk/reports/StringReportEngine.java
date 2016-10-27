@@ -49,7 +49,6 @@ public class StringReportEngine implements ReportEngine<String> {
     }
 
     private static StringBuffer reportViolations(List<Violation> violations) {
-        StringBuffer report = new StringBuffer();
         return violations
                 .stream()
                 .map(v -> formatViolation(v)).reduce((s1, s2) -> s1.append(s2)).get();
