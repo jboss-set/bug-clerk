@@ -37,8 +37,8 @@ rule "ReleaseVersionMismatch"
     // FIXME: enhance pattern matching on summary
     $candidate : Candidate( ! bug.releases.isEmpty, $summary : bug.summary.get() , filtered == false);
     $release : Release() from $candidate.bug.releases.get(0);
-    eval ( $summary.matches("^.*6\\.[0-9]\\.[0-9].*$"))  // only go further if summmary DOES contains a version number
-    eval(  $summary.contains($release.version.get()) == false); // violation only if summary does NOT contains the right version number
+    eval ( $summary.matches("^.*[6-9]\\.[0-9]\\.[0-9].*$"))  // only go further if summmary DOES contains a version number
+    eval(  $summary.contains($release.version.get().replaceAll("[a-zA-Z \t]","")) == false); // violation only if summary does NOT contains the right version number
   then
     insert( new Violation($candidate,drools.getRule().getName(), "Release in title does not match actual release (" + $release.version.get()  + "]:" + $summary) );
 end
