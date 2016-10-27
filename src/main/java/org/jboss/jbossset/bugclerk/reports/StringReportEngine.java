@@ -48,6 +48,10 @@ public class StringReportEngine implements ReportEngine<String> {
         return violations.get(0).getCandidate().getBug().getURL().toString();
     }
 
+    private static String getSummary(List<Violation> violations) {
+        return violations.get(0).getCandidate().getBug().getSummary().get();
+    }
+
     private static StringBuffer reportViolations(List<Violation> violations) {
         return violations
                 .stream()
@@ -63,8 +67,9 @@ public class StringReportEngine implements ReportEngine<String> {
 
     private static StringBuffer format(List<Violation> violations) {
         StringBuffer report = new StringBuffer();
-        report.append("Issue: ").append(getBugId(violations)).append(EOL)
+        report.append("Issue: ").append(getBugId(violations) + " - " + getSummary(violations) ).append(EOL)
                 .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
         return report.append(reportViolations(violations)).append(twoEOLs());
     }
+
 }
