@@ -1,13 +1,15 @@
 package org.jboss.jbossset.bugclerk.utils;
 
+import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
+
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueType;
-
-import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
+import org.jboss.set.aphrodite.domain.Release;
 /**
  * <p>Regroups a set of static method used by some checks.</p>
  *
@@ -43,6 +45,25 @@ public final class RulesHelper {
             Issue issue = issuesIndexedByURL.get(url);
             if ( issue != null && issue.getType().equals(IssueType.BUG) && payloadTrackerIndexedByURL.containsKey(url) )
                 return true;
+        }
+        return false;
+    }
+
+    private static String extractVersionNumberPrefix(String versionName) {
+        // Turns "7.0.0.CR1" or "7.0.z.GA" into "7.0"
+        return versionName.substring(0, 3);
+    }
+
+    public static boolean releasesStreamMismatch(Issue issue) {
+        List<Release> releases = issue.getReleases();
+        Map<String, FlagStatus> streamStatus = issue.getStreamStatus();
+        for ( Release release : releases ) {
+            String versionPrefix = extractVersionNumberPrefix(release.getVersion().get());
+            for ( String targetRelease : streamStatus.keySet() ) {
+                String targetPrefix = extractVersionNumberPrefix(targetRelease);
+                if ( ! targetPrefix.equals(versionPrefix) )
+                    return true;
+            }
         }
         return false;
     }
