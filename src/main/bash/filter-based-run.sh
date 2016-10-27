@@ -10,9 +10,9 @@ readonly JAR_NAME=${JAR_NAME:-'bugclerk'}
 
 readonly BZ_SERVER_URL='https://bugzilla.redhat.com'
 
-readonly EAP7_UNRESOLVED='12326686'
+readonly EAP7_UNRESOLVED='12328451'
 readonly FILTER_URL_ENDPOINT='https://issues.jboss.org/rest/api/latest/filter'
-readonly FILTER_URL=${FILTER_URL:-"${FILTER_URL_ENDPOINT}/${EAP7_UNRESOLVED}"}
+readonly FILTER_URL=${FILTER_URL:-${FILTER_URL_ENDPOINT}/${EAP7_UNRESOLVED}}
 
 usage() {
   echo "$(basename ${0})"
