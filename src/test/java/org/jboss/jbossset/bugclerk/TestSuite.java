@@ -19,6 +19,7 @@ import org.junit.runners.Suite;
         org.jboss.jbossset.bugclerk.checks.SummaryContainsPatchButTypeIsNotSupportPatch.class,
         org.jboss.jbossset.bugclerk.checks.TargetRelease.class, org.jboss.jbossset.bugclerk.ReportEngineTest.class,
         org.jboss.jbossset.bugclerk.checks.SprintVersionMismatch.class,
+        org.jboss.jbossset.bugclerk.checks.ComponentUpgradeTargetReleaseMismatch.class,
         org.jboss.jbossset.bugclerk.BuildReportToUpdateTracker.class,
         org.jboss.jbossset.bugclerk.comments.CommentPatternMatcherTest.class,
         org.jboss.jbossset.bugclerk.utils.URLUtilsTest.class,

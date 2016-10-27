@@ -2,11 +2,24 @@ package org.jboss.jbossset.bugclerk;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
 import org.jboss.set.aphrodite.config.TrackerType;
-import org.jboss.set.aphrodite.domain.*;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.Flag;
+import org.jboss.set.aphrodite.domain.FlagStatus;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueEstimation;
+import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.IssueType;
+import org.jboss.set.aphrodite.domain.Release;
+import org.jboss.set.aphrodite.domain.Stage;
+import org.jboss.set.aphrodite.domain.User;
 import org.mockito.Mockito;
 
 public final class MockUtils {
@@ -53,12 +66,12 @@ public final class MockUtils {
         T mock = Mockito.mock(clazz);
         return (T) populateMock(bugId, summary, mock);
     }
-    
+
     public static Issue mockBug(URL bugId, String summary) {
         Issue mock = Mockito.mock(Issue.class);
         return populateMock(bugId, summary, mock);
     }
-    
+
     public static <T extends Issue> T populateMock(URL bugId, String summary, T mock) {
         final Optional<IssueEstimation> estimation = Optional.of(mockEstimation(8));
         List<Release> releases = mockReleases("6.4.0","");
@@ -136,5 +149,11 @@ public final class MockUtils {
         for ( String checkname : checknames )
             violations.add(mockViolation(bugId, checkname));
         return violations;
+    }
+
+    public static Map<String,FlagStatus> mockStreamStatus(String streamName, FlagStatus flagStatus) {
+        Map<String,FlagStatus> map = new HashMap<String,FlagStatus>(0);
+        map.put(streamName, flagStatus);
+        return map;
     }
 }
