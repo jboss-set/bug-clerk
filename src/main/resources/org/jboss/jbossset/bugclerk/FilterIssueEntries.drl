@@ -25,6 +25,10 @@ package org.jboss.jbossset.bugclerk;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.Comment;
 
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
+
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssueResolution;
+
 rule "IgnoreDocFeatureBZ"
   salience 100
   dialect "mvel"
@@ -69,6 +73,22 @@ rule "IgnoreVerifiedBZ"
   dialect "mvel"
   when
     $candidate : Candidate( bug.status.toString == "VERIFIED", filtered == false);
+  then
+    //System.out.println( $candidate.bug.getTrackerId + " filtered by " + drools.getRule().getName() );
+    modify ( $candidate ) {
+      candidate = false,
+      filtered = true
+    };
+end
+
+rule "IgnoreCannotReproducedResolvedJIRAs"
+  salience 100
+  dialect "mvel"
+  when
+    $candidate : Candidate( bug#JiraIssue.status.toString == "MODIFIED",
+                    bug#JiraIssue.resolution == JiraIssueResolution.CANNOT_REPRODUCE_BUG || bug#JiraIssue.resolution == JiraIssueResolution.CANNOT_REPRODUCE ||
+                    bug#JiraIssue.resolution == JiraIssueResolution.REJECTED || bug#JiraIssue.resolution == JiraIssueResolution.DEFERRED,
+                    filtered == false);
   then
     //System.out.println( $candidate.bug.getTrackerId + " filtered by " + drools.getRule().getName() );
     modify ( $candidate ) {
