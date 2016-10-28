@@ -25,12 +25,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
+import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +54,7 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     public void violationIfNoReleases() {
         JiraIssue mock = MockUtils.mockBug(MockUtils.buildURL(bugId), summary, JiraIssue.class);
         Mockito.when(mock.getSprintRelease()).thenReturn(SPRINT_RELEASE);
-        Mockito.when(mock.getReleases()).thenReturn(Collections.emptyList());
+        Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
         assertTrue(mock.getReleases().isEmpty());
         assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + "_NoRelease").size(), is(1));
     }
@@ -60,7 +62,7 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     @Test
     public void noViolationIfNoSprint() {
         JiraIssue mock = MockUtils.mockBug(MockUtils.buildURL(bugId), summary, JiraIssue.class);
-        Mockito.when(mock.getReleases()).thenReturn(Collections.emptyList());
+        Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
         Mockito.when(mock.getSprintRelease()).thenReturn("");
         assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
     }
