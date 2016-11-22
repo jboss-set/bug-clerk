@@ -1,6 +1,6 @@
 #!/bin/bash
 
-readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-'0.7.0-SNAPSHOT'}
+readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-'0.9.0-SNAPSHOT'}
 readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'target'}
 
 readonly MAIN_CLASS=${MAIN_CLASS:-'org.jboss.jbossset.bugclerk.cli.BugClerkCLI'}
@@ -29,7 +29,7 @@ if [ -z "${BUGCLERK_VERSION}" ]; then
   exit 4
 fi
 
-if [ ! -e "${BUGCLERK_HOME}/${JAR_NAME}-${BUGCLERK_VERSION}.jar" ]; then
+if [ ! -e "${BUGCLERK_HOME}/bugclerk-${BUGCLERK_VERSION}.jar" ]; then
   echo "No jar file in directory: ${BUGCLERK_HOME}."
   exit 4
 fi
@@ -40,5 +40,5 @@ if [ -z "${BUG_ID}" ]; then
 fi
 
 java -cp "${BUGCLERK_HOME}/bugclerk-${BUGCLERK_VERSION}.jar" "${MAIN_CLASS}" \
-     -u "${TRACKER_USERNAME}" -p "${TRACKER_PASSWORD}"
+     -u "${TRACKER_USERNAME}" -p "${TRACKER_PASSWORD}" \
       "${BUG_ID}" ${@}
