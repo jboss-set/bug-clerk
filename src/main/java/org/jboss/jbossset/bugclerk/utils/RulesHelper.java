@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueType;
@@ -64,6 +65,28 @@ public final class RulesHelper {
                 if ( ! targetPrefix.equals(versionPrefix) )
                     return true;
             }
+        }
+        return false;
+    }
+
+    public static boolean dependsOnContainsAtLeastOneJIRAIssue(Issue issue) {
+        // WARNING: This method is designed to be used with BZ issue, thus having no JIRA issue
+        //          load in memory. So instead of using the TrackerType, we look for 'jira' in
+        //          url string. Bugclerk needs to be (greatly) improved to have a more appropriate
+        //          behavior...
+        List<URL> dependsOn = issue.getDependsOn();
+        for ( URL url: dependsOn)
+            if ( url.getHost().toLowerCase().contains("jira"))
+                return true;
+        return false;
+    }
+
+    public static boolean noUpstreamRequiredExplanation(List<Comment> comments) {
+        for (Comment comment: comments ) {
+            String commentBody = comment.getBody().toLowerCase();
+            if ( commentBody.contains("no upstream") &&
+                    commentBody.contains("required") )
+                return true;
         }
         return false;
     }
