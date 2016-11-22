@@ -24,12 +24,12 @@ package org.jboss.jbossset.bugclerk.checks;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
+import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Flag;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
@@ -50,7 +50,7 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
         payload.getDependsOn().add(dependency.getURL());
         Mockito.when(payload.getStage()).thenReturn(buildStageMapForPayload());
 
-        Collection<Candidate> mocks = buildCollectionOfCandidates(payload, dependency);
+        Collection<Candidate> mocks = CollectionUtils.buildCollectionOfCandidates(payload, dependency);
         Mockito.when(payload.getDependsOn()).thenReturn(MockUtils.idsAsURLs(dependencyId, "158690"));
         assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(1));
     }
@@ -67,13 +67,5 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
         for (Flag flag : Flag.values())
             stage.getStateMap().put(flag, FlagStatus.ACCEPTED);
         return stage;
-    }
-
-    private static final Collection<Candidate> buildCollectionOfCandidates(Issue... bugs) {
-        Collection<Candidate> mocks = new ArrayList<Candidate>(bugs.length);
-        for (Issue bug : bugs) {
-            mocks.add(new Candidate(bug));
-        }
-        return mocks;
     }
 }
