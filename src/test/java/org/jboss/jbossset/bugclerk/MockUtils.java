@@ -20,6 +20,7 @@ import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.domain.Stage;
 import org.jboss.set.aphrodite.domain.User;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.mockito.Mockito;
 
 public final class MockUtils {
@@ -35,6 +36,15 @@ public final class MockUtils {
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private static URL buildJiraUrlFromId(final String id) {
+        try {
+            return new URL(TRACKER_URL_PREFIX + id);
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e);
+        }
+
     }
 
     public static Comment mockComment(String id, String text, String bugId) {
@@ -62,23 +72,42 @@ public final class MockUtils {
         return mockBug(buildURL(bugId), summary);
     }
 
-    public static <T extends Issue> T mockBug(URL bugId, String summary, Class<T> clazz) {
-        T mock = Mockito.mock(clazz);
-        return (T) populateMock(bugId, summary, mock);
+    public static Issue mockBug(URL bugId, String summary) {
+        Issue mock = populateMock(bugId, summary, createMockStub(TrackerType.BUGZILLA));
+        List<Release> releases = mockReleases("6.4.0","");
+        Mockito.when(mock.getReleases()).thenReturn(releases);
+        return mock;
     }
 
-    public static Issue mockBug(URL bugId, String summary) {
-        Issue mock = Mockito.mock(Issue.class);
-        return populateMock(bugId, summary, mock);
+    public static JiraIssue mockJiraIssue(String bugId, String summary) {
+        JiraIssue issue = (JiraIssue) createMockStub(TrackerType.JIRA);
+        return populateMock(buildJiraUrlFromId(bugId), summary, issue);
+    }
+
+    public static JiraIssue mockJiraIssue(URL bugId, String summary) {
+        return (JiraIssue) populateMock(bugId, summary, createMockStub(TrackerType.JIRA));
+    }
+
+    private static Issue mockTrackerType(Issue issue, TrackerType type) {
+        Mockito.when(issue.getTrackerType()).thenReturn(type);
+        return issue;
+    }
+
+    private static Issue createMockStub(TrackerType type) {
+        switch(type) {
+            case JIRA:
+                return mockTrackerType(Mockito.mock(JiraIssue.class), TrackerType.JIRA);
+            case BUGZILLA:
+            default:
+                return mockTrackerType(Mockito.mock(Issue.class), TrackerType.BUGZILLA);
+        }
     }
 
     public static <T extends Issue> T populateMock(URL bugId, String summary, T mock) {
         final Optional<IssueEstimation> estimation = Optional.of(mockEstimation(8));
-        List<Release> releases = mockReleases("6.4.0","");
 
         Mockito.when(mock.getURL()).thenReturn(bugId);
         Mockito.when(mock.getTrackerId()).thenReturn(Optional.of(bugId.getQuery().split("=")[1]));
-        Mockito.when(mock.getTrackerType()).thenReturn(TrackerType.BUGZILLA);
         Mockito.when(mock.getSummary()).thenReturn(Optional.of(summary));
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getEstimation()).thenReturn(estimation);
@@ -88,7 +117,6 @@ public final class MockUtils {
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(DateUtils.threeMonthAgo()));
         Mockito.when(mock.getAssignee()).thenReturn(Optional.of(User.createWithEmail("jboss-set@redhat.com")));
         Mockito.when(mock.getReporter()).thenReturn(Optional.of(User.createWithEmail("Romain Pelisse <belaran@redhat.com>")));
-        Mockito.when(mock.getReleases()).thenReturn(releases);
         return mock;
     }
 

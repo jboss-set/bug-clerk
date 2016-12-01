@@ -23,10 +23,8 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
@@ -52,16 +50,15 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     
     @Test
     public void violationIfNoReleases() {
-        JiraIssue mock = MockUtils.mockBug(MockUtils.buildURL(bugId), summary, JiraIssue.class);
+        JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(MockUtils.buildURL(bugId), summary);
         Mockito.when(mock.getSprintRelease()).thenReturn(SPRINT_RELEASE);
         Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
-        assertTrue(mock.getReleases().isEmpty());
         assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + "_NoRelease").size(), is(1));
     }
     
     @Test
     public void noViolationIfNoSprint() {
-        JiraIssue mock = MockUtils.mockBug(MockUtils.buildURL(bugId), summary, JiraIssue.class);
+        JiraIssue mock = MockUtils.mockJiraIssue(MockUtils.buildURL(bugId), summary);
         Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
         Mockito.when(mock.getSprintRelease()).thenReturn("");
         assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
@@ -70,7 +67,7 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     
     @Test
     public void noViolationIfOneReleasesMatchesSprintVersion() {
-        JiraIssue mock = MockUtils.mockBug(MockUtils.buildURL(bugId), summary, JiraIssue.class);
+        JiraIssue mock = MockUtils.mockJiraIssue(MockUtils.buildURL(bugId), summary);
         Mockito.when(mock.getSprintRelease()).thenReturn(SPRINT_RELEASE);
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.0.2", "7.0.3"));
         assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
@@ -78,7 +75,7 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     
     @Test
     public void violationIfOneReleasesMatchesSprintVersion() {
-        JiraIssue mock = MockUtils.mockBug(MockUtils.buildURL(bugId), summary, JiraIssue.class);
+        JiraIssue mock = MockUtils.mockJiraIssue(MockUtils.buildURL(bugId), summary);
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.1");
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.0.2", "7.0.3"));
         assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(1));
