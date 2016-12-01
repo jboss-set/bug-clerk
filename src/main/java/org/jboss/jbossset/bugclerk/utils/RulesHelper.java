@@ -76,10 +76,12 @@ public final class RulesHelper {
         //          behavior...
         List<URL> dependsOn = issue.getDependsOn();
         for ( URL url: dependsOn)
-            if ( url.getHost().toLowerCase().contains("jira"))
+            if ( url.getHost().toLowerCase().contains(JIRA_TRACKER_HOSTNAME))
                 return true;
         return false;
     }
+
+    public static final String JIRA_TRACKER_HOSTNAME = "issues.jboss.org";
 
     public static boolean noUpstreamRequiredExplanation(List<Comment> comments) {
         for (Comment comment: comments ) {
@@ -88,6 +90,12 @@ public final class RulesHelper {
                     commentBody.contains("required") )
                 return true;
         }
+        return false;
+    }
+
+    public static boolean doesSiblingsFixVersionsContainsParentsOne(Issue issue, Issue sibling) {
+        for ( Release parentRelease : issue.getReleases() )
+            if ( sibling.getReleases().contains(parentRelease) ) return true;
         return false;
     }
 }
