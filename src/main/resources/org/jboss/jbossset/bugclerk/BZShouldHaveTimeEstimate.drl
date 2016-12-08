@@ -45,7 +45,7 @@ rule "BZShouldHaveTimeEstimate_DevAcked"
 	salience 0
     dialect "mvel"
     when
-      $candidate : Candidate(! bug.estimation.isPresent() || bug.estimation.get.initialEstimate == 0.0,  bug.stage.getStateMap.get(Flag.DEV).toString == "ACCEPTED" || bug.stage.getStateMap.get(Flag.DEV).toString == "SET", filtered == false);
+      $candidate : Candidate(! bug.estimation.isPresent() || bug.estimation.get.initialEstimate == 0.0,  bug.stage.getStateMap.get(Flag.DEV) == FlagStatus.ACCEPTED || bug.stage.getStateMap.get(Flag.DEV) == FlagStatus.SET, filtered == false);
     then
       insertLogical(new Violation($candidate, drools.getRule().getName(), "Issue has been dev acked, but has no estimated time associated.", Level.WARNING));
 end
