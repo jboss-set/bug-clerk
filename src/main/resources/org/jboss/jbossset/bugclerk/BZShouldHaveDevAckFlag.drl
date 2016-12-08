@@ -36,7 +36,7 @@ rule "BZShouldHaveDevAckFlag"
   dialect "mvel"
   when
     $candidate : Candidate(bug.status == IssueStatus.POST || bug.status == IssueStatus.MODIFIED, $status : bug.status.toString(),
-            $flag : bug.stage.getStateMap.get(Flag.DEV).toString == "NO_SET",
+            $flag : bug.stage.getStatus(Flag.DEV) == FlagStatus.NO_SET,
             /*bug.stage.getStateMap.get(Flag.DEV).toString.toUpperCase == "NOT_SET",*/ filtered == false);
   then
     insert(new Violation($candidate, drools.getRule().getName(), "Issue has status " + $status + " but no dev flag set:" + $flag, Level.ERROR));
