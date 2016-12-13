@@ -45,7 +45,7 @@ if [ ! -e "${BUGCLERK_HOME}/${JAR_NAME}-${BUGCLERK_VERSION}.jar" ]; then
 fi
 
 cd "${BUGCLERK_HOME}"
-java -jar ./bugclerk-${BUGCLERK_VERSION}.jar \
+java -jar ./bugclerk-${BUGCLERK_VERSION}-shaded.jar \
      -f "${FILTER_URL}" \
      -t "${TRACKER_TYPE}"\
      -u "${TRACKER_USERNAME}" \

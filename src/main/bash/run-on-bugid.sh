@@ -39,6 +39,6 @@ if [ -z "${BUG_ID}" ]; then
   exit 1
 fi
 
-java -cp "${BUGCLERK_HOME}/bugclerk-${BUGCLERK_VERSION}.jar" "${MAIN_CLASS}" \
+java -cp "${BUGCLERK_HOME}/bugclerk-${BUGCLERK_VERSION}-shaded.jar" "${MAIN_CLASS}" \
      -u "${TRACKER_USERNAME}" -p "${TRACKER_PASSWORD}" \
       "${BUG_ID}" ${@}
