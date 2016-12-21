@@ -10,7 +10,7 @@ readonly JAR_NAME=${JAR_NAME:-'bugclerk'}
 
 readonly BZ_SERVER_URL='https://bugzilla.redhat.com'
 
-readonly FILTER_ID=${FILTER_ID:-'12328451'}
+readonly FILTER_ID=${FILTER_ID:-'12330472'}
 readonly FILTER_URL_ENDPOINT='https://issues.jboss.org/rest/api/latest/filter'
 readonly FILTER_URL=${FILTER_URL:-${FILTER_URL_ENDPOINT}/${FILTER_ID}}
 
