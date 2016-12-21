@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.jbossset.bugclerk.Level;
+import org.jboss.jbossset.bugclerk.Severity;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.comments.ViolationsReportAsCommentBuilder;
 import org.jboss.set.aphrodite.domain.Comment;
@@ -52,7 +52,7 @@ public class BuildReportToUpdateTracker {
 
     @Test
     public void reportIfErrorLevelChecks() {
-        Mockito.when(mockLoadedResults.get(mock).get(0).getLevel()).thenReturn(Level.ERROR);
+        Mockito.when(mockLoadedResults.get(mock).get(0).getLevel()).thenReturn(Severity.MINOR);
         Map<Issue, Comment> map = new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(mockLoadedResults);
         assertTrue(!map.isEmpty());
         assertTrue(map.size() == 1);

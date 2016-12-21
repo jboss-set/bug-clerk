@@ -26,7 +26,7 @@ import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.Comment;
 
 import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.Level;
+import org.jboss.jbossset.bugclerk.Severity;
 
 global java.util.List list
 
@@ -36,5 +36,5 @@ rule "AssignedButStillOnSET"
   when
     $candidate : Candidate(bug.status.toString.toUpperCase == "ASSIGNED" ,bug.assignee.get.email.get == "jboss-set@redhat.com" ,filtered == false);
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "This issue status is ASSIGNED while issue is still assigned to JBoss SET (and not a member of the team)", Level.ERROR) );
+    insert( new Violation($candidate, drools.getRule().getName(), "This issue status is ASSIGNED while issue is still assigned to JBoss SET (and not a member of the team)", Severity.MAJOR) );
 end

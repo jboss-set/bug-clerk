@@ -141,7 +141,7 @@ public final class MockUtils {
         Mockito.when(mock.getCandidate().getBug()).thenReturn(bug);
         Mockito.when(mock.getCheckName()).thenReturn(checkname);
         Mockito.when(mock.getMessage()).thenReturn("Message for " + checkname + ".");
-        Mockito.when(mock.getLevel()).thenReturn(Level.ERROR);
+        Mockito.when(mock.getLevel()).thenReturn(Severity.MINOR);
         return mock;
     }
 

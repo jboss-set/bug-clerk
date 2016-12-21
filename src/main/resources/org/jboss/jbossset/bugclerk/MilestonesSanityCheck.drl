@@ -38,5 +38,5 @@ rule "MilestonesSanityCheck"
   when
     $candidate : Candidate( bug.type !=  IssueType.UPGRADE, bug.status == IssueStatus.MODIFIED, bug.releases.isEmpty , filtered == false);
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "Issue state is MODIFIED but no milestones have been associated to it.", Level.WARNING ));
+    insert( new Violation($candidate, drools.getRule().getName(), "Issue state is MODIFIED but no milestones have been associated to it.", Severity.MINOR ));
 end

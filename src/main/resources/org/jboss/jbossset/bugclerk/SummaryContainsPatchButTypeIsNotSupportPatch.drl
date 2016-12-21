@@ -26,7 +26,7 @@ import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.Comment;
 
 import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.Level;
+import org.jboss.jbossset.bugclerk.Severity;
 
 global java.util.List list
 
@@ -36,5 +36,5 @@ rule "SummaryContainsPatchButTypeIsNotSupportPatch"
   when
     $candidate : Candidate(bug.type.toString != "SUPPORT_PATCH", bug.summary.get.toLowerCase().contains("patch") ,filtered == false);
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "Summary description contains word 'patch' but bug type is not 'Support Patch':" + $candidate.bug.type , Level.WARNING) );
+    insert( new Violation($candidate, drools.getRule().getName(), "Summary description contains word 'patch' but bug type is not 'Support Patch':" + $candidate.bug.type , Severity.MINOR) );
 end

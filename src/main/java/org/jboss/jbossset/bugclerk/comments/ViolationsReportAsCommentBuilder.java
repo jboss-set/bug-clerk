@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
-import org.jboss.jbossset.bugclerk.Level;
+import org.jboss.jbossset.bugclerk.Severity;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.utils.StringUtils;
 import org.jboss.set.aphrodite.domain.Comment;
@@ -68,7 +68,7 @@ public class ViolationsReportAsCommentBuilder {
     private Comment buildCommentReportIfNotAlreadyReported(List<Violation> violations) {
         List<Violation> newViolationToReport = filterViolationsAlreadyReported(violations);
         if (!newViolationToReport.isEmpty()) {
-            return buildReportComment(newViolationToReport.stream().filter(v -> v.getLevel() == Level.ERROR)
+            return buildReportComment(newViolationToReport.stream().filter(v -> v.getLevel() == Severity.MINOR)
                     .collect(Collectors.toList()));
         }
         return null;

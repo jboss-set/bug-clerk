@@ -39,7 +39,7 @@ rule "SprintVersionMismatch"
                             filtered == false);
     $wrongRelease : Release( version.isPresent(), ! version.get().contains($sprintRelease) ) from $candidate.bug.releases;
   then
-    insert(new Violation($candidate,drools.getRule().getName(), "Sprint version does not match any of the actual release(s) (" + $wrongRelease  + "):" + $sprintRelease, Level.WARNING));
+    insert(new Violation($candidate,drools.getRule().getName(), "Sprint version does not match any of the actual release(s) (" + $wrongRelease  + "):" + $sprintRelease, Severity.MINOR));
 end
 
 rule "SprintVersionMismatch_NoRelease"
@@ -51,5 +51,5 @@ rule "SprintVersionMismatch_NoRelease"
                             bug.releases.isEmpty,
                             filtered == false);
   then
-    insert(new Violation($candidate,drools.getRule().getName(), "Sprint release is specified (" + $sprintRelease + ") but there is no releases associated to the issue.", Level.WARNING));
+    insert(new Violation($candidate,drools.getRule().getName(), "Sprint release is specified (" + $sprintRelease + ") but there is no releases associated to the issue.", Severity.MINOR));
 end

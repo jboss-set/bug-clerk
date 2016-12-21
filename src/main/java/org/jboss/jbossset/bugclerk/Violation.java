@@ -26,7 +26,7 @@ public class Violation {
     private final Candidate candidate;
     private final String message;
     private final String checkName;
-    private Level level = Level.ERROR;
+    private Severity level = Severity.MINOR;
 
     private void constructorSanityCheck(Candidate candidate, String mssg) {
         if (candidate == null)
@@ -44,7 +44,7 @@ public class Violation {
         this.checkName = checkName;
     }
 
-    public Violation(Candidate candidate, String checkName, String message, Level level) {
+    public Violation(Candidate candidate, String checkName, String message, Severity level) {
         this(candidate, checkName, message);
         this.level = level;
     }
@@ -61,11 +61,11 @@ public class Violation {
         return candidate;
     }
 
-    public Level getLevel() {
+    public Severity getLevel() {
         return level;
     }
 
-    public void setLevel(Level level) {
+    public void setLevel(Severity level) {
         this.level = level;
     }
 

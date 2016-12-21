@@ -38,7 +38,7 @@ rule "BZMissingUpstream_NoDeps"
 	eval ( $dependsOn.isEmpty());
     eval ( RulesHelper.noUpstreamRequiredExplanation($candidate.bug.comments) == false);	
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Level.WARNING));
+    insert( new Violation($candidate, drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Severity.MINOR));
 end
 
 rule "BZMissingUpstream_WithDeps"
@@ -50,5 +50,5 @@ rule "BZMissingUpstream_WithDeps"
     eval ( RulesHelper.dependsOnContainsAtLeastOneJIRAIssue($candidate.bug) == false);
     eval ( RulesHelper.noUpstreamRequiredExplanation($candidate.bug.comments) == false);	
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Level.WARNING));
+    insert( new Violation($candidate, drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Severity.MINOR));
 end
