@@ -21,10 +21,15 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
+import java.util.GregorianCalendar;
+import java.util.Optional;
+
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
-import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueStatus;
@@ -32,16 +37,11 @@ import org.jboss.set.aphrodite.domain.Stage;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.Collection;
-import java.util.GregorianCalendar;
-import java.util.Optional;
-
-import static org.junit.Assert.assertTrue;
-
 /**
  * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
  */
 public class NoFlagsCheck extends AbstractCheckRunner {
+    
     @Test
     public void testNoFlags() {
         final String bugId = "143794";
@@ -49,7 +49,7 @@ public class NoFlagsCheck extends AbstractCheckRunner {
         Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(new GregorianCalendar(2000, 0, 1).getTime()));
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
         Mockito.when(mock.getStage()).thenReturn(new Stage());
-        final Collection<Violation> violations = engine.processBugEntry(CollectionUtils.asSetOf(new Candidate(mock)));
+        final Collection<Candidate> violations = engine.processBugEntry(CollectionUtils.asSetOf(new Candidate(mock)));
         // as long as we have no NullPointerExceptions and some Violations, we're good.
         assertTrue(violations.size() > 0);
     }

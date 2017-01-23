@@ -1,5 +1,5 @@
 /*
-q * JBoss, Home of Professional Open Source.
+ * JBoss, Home of Professional Open Source.
  * Copyright 2015, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
@@ -29,6 +29,7 @@ import java.util.Collection;
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
+import org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Flag;
 import org.jboss.set.aphrodite.domain.FlagStatus;
@@ -52,9 +53,13 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
 
         Collection<Candidate> mocks = CollectionUtils.buildCollectionOfCandidates(payload, dependency);
         Mockito.when(payload.getDependsOn()).thenReturn(MockUtils.idsAsURLs(dependencyId, "158690"));
-        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(1));
+        Collection<Candidate> candidates = engine.runCheckOnBugs(mocks, checkName);
+        assertThat(candidates.size(), is(2));
+ //       AssertsHelper.checkResults(candidates, payload.getTrackerId().get(), 1, checkName);
+        AssertsHelper.assertResultsIsAsExpected(candidates, checkName, payload.getTrackerId().get(), 1);
+        
     }
-
+    
     private static Stage buildStageMapForDeps() {
         Stage stage = new Stage();
         for (Flag flag : Flag.values())

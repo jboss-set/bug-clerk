@@ -24,7 +24,6 @@ package org.jboss.jbossset.bugclerk;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.xml.transform.stream.StreamSource;
@@ -39,7 +38,6 @@ import org.jboss.jbossset.bugclerk.reports.xml.BugClerkReport;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.jbossset.bugclerk.utils.OutputInputStreamUtils;
 import org.jboss.jbossset.bugclerk.utils.XMLUtils;
-import org.jboss.set.aphrodite.domain.Issue;
 
 public class BugClerk {
 
@@ -50,19 +48,19 @@ public class BugClerk {
         this.aphrodite = aphrodite;
     }
 
-    protected Collection<Violation> processEntriesAndReportViolations(List<Candidate> candidates) {
+    protected Collection<Candidate> processEntriesAndReportViolations(List<Candidate> candidates) {
         RuleEngine ruleEngine = new RuleEngine(new HashMap<String, Object>(0));
-        Collection<Violation> violations = ruleEngine.processBugEntry(candidates);
+        Collection<Candidate> violations = ruleEngine.processBugEntry(candidates);
         ruleEngine.shutdownRuleEngine();
         return violations;
     }
 
-    protected String buildReport(Map<Issue, List<Violation>> violationByBugId) {
+    protected String buildReport(Collection<Candidate> candidates) {
         ReportEngine<String> reportEngine = new StringReportEngine();
-        return reportEngine.createReport(violationByBugId);
+        return reportEngine.createReport(candidates);
     }
 
-    protected BugClerkReport buildBugClerkReport(Map<Issue, List<Violation>> violationByBugId) {
+    protected BugClerkReport buildBugClerkReport(Collection<Candidate> violationByBugId) {
         ReportEngine<BugClerkReport> reportEngine = new BugClerkReportEngine();
         return reportEngine.createReport(violationByBugId);
     }
@@ -75,24 +73,22 @@ public class BugClerk {
                 .collect(Collectors.toList());
         LoggingUtils.getLogger().info("Loading data from tracker took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
-        Collection<Violation> violations = processEntriesAndReportViolations(candidates);
-        Map<Issue, List<Violation>> violationByBugId = violations.stream().collect(
-                Collectors.groupingBy(v -> v.getCandidate().getBug()));
+        Collection<Candidate> violations = processEntriesAndReportViolations(candidates);
         LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
-        String report = buildReport(violationByBugId);
+        String report = buildReport(violations);
 
         LoggingUtils.getLogger().fine("Report produced, running post analysis actions");
-        postAnalysisActions(arguments, violationByBugId, report);
+        postAnalysisActions(arguments, violations, report);
 
         LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         LoggingUtils.getLogger().info(report);
 
-        reportsGeneration(arguments, violationByBugId);
+        reportsGeneration(arguments, violations);
         LoggingUtils.getLogger().fine("Generating XML/HTML Report:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
-        return violationByBugId.size();
+        return candidates.size();
     }
 
-    protected void reportsGeneration(BugClerkArguments arguments, Map<Issue, List<Violation>> violationByBugId) {
+    protected void reportsGeneration(BugClerkArguments arguments, Collection<Candidate> violationByBugId) {
         if (arguments.isXMLReport() || arguments.isHtmlReport()) {
             BugClerkReport xmlReport = buildBugClerkReport(violationByBugId);
             if (arguments.isXMLReport())
@@ -110,10 +106,10 @@ public class BugClerk {
                 .getXmlReportFilename();
     }
 
-    protected void postAnalysisActions(BugClerkArguments arguments, Map<Issue, List<Violation>> violationByBugId, String report) {
-        if (!violationByBugId.isEmpty() && arguments.isReportToBz()) {
+    protected void postAnalysisActions(BugClerkArguments arguments, Collection<Candidate> candidates, String report) {
+        if (! candidates.isEmpty() && arguments.isReportToBz()) {
             LoggingUtils.getLogger().info("Updating Bugzilla entries - if needed.");
-            aphrodite.addComments(new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(violationByBugId));
+            aphrodite.addComments(new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(candidates));
             LoggingUtils.getLogger().info("Bugzilla entries updated - if needed.");
         }
     }

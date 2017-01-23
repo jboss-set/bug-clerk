@@ -2,12 +2,12 @@ package org.jboss.jbossset.bugclerk;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.jbossset.bugclerk.Severity;
-import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.comments.ViolationsReportAsCommentBuilder;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Issue;
@@ -23,7 +23,7 @@ public class BuildReportToUpdateTracker {
     final String text = "text";
     final String checkname = "checkname";
 
-    private Map<Issue, List<Violation>> mockLoadedResults = new HashMap<Issue, List<Violation>>(1);
+    private Collection<Candidate> mockLoadedResults = new ArrayList<Candidate>(1);
     private Issue mock;
 
     @After
@@ -40,8 +40,11 @@ public class BuildReportToUpdateTracker {
         mock = MockUtils.mockBug(bugId, checkname);
         Mockito.when(mock.getComments()).thenReturn(mockComments);
 
-        mockLoadedResults = new HashMap<Issue, List<Violation>>(1);
-        mockLoadedResults.put(mock, violations);
+        mockLoadedResults = new ArrayList<Candidate>(1);
+        Candidate candidate = new Candidate(mock);
+        for ( Violation v : violations )
+            candidate.addViolation(v);
+        mockLoadedResults.add(candidate);
     }
 
     @Test
@@ -52,8 +55,11 @@ public class BuildReportToUpdateTracker {
 
     @Test
     public void reportIfErrorLevelChecks() {
-        Mockito.when(mockLoadedResults.get(mock).get(0).getLevel()).thenReturn(Severity.MINOR);
-        Map<Issue, Comment> map = new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(mockLoadedResults);
+        Violation v = MockUtils.mockViolation(bugId, checkname);        
+        Mockito.when(v.getLevel()).thenReturn(Severity.MAJOR);
+        Candidate candidate = new Candidate(mock);
+        candidate.addViolation(v);
+        Map<Issue, Comment> map = new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(CollectionUtils.asListOf(candidate));
         assertTrue(!map.isEmpty());
         assertTrue(map.size() == 1);
         assertTrue(map.get(mock).getBody().contains(checkname));

@@ -35,5 +35,5 @@ rule "PostMissingPR"
     $candidate : Candidate( bug.status.toString == "POST", ! bug.trackerType.toString.equalsIgnoreCase("jira"), $status : bug.status.toString, $comments : bug.comments, filtered == false);
     not Comment( body.contains("github.com"), body.contains("/pull/") || body.contains("/commit/")  ) from $comments;
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "Issue status is " + $status + ", but PR is missing") );
+    $candidate.addViolation( new Violation(drools.getRule().getName(), "Issue status is " + $status + ", but PR is missing") );
 end

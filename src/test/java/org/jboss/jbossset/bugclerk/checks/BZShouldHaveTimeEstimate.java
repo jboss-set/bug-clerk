@@ -21,8 +21,7 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 
 import java.util.Optional;
 
@@ -46,11 +45,14 @@ public class BZShouldHaveTimeEstimate extends AbstractCheckRunner {
     private final String POST_OR_MODIFIED = "_PostOrModified";
     private final String DEV_ACKED = "_DevAcked";
 
+    private String bugId = "12345";
+
     @Test
     public void devFlagSetButNoTimeEstimate() {
+        final String checkName = this.checkName + DEV_ACKED;
         mock.getStage().getStateMap().put(Flag.DEV, FlagStatus.SET);
         noTimeEstimate();
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + DEV_ACKED).size(), is(1));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 1);
     }
 
     private void noTimeEstimate() {
@@ -59,27 +61,28 @@ public class BZShouldHaveTimeEstimate extends AbstractCheckRunner {
 
     @Test
     public void postButNoTimeEstimate() {
+        final String checkName = this.checkName + POST_OR_MODIFIED;
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
         noTimeEstimate();
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + POST_OR_MODIFIED).size(),
-                is(1));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId,1);
     }
 
     @Test
     public void falsePositiveWithPost() {
-        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + POST_OR_MODIFIED).size(),
-                is(0));
+        final String checkName = this.checkName + POST_OR_MODIFIED;
+        Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);        
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
     }
 
     @Test
     public void falsePositiveWithDevAck() {
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName + DEV_ACK_FLAG).size(), is(0));
+        final String checkName = this.checkName + DEV_ACK_FLAG;
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
     }
 
     @Before
-    public void prepareMock() {
-        mock = MockUtils.mockBug("12345", "summary");
+    public void prepareMock() {        
+        mock = MockUtils.mockBug(this.bugId, "summary");
         Mockito.when(mock.getEstimation()).thenReturn(Optional.of(new IssueEstimation(3, 3)));
         mock.getStage().getStateMap().put(Flag.DEV, FlagStatus.ACCEPTED);
     }

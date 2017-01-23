@@ -52,9 +52,9 @@ public class PayloadComponentUpgradeShouldHaveAFix extends AbstractCheckRunner {
         URL upgradeURL = MockUtils.buildURL(bugId);
         URL payloadTrackerUrl = MockUtils.buildURL(payloadId);
 
-        mock = MockUtils.mockBug(upgradeURL, "summary");
+        mock = MockUtils.mockBug(bugId, upgradeURL, "summary");
         Mockito.when(mock.getType()).thenReturn(IssueType.UPGRADE);
-        payloadTracker = MockUtils.mockBug(payloadTrackerUrl, "EAP 6.6.6 - Payload Tracker");
+        payloadTracker = MockUtils.mockBug(payloadId, payloadTrackerUrl, "EAP 6.6.6 - Payload Tracker");
         Mockito.when(payloadTracker.getType()).thenReturn(IssueType.BUG);
         Mockito.when(payloadTracker.getDependsOn()).thenReturn(CollectionUtils.asListOf(upgradeURL));
         Mockito.when(mock.getBlocks()).thenReturn(CollectionUtils.asListOf(payloadTrackerUrl));
@@ -87,7 +87,7 @@ public class PayloadComponentUpgradeShouldHaveAFix extends AbstractCheckRunner {
     public void noViolationIfUpgradeHasAFix() {
         final String fixId = "15436473";
         final URL fixURL = MockUtils.buildURL(fixId);
-        final Issue fix = MockUtils.mockBug(fixURL, "bug fix");
+        final Issue fix = MockUtils.mockBug(fixId, fixURL, "bug fix");
         Mockito.when(fix.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getDependsOn()).thenReturn(CollectionUtils.asListOf(fixURL, MockUtils.buildURL(payloadId)));
         assertResultsIsAsExpected(engine.runChecksOnBugs(

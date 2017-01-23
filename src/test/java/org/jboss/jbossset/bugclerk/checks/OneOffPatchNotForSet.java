@@ -23,7 +23,6 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
-import static org.junit.Assert.assertTrue;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
@@ -60,8 +59,6 @@ public class OneOffPatchNotForSet extends AbstractCheckRunner {
         mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
 
-        assertTrue(engine
-                .runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(MockUtils.mockBug("123", "summary"))), checkName)
-                .isEmpty());
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asListOf(new Candidate(MockUtils.mockBug("123", "summary"))),checkName),checkName,bugId,0);
     }
 }

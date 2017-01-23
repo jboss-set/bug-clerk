@@ -40,5 +40,5 @@ rule "FixVersionAndSprintMustMatchBetweenSiblings"
     $sibling :   Candidate(bug.URL memberOf $dependsOn);
     eval ( RulesHelper.doesSiblingsFixVersionsContainsParentsOne($candidate.bug, $sibling.bug) == false);
   then
-    insertLogical( new Violation($candidate, drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Severity.MINOR));
+    $candidate.addViolationOnce( new Violation(drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Severity.MINOR));
 end

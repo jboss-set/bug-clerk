@@ -1,10 +1,9 @@
 package org.jboss.jbossset.bugclerk.reports;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
@@ -17,24 +16,28 @@ import org.jboss.jbossset.bugclerk.reports.xml.BugClerkReport;
 import org.jboss.jbossset.bugclerk.reports.xml.BugReport;
 import org.jboss.jbossset.bugclerk.reports.xml.ViolationDescription;
 import org.jboss.set.aphrodite.domain.Flag;
-import org.jboss.set.aphrodite.domain.Issue;
 
 public final class BugClerkReportEngine implements ReportEngine<BugClerkReport> {
 
     public static final String XSLT_FILENAME = "/xslt/stylesheet.xsl";
 
     @Override
-    public BugClerkReport createReport(Map<Issue, List<Violation>> violationByBugId) {
-        return new BugClerkReport(createBugReports(violationByBugId.entrySet()));
+    public BugClerkReport createReport(Collection<Candidate> candidates) {
+        return new BugClerkReport(createBugReports(candidates));
     }
 
-    private static List<BugReport> createBugReports(Set<Entry<Issue, List<Violation>>> entries) {
-        return entries.parallelStream().map(v -> createBugReport(v)).collect(Collectors.toList());
+    private static List<BugReport> createBugReports(Collection<Candidate> entries) {
+        List<BugReport> list = new ArrayList<BugReport>(entries.size());
+        entries.stream().forEach(c -> {
+            if (!c.getViolations().isEmpty())
+                list.add(createBugReportCandidate(c));
+        });
+        return list;
     }
 
-    private static BugReport createBugReport(Entry<Issue, List<Violation>> entry) {
-        return new BugReport(entry.getKey().getTrackerId().get(), entry.getKey().getStatus().toString(), getAckFlags(entry
-                .getValue().get(0).getCandidate()), entry.getKey().getURL(), buildViolationsList(entry.getValue()));
+    private static BugReport createBugReportCandidate(Candidate entry) {
+        return new BugReport(entry.getBug().getTrackerId().get(), entry.getBug().getStatus().toString(),
+                getAckFlags(entry), entry.getBug().getURL(), buildViolationsList(entry.getViolations()));
     }
 
     private static List<ViolationDescription> buildViolationsList(List<Violation> violations) {

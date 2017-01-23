@@ -109,4 +109,10 @@ public final class URLUtils {
         return result;
     }
 
+    public static String extractJiraTrackerId(URL bugId) {
+        if ( bugId != null && bugId.getQuery().contains("/") )
+            return bugId.getQuery().substring(bugId.getQuery().lastIndexOf("/"));
+        return "";
+    }
+
 }

@@ -62,15 +62,15 @@ public class RuleEngine {
         }
     }
 
-    public Collection<Violation> processBugEntry(Collection<Candidate> candidates) {
+    public Collection<Candidate> processBugEntry(Collection<Candidate> candidates) {
         addCandidatesToFacts(candidates);
         ksession.fireAllRules();
         return retrieveViolationsFromKSession(ksession);
     }
 
     @SuppressWarnings("unchecked")
-    private static Collection<Violation> retrieveViolationsFromKSession(final KieSession ksession) {
-        return (Collection<Violation>) ksession.getObjects(new ClassObjectFilter(Violation.class));
+    private static Collection<Candidate> retrieveViolationsFromKSession(final KieSession ksession) {
+        return (Collection<Candidate>) ksession.getObjects(new ClassObjectFilter(Candidate.class));
     }
 
     private void addCandidatesToFacts(Collection<Candidate> candidates) {
@@ -86,13 +86,13 @@ public class RuleEngine {
         };
     }
 
-    public Collection<Violation> runChecksOnBugs(Collection<Candidate> candidates, final Collection<String> checknames) {
+    public Collection<Candidate> runChecksOnBugs(Collection<Candidate> candidates, final Collection<String> checknames) {
         addCandidatesToFacts(candidates);
         ksession.fireAllRules(createAgendaForCheck(checknames));
         return retrieveViolationsFromKSession(ksession);
     }
 
-    public Collection<Violation> runCheckOnBugs(Collection<Candidate> candidates, final String checkname) {
+    public Collection<Candidate> runCheckOnBugs(Collection<Candidate> candidates, final String checkname) {
         return runChecksOnBugs(candidates, Arrays.asList(checkname));
     }
 

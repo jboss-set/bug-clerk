@@ -21,10 +21,8 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 import static org.jboss.jbossset.bugclerk.checks.utils.BugClerkMockingHelper.buildTestSubjectWithComment;
-import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
 
@@ -67,7 +65,7 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
         Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         mocks.iterator().next().getBug().getStage().getStateMap().put(Flag.DEV, FlagStatus.ACCEPTED);
         Mockito.when(mocks.iterator().next().getBug().getStatus()).thenReturn(IssueStatus.MODIFIED);
-        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(0));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(mocks, checkName), checkName, bugId,0);
     }
 
     @Test
@@ -82,10 +80,11 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
     @Test
     public void bzOnPostAndHasDevFlag() {
         final String payload = "Well; it does seems like one forgot the PR here.";
-        Collection<Candidate> mocks = buildTestSubjectWithComment("143794", payload);
+        final String bugId = "143794";
+        Collection<Candidate> mocks = buildTestSubjectWithComment(bugId, payload);
         mocks.iterator().next().getBug().getStage().getStateMap().put(Flag.DEV, FlagStatus.ACCEPTED);
         Mockito.when(mocks.iterator().next().getBug().getStatus()).thenReturn(IssueStatus.POST);
-        assertThat(engine.runCheckOnBugs(mocks, checkName).size(), is(0));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(mocks, checkName), checkName, bugId, 0);
     }
 
     @Before

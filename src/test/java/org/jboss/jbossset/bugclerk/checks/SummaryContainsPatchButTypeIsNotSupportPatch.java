@@ -21,7 +21,7 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
-import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertNoViolationFound;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
@@ -38,16 +38,16 @@ public class SummaryContainsPatchButTypeIsNotSupportPatch extends AbstractCheckR
 
     @Test
     public void noViolationIfCorrectBugType() {
-        assertNoViolationFound(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(prepareMock("summary with Patch in it", IssueType.SUPPORT_PATCH))),
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(prepareMock("summary with Patch in it", IssueType.SUPPORT_PATCH))),
                 checkName),
-                checkName, bugId);
+                checkName, bugId, 0);
     }
 
     @Test
     public void noViolationIfNoPatchInDesc() {
-        assertNoViolationFound(
+        assertResultsIsAsExpected(
                 engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(prepareMock("Summary", IssueType.BUG))), checkName),
-                checkName, bugId);
+                checkName, bugId,0);
     }
 
     protected Issue prepareMock(String summary, IssueType type) {

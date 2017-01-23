@@ -1,5 +1,6 @@
 package org.jboss.jbossset.bugclerk.comments;
 
+import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.checks.AssignedButStillOnSET;
@@ -39,7 +40,10 @@ public class ViolationsReportAsCommentBuilderTest {
         for ( Issue issue : issues )
             violations.put(issue,MockUtils.generateMockViolationsForIssue(issue.getTrackerId().get(), checknames));
         // Run and asserts
-        for (Map.Entry<Issue, Comment> entry: builder.reportViolationToBugTracker(violations).entrySet() ) {
+        Collection<Candidate> candidates = new ArrayList<Candidate>(1);
+        Candidate candidate = new Candidate(MockUtils.mockBug("mockId", "summary"));
+        candidates.add(candidate);
+        for (Map.Entry<Issue, Comment> entry: builder.reportViolationToBugTracker(candidates).entrySet() ) {
             for ( String checkname : checknames ) {
                 final int nbOccurences = StringUtils.occurencesInString(StringUtils.formatCheckname(checkname), entry.getValue().getBody());
                 if (nbOccurences > 1)

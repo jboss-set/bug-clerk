@@ -40,5 +40,5 @@ rule "ReleaseVersionMismatch"
     eval ( $summary.matches("^.*[6-9]\\.[0-9]\\.[0-9].*$"))  // only go further if summmary DOES contains a version number
     eval(  $summary.contains($release.version.get().replaceAll("[a-zA-Z \t]","").replaceAll("\\.$","")) == false); // violation only if summary does NOT contains the right version number
   then
-    insert( new Violation($candidate,drools.getRule().getName(), "Release in title does not match actual release (" + $release.version.get()  + "]:" + $summary) );
+    $candidate.addViolation( new Violation(drools.getRule().getName(), "Release in title does not match actual release (" + $release.version.get()  + "]:" + $summary) );
 end

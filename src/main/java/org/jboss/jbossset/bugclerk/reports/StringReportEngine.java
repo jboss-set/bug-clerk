@@ -27,33 +27,27 @@ import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
+import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.set.aphrodite.domain.Issue;
 
 public class StringReportEngine implements ReportEngine<String> {
 
     @Override
-    public String createReport(Map<Issue, List<Violation>> violationByBugId) {
-        return violationByBugId.isEmpty() ? "" : buildReportAsString(violationByBugId.values());
+    public String createReport(Collection<Candidate> violationByBugId) {
+        return violationByBugId.isEmpty() ? "" : buildReportAsString(violationByBugId);
     }
 
-    private static String buildReportAsString(Collection<List<Violation>> values) {
-        return values.stream().map(violations -> format(violations)).reduce((s1, s2) -> s1.append(s2))
+    private static String buildReportAsString(Collection<Candidate> values) {
+        return values.stream().map(candidate -> format(candidate)).reduce((s1, s2) -> s1.append(s2))
                 .get().toString();
     }
 
-    private static String getBugId(List<Violation> violations) {
-        return violations.get(0).getCandidate().getBug().getURL().toString();
-    }
-
-    private static String getSummary(List<Violation> violations) {
-        return violations.get(0).getCandidate().getBug().getSummary().get();
-    }
-
     private static StringBuffer reportViolations(List<Violation> violations) {
-        return violations
+        if ( violations.isEmpty() )
+            return new StringBuffer();
+        else
+            return violations
                 .stream()
                 .map(v -> formatViolation(v)).reduce((s1, s2) -> s1.append(s2)).get();
     }
@@ -65,11 +59,15 @@ public class StringReportEngine implements ReportEngine<String> {
         return report;
     }
 
-    private static StringBuffer format(List<Violation> violations) {
+    private static StringBuffer format(Candidate candidate) {
         StringBuffer report = new StringBuffer();
-        report.append("Issue: ").append(getBugId(violations) + " - " + getSummary(violations) ).append(EOL)
-                .append("\t has the following violations (" + violations.size() + "):").append(EOL).append(EOL);
-        return report.append(reportViolations(violations)).append(twoEOLs());
+        if (! candidate.getViolations().isEmpty() ) {
+            report.append("Issue: ").append(candidate.getBug().getURL() + " - " + candidate.getBug().getSummary().get() ).append(EOL)
+                    .append("\t has the following violations (" + candidate.getViolations().size() + "):").append(EOL).append(EOL);
+            return report.append(reportViolations(candidate.getViolations())).append(twoEOLs());
+        }
+        else
+            return report;
     }
 
 }

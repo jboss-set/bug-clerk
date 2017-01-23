@@ -21,7 +21,9 @@
  */
 package org.jboss.jbossset.bugclerk;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.jboss.set.aphrodite.domain.Issue;
@@ -30,6 +32,7 @@ public class Candidate {
 
     private final Issue bug;
     private final Set<String> checksToBeIgnored = new HashSet<String>(0);
+    private final List<Violation> violations = new ArrayList<Violation>(0);
 
     private boolean isCandidate = true;
     private boolean filtered = false;
@@ -74,9 +77,34 @@ public class Candidate {
         return checksToBeIgnored;
     }
 
+    public void addViolation(Violation violation) {
+        this.violations.add(violation);
+    }
+
+    /*
+     * Some violation maybe be reported several times by drools engine,
+     * it used to be compensante by using insertLogical (instead of insert)
+     * but now Violation instead are directly added to the candidate's
+     * violation list, so the folllowing methods is a work around that.
+     *
+     * Note: using is not option, as some rules may needs to report several
+     * violations on one Issue instance.
+     */
+    public void addViolationOnce(Violation violation) {
+        if ( ! this.violations.isEmpty() )
+            for ( Violation v : this.violations )
+                if ( v.getCheckName().equals(violation.getCheckName()) )
+                        return;
+        this.violations.add(violation);
+    }
+
+    public List<Violation> getViolations() {
+        return violations;
+    }
+
     @Override
     public String toString() {
-        return "Candidate [bug=" + bug + ", checksToBeIgnored=" + checksToBeIgnored + ", isCandidate=" + isCandidate
-                + ", filtered=" + filtered + "]";
+        return "Candidate [bug=" + bug + ", checksToBeIgnored=" + checksToBeIgnored + ", violations=" + violations
+                + ", isCandidate=" + isCandidate + ", filtered=" + filtered + "]";
     }
 }

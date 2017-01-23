@@ -22,6 +22,7 @@
 package org.jboss.jbossset.bugclerk.checks;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -55,8 +56,8 @@ public class MilestonesSanityCheck extends AbstractCheckRunner {
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("6.3.0", ""));
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
-        
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
+
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
     }
 
     @Test
@@ -66,7 +67,7 @@ public class MilestonesSanityCheck extends AbstractCheckRunner {
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
         
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId,0);
     }
 
     @Test
@@ -76,7 +77,7 @@ public class MilestonesSanityCheck extends AbstractCheckRunner {
         Mockito.when(mock.getType()).thenReturn(IssueType.UPGRADE);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.MODIFIED);
 
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
     }
 
     @Test

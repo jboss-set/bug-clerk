@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
+import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.config.TrackerType;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Flag;
@@ -69,11 +70,11 @@ public final class MockUtils {
     }
 
     public static Issue mockBug(String bugId, String summary) {
-        return mockBug(buildURL(bugId), summary);
+        return mockBug(bugId, buildURL(bugId), summary);
     }
 
-    public static Issue mockBug(URL bugId, String summary) {
-        Issue mock = populateMock(bugId, summary, createMockStub(TrackerType.BUGZILLA));
+    public static Issue mockBug(String bugId, URL bugURL, String summary) {
+        Issue mock = populateMock(bugId, bugURL, summary, createMockStub(TrackerType.BUGZILLA));
         List<Release> releases = mockReleases("6.4.0","");
         Mockito.when(mock.getReleases()).thenReturn(releases);
         return mock;
@@ -81,11 +82,11 @@ public final class MockUtils {
 
     public static JiraIssue mockJiraIssue(String bugId, String summary) {
         JiraIssue issue = (JiraIssue) createMockStub(TrackerType.JIRA);
-        return populateMock(buildJiraUrlFromId(bugId), summary, issue);
+        return populateMock(bugId, buildJiraUrlFromId(bugId), summary, issue);
     }
 
     public static JiraIssue mockJiraIssue(URL bugId, String summary) {
-        return (JiraIssue) populateMock(bugId, summary, createMockStub(TrackerType.JIRA));
+        return (JiraIssue) populateMock(URLUtils.extractJiraTrackerId(bugId),bugId, summary, createMockStub(TrackerType.JIRA));
     }
 
     private static Issue mockTrackerType(Issue issue, TrackerType type) {
@@ -103,11 +104,11 @@ public final class MockUtils {
         }
     }
 
-    public static <T extends Issue> T populateMock(URL bugId, String summary, T mock) {
+    public static <T extends Issue> T populateMock(String bugId, URL bugURL, String summary, T mock) {
         final Optional<IssueEstimation> estimation = Optional.of(mockEstimation(8));
 
-        Mockito.when(mock.getURL()).thenReturn(bugId);
-        Mockito.when(mock.getTrackerId()).thenReturn(Optional.of(bugId.getQuery().split("=")[1]));
+        Mockito.when(mock.getTrackerId()).thenReturn(Optional.of(bugId));
+        Mockito.when(mock.getURL()).thenReturn(bugURL);
         Mockito.when(mock.getSummary()).thenReturn(Optional.of(summary));
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getEstimation()).thenReturn(estimation);
@@ -135,10 +136,7 @@ public final class MockUtils {
     }
 
     public static Violation mockViolation(final String bugId, final String checkname) {
-        Issue bug = MockUtils.mockBug(bugId, "summary");
         Violation mock = Mockito.mock(Violation.class);
-        Mockito.when(mock.getCandidate()).thenReturn(Mockito.mock(Candidate.class));
-        Mockito.when(mock.getCandidate().getBug()).thenReturn(bug);
         Mockito.when(mock.getCheckName()).thenReturn(checkname);
         Mockito.when(mock.getMessage()).thenReturn("Message for " + checkname + ".");
         Mockito.when(mock.getLevel()).thenReturn(Severity.MINOR);

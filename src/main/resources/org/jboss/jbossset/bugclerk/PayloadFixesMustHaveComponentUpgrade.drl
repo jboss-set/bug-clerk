@@ -45,5 +45,5 @@ rule "PayloadFixesMustHaveComponentUpgrade"
     // if so, does this fix blocks a component upgrade ?
     eval(RulesHelper.isOneOfThoseIssueAComponentUpgrade($issue.getBlocks(),issuesIndexedByURL) == false)
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "The following issue belong to one or payload tracker, but has no component fix:" + $issue.getTrackerId().get() ));
+    $candidate.addViolationOnce(new Violation(drools.getRule().getName(), "The following issue belong to one or payload tracker, but has no component fix:" + $issue.getTrackerId().get() ));
 end

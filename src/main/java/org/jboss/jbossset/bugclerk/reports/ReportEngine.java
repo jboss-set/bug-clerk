@@ -1,12 +1,10 @@
 package org.jboss.jbossset.bugclerk.reports;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
-import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.jbossset.bugclerk.Candidate;
 
 public interface ReportEngine<T> {
 
-    T createReport(Map<Issue, List<Violation>> violationByBugId);
+    T createReport(Collection<Candidate> violationByBugId);
 }

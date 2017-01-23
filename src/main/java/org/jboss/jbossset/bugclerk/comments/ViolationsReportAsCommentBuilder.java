@@ -28,6 +28,7 @@ import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
+import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.Severity;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.utils.StringUtils;
@@ -55,20 +57,20 @@ public class ViolationsReportAsCommentBuilder {
             + "or if you wish to ask for enhancement or new checks for " + BugClerk.class.getSimpleName()
             + " please, fill an issue on BugClerk issue tracker: " + BUGCLERK_ISSUES_TRACKER;
 
-    public Map<Issue, Comment> reportViolationToBugTracker(Map<Issue, List<Violation>> violationByBugId) {
+    public Map<Issue, Comment> reportViolationToBugTracker(Collection<Candidate> candidates) {
         Map<Issue, Comment> commentsToAddToIssues = new HashMap<Issue, Comment>();
-        violationByBugId.forEach((k, violations) -> {
-            Comment comment = buildCommentReportIfNotAlreadyReported(violations);
+        candidates.forEach((c) -> {
+            Comment comment = buildCommentReportIfNotAlreadyReported(c);
             if (comment != null)
-                commentsToAddToIssues.put(k, comment);
+                commentsToAddToIssues.put(c.getBug(), comment);
         });
         return commentsToAddToIssues;
     }
 
-    private Comment buildCommentReportIfNotAlreadyReported(List<Violation> violations) {
-        List<Violation> newViolationToReport = filterViolationsAlreadyReported(violations);
+    private Comment buildCommentReportIfNotAlreadyReported(Candidate candidate) {
+        List<Violation> newViolationToReport = filterViolationsAlreadyReported(candidate);
         if (!newViolationToReport.isEmpty()) {
-            return buildReportComment(newViolationToReport.stream().filter(v -> v.getLevel() == Severity.MINOR)
+            return buildReportComment(newViolationToReport.stream().filter(v -> v.getLevel().compareTo(Severity.MAJOR) >= 0)
                     .collect(Collectors.toList()));
         }
         return null;
@@ -81,10 +83,11 @@ public class ViolationsReportAsCommentBuilder {
         return null;
     }
 
-    private List<Violation> filterViolationsAlreadyReported(List<Violation> violations) {
-        List<Violation> violationsToReport = new ArrayList<>(violations.size());
-        violations.stream().forEach( (v) ->  addViolationToReportIfNotAlreadyReported(
-                formatCheckname(v.getCheckName()), v.getCandidate().getBug().getComments(), violationsToReport, v));
+    private List<Violation> filterViolationsAlreadyReported(Candidate candidate) {
+        List<Violation> violationsToReport = new ArrayList<>(candidate.getViolations().size());
+        candidate.getViolations().stream()
+            .forEach( (v) ->  addViolationToReportIfNotAlreadyReported(
+                formatCheckname(v.getCheckName()), candidate.getBug().getComments(), violationsToReport, v));
         return violationsToReport;
     }
 

@@ -36,9 +36,9 @@ rule "BZMissingUpstream_NoDeps"
   when
 	$candidate : Candidate( ! bug.trackerType.toString.equalsIgnoreCase("jira"), $dependsOn: bug.getDependsOn(), filtered == false);
 	eval ( $dependsOn.isEmpty());
-    eval ( RulesHelper.noUpstreamRequiredExplanation($candidate.bug.comments) == false);	
+    eval ( RulesHelper.noUpstreamRequiredExplanation($candidate.bug.comments) == false);
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Severity.MINOR));
+    $candidate.addViolation( new Violation(drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Severity.MINOR));
 end
 
 rule "BZMissingUpstream_WithDeps"
@@ -48,7 +48,7 @@ rule "BZMissingUpstream_WithDeps"
     $candidate : Candidate( ! bug.trackerType.toString.equalsIgnoreCase("jira"), $dependsOn: bug.getDependsOn(), filtered == false);
     eval ( ! $dependsOn.isEmpty()); // dealt with by other rule above
     eval ( RulesHelper.dependsOnContainsAtLeastOneJIRAIssue($candidate.bug) == false);
-    eval ( RulesHelper.noUpstreamRequiredExplanation($candidate.bug.comments) == false);	
+    eval ( RulesHelper.noUpstreamRequiredExplanation($candidate.bug.comments) == false);
   then
-    insert( new Violation($candidate, drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Severity.MINOR));
+    $candidate.addViolation( new Violation(drools.getRule().getName(), "BZ Issue has no JIRA upstream issue.", Severity.MINOR));
 end

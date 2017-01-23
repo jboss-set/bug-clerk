@@ -21,8 +21,7 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
@@ -48,14 +47,14 @@ public class ReleaseVersionMismatch extends AbstractCheckRunner {
     public void violationIfFlagPresentNotMatching() {
         Issue mock = MockUtils.mockBug(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("6.3.0", ""));
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(1));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 1);
     }
 
     @Test
     public void noViolationIfFlagPresentIsMatching() {
         Issue mock = MockUtils.mockBug(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("6.4.0", ""));
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
     }
 
 }

@@ -46,5 +46,5 @@ rule "PayloadComponentUpgradeShouldHaveAFix"
     // Does it has a dependency to a fix that belong to the payload tracker ?
     eval ( RulesHelper.doesAnIssueBelongToPayloadTracker( $issue.getDependsOn() , issuesIndexedByURL, payloadTrackerIndexedByURL) == false );
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "The following issue belong to one or payload tracker, but has no component fix:" + $issue.getTrackerId().get() ));
+    $candidate.addViolationOnce(new Violation(drools.getRule().getName(), "The following issue belong to one or payload tracker, but has no component fix:" + $issue.getTrackerId().get() ));
 end

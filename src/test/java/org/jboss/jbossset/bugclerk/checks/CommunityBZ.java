@@ -21,9 +21,7 @@
  */
 package org.jboss.jbossset.bugclerk.checks;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
-import static org.junit.Assert.assertThat;
 
 import java.util.Optional;
 
@@ -41,7 +39,7 @@ public class CommunityBZ extends AbstractCheckRunner {
     @Test
     public void violationIfCreatorEmailIsNotFromRedHat() {
         final String bugId = "123466";
-        Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBug(bugId, "summary");
         Mockito.when(mock.getReporter()).thenReturn(Optional.of(User.createWithEmail("Romain Pelisse <belaran@gmail.com>")));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
                 bugId);
@@ -49,7 +47,8 @@ public class CommunityBZ extends AbstractCheckRunner {
 
     @Test
     public void noViolationIfEmailIsFromRedHat() {
-        Issue mock = MockUtils.mockBug("123466", "summary");
-        assertThat(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName).size(), is(0));
+        final String bugId = "123466";
+        final Issue mock = MockUtils.mockBug(bugId , "summary");
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,bugId,0);
     }
 }

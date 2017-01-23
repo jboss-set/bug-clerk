@@ -23,29 +23,17 @@ package org.jboss.jbossset.bugclerk;
 
 public class Violation {
 
-    private final Candidate candidate;
     private final String message;
     private final String checkName;
     private Severity level = Severity.MINOR;
 
-    private void constructorSanityCheck(Candidate candidate, String mssg) {
-        if (candidate == null)
-            throw new IllegalArgumentException("Can't instantiate " + this.getClass().getCanonicalName()
-                    + " with a 'null' bug ref.");
-        if (mssg == null || "".equals(mssg))
-            throw new IllegalArgumentException("Can't instantiate " + this.getClass().getCanonicalName()
-                    + " with a 'null' or empty message.");
-    }
-
-    public Violation(Candidate candidate, String checkName, String message) {
-        constructorSanityCheck(candidate, message);
-        this.candidate = candidate;
+    public Violation(String checkName, String message) {
         this.message = message;
         this.checkName = checkName;
     }
 
-    public Violation(Candidate candidate, String checkName, String message, Severity level) {
-        this(candidate, checkName, message);
+    public Violation(String checkName, String message, Severity level) {
+        this(checkName, message);
         this.level = level;
     }
 
@@ -55,10 +43,6 @@ public class Violation {
 
     public String getCheckName() {
         return checkName;
-    }
-
-    public Candidate getCandidate() {
-        return candidate;
     }
 
     public Severity getLevel() {
@@ -71,7 +55,7 @@ public class Violation {
 
     @Override
     public String toString() {
-        return "Violation [candidate=" + candidate + ", message=" + message + ", checkName=" + checkName + ", level=" + level
+        return "Violation [message=" + message + ", checkName=" + checkName + ", level=" + level
                 + "]";
     }
 
@@ -79,7 +63,6 @@ public class Violation {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((candidate == null) ? 0 : candidate.hashCode());
         result = prime * result + ((checkName == null) ? 0 : checkName.hashCode());
         result = prime * result + ((level == null) ? 0 : level.hashCode());
         result = prime * result + ((message == null) ? 0 : message.hashCode());
@@ -96,11 +79,6 @@ public class Violation {
             return false;
 
         Violation other = (Violation) obj;
-        if (candidate == null) {
-            if (other.candidate != null)
-                return false;
-        } else if (!candidate.equals(other.candidate))
-            return false;
 
         if (checkName == null) {
             if (other.checkName != null)

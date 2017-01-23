@@ -37,5 +37,5 @@ rule "BZShouldHaveQaAckFlag"
   when
     $candidate : Candidate(bug.status.toString == "VERIFIED", $status : bug.status.toString , bug.stage.getStateMap.get(Flag.QE).toString == "NO_SET", filtered == false);
   then
-    insert(new Violation($candidate, drools.getRule().getName(), "Issue has status " + $status + " but no qa flag set.", Severity.MAJOR));
+    $candidate.addViolation(new Violation(drools.getRule().getName(), "Issue has status " + $status + " but no qa flag set.", Severity.MAJOR));
 end
