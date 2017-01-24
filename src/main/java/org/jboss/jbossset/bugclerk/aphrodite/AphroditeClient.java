@@ -19,7 +19,7 @@ public final class AphroditeClient {
 
     private final Aphrodite aphrodite;
 
-    private static final int DEFAULT_ISSUE_LIMIT = 500;
+    private static final int DEFAULT_ISSUE_LIMIT = 400;
 
     public AphroditeClient(IssueTrackerConfig issueTrackerConfig) {
         try {
