@@ -38,8 +38,7 @@ public final class BugClerkWithFilterCLI {
     public static void main(String[] args) throws MalformedURLException, AphroditeException, NotFoundException {
         BugClerkInvocatioWithFilterArguments arguments = CommandLineInterfaceUtils.extractParameters(
                 new BugClerkInvocatioWithFilterArguments(), args);
-        AphroditeClient client = new AphroditeClient(CommandLineInterfaceUtils.buildTrackerConfig(arguments,
-                arguments.getFilterURL()));
+        AphroditeClient client = new AphroditeClient();
         final List<Issue> issues = client.retrievePayload(arguments.getFilterURL());
 
         if (!issues.isEmpty())

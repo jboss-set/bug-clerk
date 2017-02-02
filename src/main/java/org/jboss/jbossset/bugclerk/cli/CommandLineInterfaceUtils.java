@@ -1,8 +1,6 @@
 package org.jboss.jbossset.bugclerk.cli;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
-import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
-import org.jboss.set.aphrodite.config.IssueTrackerConfig;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -30,10 +28,4 @@ public final class CommandLineInterfaceUtils {
         }
         return arguments;
     }
-
-    public static IssueTrackerConfig buildTrackerConfig(CommonArguments arguments, String trackerUrl) {
-        return AphroditeClient.buildTrackerConfig(trackerUrl, arguments.getUsername(), arguments.getPassword(),
-                arguments.getTrackerType());
-    }
-
 }

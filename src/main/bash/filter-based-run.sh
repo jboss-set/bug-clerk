@@ -1,8 +1,6 @@
 #!/bin/bash
 
-readonly TRACKER_USERNAME=${TRACKER_USERNAME}
-readonly TRACKER_PASSWORD=${TRACKER_PASSWORD}
-readonly TRACKER_TYPE=${TRACKER_TYPE:-'jira'}
+readonly APHRODITE_CONFIG=${APHRODITE_CONFIG:-"$(pwd)/aphrodite-config.json"}
 
 readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'.'}
 readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-${project.version}}
@@ -19,16 +17,6 @@ usage() {
   echo ''
 }
 
-if [ -z "${TRACKER_USERNAME}" ]; then
-  echo "Missing Bugzilla Username"
-  exit 1
-fi
-
-if [ -z "${TRACKER_PASSWORD}" ]; then
-  echo "Missing Bugzilla Password"
-  exit 2
-fi
-
 if [ ! -d "${BUGCLERK_HOME}" ]; then
   echo "Invalid BUGCLERK_HOME (not a directory): ${BUGCLERK_HOME}"
   exit 3
@@ -39,17 +27,16 @@ if [ -z "${BUGCLERK_VERSION}" ]; then
   exit 4
 fi
 
-if [ ! -e "${BUGCLERK_HOME}/${JAR_NAME}-${BUGCLERK_VERSION}.jar" ]; then
-  echo "No jar file in directory: ${BUGCLERK_HOME}."
+readonly FULL_PATH_TO_JAR="${BUGCLERK_HOME}/${JAR_NAME}-${BUGCLERK_VERSION}-shaded.jar"
+if [ ! -e "${FULL_PATH_TO_JAR}" ]; then
+  echo "No jar file in directory: ${FULL_PATH_TO_JAR}."
   exit 4
 fi
 
 cd "${BUGCLERK_HOME}"
-java -jar ./bugclerk-${BUGCLERK_VERSION}-shaded.jar \
+java -Daphrodite.config="${APHRODITE_CONFIG}" \
+     -jar ./bugclerk-${BUGCLERK_VERSION}-shaded.jar \
      -f "${FILTER_URL}" \
-     -t "${TRACKER_TYPE}"\
-     -u "${TRACKER_USERNAME}" \
-     -p "${TRACKER_PASSWORD}" \
      ${@}
 readonly STATUS=${?}
 cd - > /dev/null

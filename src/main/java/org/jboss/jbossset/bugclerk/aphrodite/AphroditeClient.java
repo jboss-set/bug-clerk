@@ -15,11 +15,19 @@ import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.spi.AphroditeException;
 import org.jboss.set.aphrodite.spi.NotFoundException;
 
-public final class AphroditeClient {
+public class AphroditeClient {
 
     private final Aphrodite aphrodite;
 
     private static final int DEFAULT_ISSUE_LIMIT = 400;
+
+    public AphroditeClient() {
+        try {
+            aphrodite = Aphrodite.instance();
+        } catch (AphroditeException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     public AphroditeClient(IssueTrackerConfig issueTrackerConfig) {
         try {

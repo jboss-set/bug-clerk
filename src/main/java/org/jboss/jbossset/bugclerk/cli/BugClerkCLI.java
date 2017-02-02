@@ -37,8 +37,7 @@ public final class BugClerkCLI {
             if (arguments.getIds().isEmpty())
                 throw new IllegalArgumentException("No IDs provided.");
 
-            AphroditeClient aphrodite = new AphroditeClient(CommandLineInterfaceUtils.buildTrackerConfig(arguments, arguments
-                    .getIds().get(0)));
+            AphroditeClient aphrodite = new AphroditeClient();
             arguments.setIssues(aphrodite.loadIssues(arguments.getIds()));
             new BugClerk(aphrodite).runAndReturnsViolations(BugClerkArguments.validateArgs(arguments));
             aphrodite.close();

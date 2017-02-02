@@ -1,10 +1,10 @@
 package org.jboss.jbossset.bugclerk.cli;
 
-import org.jboss.set.aphrodite.config.TrackerType;
-
 import com.beust.jcommander.Parameter;
 
 public class CommonArguments {
+
+    public static final String APHRODITE_CONFIG = "APHRODITE_CONFIG";
 
     @Parameter(names = { "-?", "--help" }, description = "print help text", required = false)
     private boolean help = false;
@@ -18,20 +18,11 @@ public class CommonArguments {
     @Parameter(names = { "-h", "--html-report" }, description = "Create an html report, on top of the XML one", required = false)
     private String htmlReportFilename;
 
-    @Parameter(names = { "-u", "--bugzilla-username" }, description = "username for tracker's authentification", required = true)
-    private String username;
-
-    @Parameter(names = { "-p", "--bugzilla-password" }, description = "password for tracker's authentification", required = true)
-    private String password;
-
     @Parameter(names = { "-c", "--comment-on-bz" }, description = "add a comment to a BZ featuring violations, default is false", required = false)
     private boolean reportToBz = false;
 
     @Parameter(names = { "-F", "--fail-on-violation" }, description = "exit program with status equals to number of violations", required = false)
     private boolean failOnViolation = false;
-
-    @Parameter(names = { "-t", "--tracker-type" }, description = "Tracker type (true for bugzilla, false for JIRA)", converter = TrackerTypeConverter.class)
-    private TrackerType trackerType = TrackerType.BUGZILLA;
 
     public boolean isDebug() {
         return debug;
@@ -73,22 +64,6 @@ public class CommonArguments {
         return !(this.htmlReportFilename == null || "".equals(this.htmlReportFilename));
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public boolean isReportToBz() {
         return reportToBz;
     }
@@ -105,18 +80,11 @@ public class CommonArguments {
         this.failOnViolation = isFailOnViolation;
     }
 
-    public TrackerType getTrackerType() {
-        return trackerType;
-    }
-
-    public void setTrackerType(TrackerType trackerType) {
-        this.trackerType = trackerType;
-    }
-
     @Override
     public String toString() {
-        return "AbstractCommonArguments [help=" + help + ", debug=" + debug + ", xmlReportFilename=" + xmlReportFilename
-                + ", htmlReportFilename=" + htmlReportFilename + ", username=" + username + ", password=" + password
-                + ", reportToBz=" + reportToBz + ", failOnViolation=" + failOnViolation + ", trackerType=" + trackerType + "]";
+        return "CommonArguments [help=" + help + ", debug=" + debug + ", xmlReportFilename=" + xmlReportFilename
+                + ", htmlReportFilename=" + htmlReportFilename + ", reportToBz=" + reportToBz + ", failOnViolation="
+                + failOnViolation + "]";
     }
+
 }
