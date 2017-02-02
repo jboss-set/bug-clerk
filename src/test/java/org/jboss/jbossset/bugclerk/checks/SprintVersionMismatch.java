@@ -50,7 +50,7 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     @Test
     public void violationIfNoReleases() {
         final String checkNameNoRelease = checkName + "_NoRelease";
-        JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(MockUtils.buildURL(bugId), summary);
+        JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(bugId, summary);
         Mockito.when(mock.getSprintRelease()).thenReturn(SPRINT_RELEASE);
         Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkNameNoRelease), checkNameNoRelease, bugId, 1);
@@ -58,7 +58,7 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     
     @Test
     public void noViolationIfNoSprint() {
-        JiraIssue mock = MockUtils.mockJiraIssue(MockUtils.buildURL(bugId), summary);
+        JiraIssue mock = MockUtils.mockJiraIssue(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
         Mockito.when(mock.getSprintRelease()).thenReturn("");
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
@@ -67,7 +67,7 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     
     @Test
     public void noViolationIfOneReleasesMatchesSprintVersion() {
-        JiraIssue mock = MockUtils.mockJiraIssue(MockUtils.buildURL(bugId), summary);
+        JiraIssue mock = MockUtils.mockJiraIssue(bugId, summary);
         Mockito.when(mock.getSprintRelease()).thenReturn(SPRINT_RELEASE);
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.0.2", "7.0.3"));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
@@ -75,7 +75,7 @@ public class SprintVersionMismatch extends AbstractCheckRunner {
     
     @Test
     public void violationIfOneReleasesMatchesSprintVersion() {
-        JiraIssue mock = MockUtils.mockJiraIssue(MockUtils.buildURL(bugId), summary);
+        JiraIssue mock = MockUtils.mockJiraIssue(bugId, summary);
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.1");
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.0.2", "7.0.3"));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 1);

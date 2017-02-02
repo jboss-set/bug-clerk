@@ -27,6 +27,7 @@ import org.mockito.Mockito;
 public final class MockUtils {
 
     private static final String TRACKER_URL_PREFIX = "https://bugzilla.redhat.com/show_bug.cgi?id=";
+    private static final String JIRA_TRACKER_URL_PREFIX = "https://issues.jboss.org/browse/";
 
     private MockUtils() {
     }
@@ -41,7 +42,7 @@ public final class MockUtils {
 
     private static URL buildJiraUrlFromId(final String id) {
         try {
-            return new URL(TRACKER_URL_PREFIX + id);
+            return new URL(JIRA_TRACKER_URL_PREFIX + id);
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
@@ -83,10 +84,6 @@ public final class MockUtils {
     public static JiraIssue mockJiraIssue(String bugId, String summary) {
         JiraIssue issue = (JiraIssue) createMockStub(TrackerType.JIRA);
         return populateMock(bugId, buildJiraUrlFromId(bugId), summary, issue);
-    }
-
-    public static JiraIssue mockJiraIssue(URL bugId, String summary) {
-        return (JiraIssue) populateMock(URLUtils.extractJiraTrackerId(bugId),bugId, summary, createMockStub(TrackerType.JIRA));
     }
 
     private static Issue mockTrackerType(Issue issue, TrackerType type) {
