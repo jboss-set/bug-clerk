@@ -50,7 +50,7 @@ public abstract class AbstractCheckRunner {
 
     @Before
     public void initRuleEngine() {
-        this.engine = new RuleEngine(new HashMap<String, Object>(0));
+        this.engine = new RuleEngine(new HashMap<String, Object>(0),null);
     }
 
     @Before

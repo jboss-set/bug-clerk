@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.drools.core.ClassObjectFilter;
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieSession;
@@ -39,18 +40,19 @@ public class RuleEngine {
     private final KieSession ksession;
     static final String KIE_SESSION = "BzCheck";
 
-    public RuleEngine(Map<String, Object> externalGlobals) {
-        Map<String, Object> globals = buildGlobalsMap();
+    public RuleEngine(Map<String, Object> externalGlobals,AphroditeClient client) {
+        Map<String, Object> globals = buildGlobalsMap(client);
         if (! externalGlobals.isEmpty() )
             globals.putAll(externalGlobals);
         ksession = createKSession(KIE_SESSION);
         globals.entrySet().forEach(e -> ksession.getGlobals().set(e.getKey(), e.getValue()));
     }
 
-    protected Map<String, Object> buildGlobalsMap() {
+    protected Map<String, Object> buildGlobalsMap(AphroditeClient client) {
         Map<String, Object> globalsMaps = new HashMap<String, Object>(2);
         globalsMaps.put("issuesIndexedByURL", new HashMap<URL,Issue>());
         globalsMaps.put("payloadTrackerIndexedByURL", new HashMap<URL,Issue>());
+        if ( client != null ) globalsMaps.put("aphrodite", client);
         return globalsMaps;
     }
 

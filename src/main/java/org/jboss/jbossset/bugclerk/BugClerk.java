@@ -49,7 +49,7 @@ public class BugClerk {
     }
 
     protected Collection<Candidate> processEntriesAndReportViolations(List<Candidate> candidates) {
-        RuleEngine ruleEngine = new RuleEngine(new HashMap<String, Object>(0));
+        RuleEngine ruleEngine = new RuleEngine(new HashMap<String, Object>(0), this.aphrodite);
         Collection<Candidate> violations = ruleEngine.processBugEntry(candidates);
         ruleEngine.shutdownRuleEngine();
         return violations;
