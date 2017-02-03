@@ -9,5 +9,5 @@ dependency-reduced-pom.xml
 .idea/
 bugclerk.iml
 # BugClerk specific
-aphrodite-config.json
+*.json
 /bin/
