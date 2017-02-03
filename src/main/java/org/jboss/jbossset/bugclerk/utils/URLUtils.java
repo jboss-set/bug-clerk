@@ -22,6 +22,8 @@
 package org.jboss.jbossset.bugclerk.utils;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +115,14 @@ public final class URLUtils {
         if ( bugId != null && bugId.getQuery().contains("/") )
             return bugId.getQuery().substring(bugId.getQuery().lastIndexOf("/"));
         return "";
+    }
+
+    public static URI createURIFromString(String uri) {
+        try {
+            return new URI(uri);
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Invalid URI:" + uri);
+        }
     }
 
 }

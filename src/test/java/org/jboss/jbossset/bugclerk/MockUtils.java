@@ -3,6 +3,7 @@ package org.jboss.jbossset.bugclerk;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.config.TrackerType;
+import org.jboss.set.aphrodite.domain.Codebase;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Flag;
 import org.jboss.set.aphrodite.domain.FlagStatus;
@@ -20,6 +22,8 @@ import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.domain.Stage;
+import org.jboss.set.aphrodite.domain.Stream;
+import org.jboss.set.aphrodite.domain.StreamComponent;
 import org.jboss.set.aphrodite.domain.User;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.mockito.Mockito;
@@ -69,6 +73,15 @@ public final class MockUtils {
             throw new IllegalStateException(e);
         }
     }
+
+    public static URL buildURL(String trackerUrlPrefix, String id) {
+        try {
+            return new URL(trackerUrlPrefix + "/" + id);
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
 
     public static Issue mockBug(String bugId, String summary) {
         return mockBug(bugId, buildURL(bugId), summary);
@@ -178,5 +191,30 @@ public final class MockUtils {
         Map<String,FlagStatus> map = new HashMap<String,FlagStatus>(0);
         map.put(streamName, flagStatus);
         return map;
+    }
+
+    public static List<Stream> mockStreamsWithStreamWithOneComponent(String streamName, String componentName, String URI, String branchName, String tag, String version, String gav ) {
+        return Arrays.asList(MockUtils.mockStreamWithOneComponent(streamName, componentName, URI, branchName, tag, version, gav));
+    }
+
+    public static List<URL> mockPullRequestsUrls(String pullRequestURI) {
+        return Arrays.asList(URLUtils.createURLFromString(pullRequestURI));
+    }
+
+    public static List<Release> mockReleases(String targetRelease) {
+        Release release = new Release();
+        release.setVersion(targetRelease);
+        return Arrays.asList(release);
+    }
+
+    public static Stream mockStreamWithOneComponent(String streamName, String componentName, String URI, String branchName, String tag, String version, String gav ) {
+        Stream stream = new Stream(streamName);
+        Codebase codebase = new Codebase(branchName);
+        List<String> contacts = new ArrayList<String>(0);
+        StreamComponent component = new StreamComponent(componentName,
+                contacts,URLUtils.createURIFromString(URI),
+                codebase, tag, version, gav);
+        stream.addComponent(component);
+        return stream;
     }
 }

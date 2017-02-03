@@ -2,15 +2,22 @@ package org.jboss.jbossset.bugclerk.utils;
 
 import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
 
+
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
+import org.jboss.set.aphrodite.domain.Stream;
+import org.jboss.set.aphrodite.domain.StreamComponent;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 /**
  * <p>Regroups a set of static method used by some checks.</p>
  *
@@ -96,6 +103,33 @@ public final class RulesHelper {
     public static boolean doesSiblingsFixVersionsContainsParentsOne(Issue issue, Issue sibling) {
         for ( Release parentRelease : issue.getReleases() )
             if ( sibling.getReleases().contains(parentRelease) ) return true;
+        return false;
+    }
+
+    public static boolean isPullRequestAgainstAppropriateBranch(JiraIssue issue, AphroditeClient aphrodite) {
+        Release release = issue.getReleases().get(0);
+        if ( release.getVersion().isPresent() ) {
+            String branchName = release.getVersion().get();
+            for (Stream stream : aphrodite.getAllStreams() )
+                if ( stream.getName().contains(branchName))
+                    if ( checkPullRequestsAgainstEachComponentCodebase(issue,stream.getAllComponents(), aphrodite ) )
+                        return true;
+        }
+        return false;
+    }
+
+    private static boolean checkPullRequestsAgainstEachComponentCodebase(JiraIssue issue, Collection<StreamComponent> streams, AphroditeClient aphrodite) {
+        for ( StreamComponent component : streams )
+            if ( doesPullRequestsFilledAgainstAppropriateCodebase(issue.getPullRequests(),component,aphrodite) )
+                return true;
+        return false;
+    }
+
+    private static boolean doesPullRequestsFilledAgainstAppropriateCodebase(List<URL> pullRequests, StreamComponent component, AphroditeClient aphrodite) {
+        for ( URL url : pullRequests)
+            if ( url.toString().startsWith(component.getRepositoryURL().toString()))
+                if ( ! component.getCodebase().equals(aphrodite.getPullRequest(url.toString()).getCodebase()))
+                    return true;
         return false;
     }
 }

@@ -2,7 +2,6 @@ package org.jboss.jbossset.bugclerk.checks.utils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
@@ -32,36 +31,26 @@ public final class AssertsHelper {
 
     public static void assertResultsIsAsExpected(Collection<Candidate> candidates, String checkname, String bugId,
             int nbViolationExpected) {
+        boolean status = false;
         for ( Candidate candidate : candidates) {
-            if ( candidate.getBug().getTrackerId().equals(bugId)) {
+            if ( candidate.getBug().getTrackerId().get().equals(bugId)) {
                 List<Violation> violations = candidate.getViolations();
                 assertThat(violations.size(), is(nbViolationExpected));
                 for (Violation v : violations) {
                     assertThat(v.getCheckName(), is(checkname));
+                    status = true;
                 }
             }
         }
+        if (! status && nbViolationExpected > 0 ) fail("Expected violation data not found");
     }
-    
-    public static void checkResults(Collection<Candidate> candidates, String bugId, int expectedNbOfViolations, String checkName) {
-        boolean status = false;
-        for ( Candidate candidate : candidates ) {
-            String t = candidate.getBug().getTrackerId().get();
-            if ( t.equals(bugId)) {
-                assertTrue(checkViolationIsPresent(candidate.getViolations(), checkName)); //, is(true);
-                assertThat(candidate.getViolations().size(), is(expectedNbOfViolations));
-                status = true;
-            }
-        }
-        if (! status ) fail("Expected violation data not found");       
-    }
-    
+
     public static boolean checkViolationIsPresent(List<Violation> violations, String checkName) {
         for ( Violation v : violations )
             if ( v.getCheckName().equals(checkName))
                 return true;
         return false;
-        
+
     }
 
 }
