@@ -27,6 +27,7 @@
 
     <version.drools>6.4.0.Final</version.drools>
     <version.org.drools>${version.drools}</version.org.drools>
+    <version.org.jboss.set.aphrodite>0.6.0-SNAPSHOT</version.org.jboss.set.aphrodite>
     <version.org.kie>${version.drools}</version.org.kie>
   </properties>
 
@@ -41,10 +42,19 @@
     <!-- Aphrodite - libs to all things trackery and repository -->
     <dependency>
       <groupId>org.jboss.set</groupId>
-        <artifactId>jboss-aphrodite-dist</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
-      </dependency>
-
+	  <artifactId>jboss-aphrodite-common</artifactId>
+	  <version>${version.org.jboss.set.aphrodite}</version>
+	</dependency>
+    <dependency>
+      <groupId>org.jboss.set</groupId>
+      <artifactId>jboss-aphrodite-domain</artifactId>
+      <version>${version.org.jboss.set.aphrodite}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.set</groupId>
+      <artifactId>jboss-aphrodite-jira</artifactId>
+      <version>${version.org.jboss.set.aphrodite}</version>
+    </dependency>
 
     <!-- Drools -->
     <dependency>

@@ -33,7 +33,7 @@ import org.jboss.jbossset.bugclerk.RuleEngine;
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Codebase;
-import org.jboss.set.aphrodite.domain.Patch;
+import org.jboss.set.aphrodite.domain.PullRequest;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,19 +58,19 @@ public class PRAgainstProperBranch extends AbstractCheckRunner {
     public void initRuleEngine() {
         AphroditeClient client = Mockito.mock(AphroditeClient.class);
         Mockito.when(client.getAllStreams()).thenReturn(MockUtils.mockStreamsWithStreamWithOneComponent("jboss-eap-7.0.z", "aesh","https://github.com/aeshell/aesh.git", "0.66.+","0.66.12", "0.66.12.redhat-1", "org.jboss.aesh"));
-        Mockito.when(client.getPullRequest(anyString())).thenAnswer(new Answer<Patch>() {
+        Mockito.when(client.getPullRequest(anyString())).thenAnswer(new Answer<PullRequest>() {
 
             @Override
-            public Patch answer(InvocationOnMock invocation) throws Throwable {
-                return mockPatch();
+            public PullRequest answer(InvocationOnMock invocation) throws Throwable {
+                return mockPullRequest();
             }
         });
         this.engine = new RuleEngine(new HashMap<String, Object>(0),client);
     }
         
-    private Patch mockPatch() {
+    private PullRequest mockPullRequest() {
         Codebase codebase = new Codebase("0.7");
-        Patch mock = Mockito.mock(Patch.class);
+        PullRequest mock = Mockito.mock(PullRequest.class);
         Mockito.when(mock.getCodebase()).thenReturn(codebase);
         return mock;
     }
