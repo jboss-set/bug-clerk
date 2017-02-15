@@ -12,7 +12,7 @@ import org.jboss.set.aphrodite.config.IssueTrackerConfig;
 import org.jboss.set.aphrodite.config.TrackerType;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Issue;
-import org.jboss.set.aphrodite.domain.Patch;
+import org.jboss.set.aphrodite.domain.PullRequest;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.spi.AphroditeException;
 import org.jboss.set.aphrodite.spi.NotFoundException;
@@ -67,9 +67,9 @@ public class AphroditeClient {
         return new IssueTrackerConfig(URLUtils.getServerUrl(trackerUrl), username, password, type, DEFAULT_ISSUE_LIMIT);
     }
 
-    public Patch getPullRequest(String pullRequestUrl) {
+    public PullRequest getPullRequest(String pullRequestUrl) {
         try {
-            return aphrodite.getPatch(URLUtils.createURLFromString(pullRequestUrl));
+            return aphrodite.getPullRequest(URLUtils.createURLFromString(pullRequestUrl));
         } catch (NotFoundException e) {
             throw new IllegalArgumentException("No such Pull Requests:" + pullRequestUrl, e);
         }
