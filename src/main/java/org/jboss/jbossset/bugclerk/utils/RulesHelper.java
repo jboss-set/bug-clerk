@@ -2,12 +2,11 @@ package org.jboss.jbossset.bugclerk.utils;
 
 import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
 
-
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Optional;
 
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.Comment;
@@ -30,10 +29,20 @@ public final class RulesHelper {
 
     private RulesHelper(){}
 
-    public static boolean isOneOfThoseIssueAPayload(List<URL> issues, Map<URL, Issue> payloadTrackerIndexedByURL) {
+    private static Optional<Issue> retrieveIssueIfNotFoundIn(URL block,Map<URL, Issue> payloadTrackerIndexedByURL, AphroditeClient aphrodite) {
+        Optional<Issue> blockingIssue;
+        Issue issue = payloadTrackerIndexedByURL.get(block);
+        if ( issue == null && aphrodite != null ) // Aphrodite would 'null' only in unit test case
+            blockingIssue = aphrodite.retrieveIssue(block);
+        else
+            blockingIssue = Optional.of(issue);
+        return blockingIssue;
+    }
+
+    public static boolean isOneOfThoseIssueAPayload(List<URL> issues, Map<URL, Issue> payloadTrackerIndexedByURL, AphroditeClient aphrodite) {
         for ( URL block : issues ) {
-            Issue issue = payloadTrackerIndexedByURL.get(block);
-            if ( issue != null && issue.getSummary().isPresent() && issue.getSummary().get().contains(PAYLOAD_TRACKER_PREFIX) )
+            Optional<Issue> blockingIssue = retrieveIssueIfNotFoundIn(block, payloadTrackerIndexedByURL, aphrodite);
+            if ( blockingIssue != null && blockingIssue.isPresent() && blockingIssue.get().getSummary().isPresent() && blockingIssue.get().getSummary().get().contains(PAYLOAD_TRACKER_PREFIX) )
                 return true;
         }
         return false;

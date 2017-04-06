@@ -1,8 +1,10 @@
 package org.jboss.jbossset.bugclerk.aphrodite;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
@@ -57,6 +59,14 @@ public class AphroditeClient {
     public List<Issue> loadIssues(List<String> ids) {
         return aphrodite.getIssues(ids.parallelStream().map(id -> URLUtils.createURLFromString(id))
                 .collect(Collectors.toList()));
+    }
+
+    public Optional<Issue> retrieveIssue(URL url) {
+        try {
+            return Optional.of(aphrodite.getIssue(url));
+        } catch (NotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     public List<Stream> getAllStreams() {

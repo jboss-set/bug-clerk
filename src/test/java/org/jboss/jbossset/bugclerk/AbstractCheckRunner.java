@@ -25,9 +25,11 @@ import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.junit.After;
 import org.junit.Before;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractCheckRunner {
@@ -50,7 +52,11 @@ public abstract class AbstractCheckRunner {
 
     @Before
     public void initRuleEngine() {
-        this.engine = new RuleEngine(new HashMap<String, Object>(0),null);
+        this.engine = new RuleEngine(new HashMap<String, Object>(0),mockAphroditeClientIfNeeded());
+    }
+
+    protected AphroditeClient mockAphroditeClientIfNeeded() {
+        return Mockito.mock(AphroditeClient.class);
     }
 
     @Before

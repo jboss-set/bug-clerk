@@ -34,6 +34,7 @@ import org.jboss.set.aphrodite.domain.IssueType;
 
 global java.util.Map issuesIndexedByURL;
 global java.util.Map payloadTrackerIndexedByURL;
+global org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient aphrodite;
 
 rule "PayloadComponentUpgradeShouldHaveAFix"
   salience 0
@@ -42,7 +43,7 @@ rule "PayloadComponentUpgradeShouldHaveAFix"
     // Is this a component upgrade ?
     $candidate : Candidate( $issue: bug, $url: bug.getURL, bug.getType().toString().equalsIgnoreCase(IssueType.UPGRADE.toString()), ! filtered);
     // Does this component upgrade blocks a payload ?
-    eval ( RulesHelper.isOneOfThoseIssueAPayload($issue.getBlocks(), payloadTrackerIndexedByURL) == true );
+    eval ( RulesHelper.isOneOfThoseIssueAPayload($issue.getBlocks(), payloadTrackerIndexedByURL, aphrodite) == true );
     // Does it has a dependency to a fix that belong to the payload tracker ?
     eval ( RulesHelper.doesAnIssueBelongToPayloadTracker( $issue.getDependsOn() , issuesIndexedByURL, payloadTrackerIndexedByURL) == false );
   then

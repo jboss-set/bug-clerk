@@ -34,6 +34,7 @@ import org.jboss.set.aphrodite.domain.IssueType;
 
 global java.util.Map issuesIndexedByURL;
 global java.util.Map payloadTrackerIndexedByURL;
+global org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient aphrodite;
 
 rule "PayloadFixesMustHaveComponentUpgrade"
   salience 0
@@ -41,7 +42,7 @@ rule "PayloadFixesMustHaveComponentUpgrade"
   when
     // does this issue "block" (thus belong to) a Payload Tracker ? (And not an upgrade)
     $candidate : Candidate( $issue: bug, $url: bug.getURL, ! bug.getType().toString().equalsIgnoreCase(IssueType.UPGRADE.toString()), filtered == false);
-    eval(RulesHelper.isOneOfThoseIssueAPayload($issue.getBlocks(), payloadTrackerIndexedByURL) == true)
+    eval(RulesHelper.isOneOfThoseIssueAPayload($issue.getBlocks(), payloadTrackerIndexedByURL, aphrodite) == true)
     // if so, does this fix blocks a component upgrade ?
     eval(RulesHelper.isOneOfThoseIssueAComponentUpgrade($issue.getBlocks(),issuesIndexedByURL) == false)
   then
