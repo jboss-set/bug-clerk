@@ -4,6 +4,7 @@ import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,10 +13,13 @@ import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.domain.StreamComponent;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogGroup;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogItem;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 /**
  * <p>Regroups a set of static method used by some checks.</p>
@@ -26,6 +30,8 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 public final class RulesHelper {
 
     public static String PAYLOAD_TRACKER_PREFIX = "Payload Tracker";
+    private final static String STATUS = "Status";
+    private final static String RESOLVED = "Resolved";
 
     private RulesHelper(){}
 
@@ -125,6 +131,35 @@ public final class RulesHelper {
                         return true;
         }
         return false;
+    }
+
+    public static boolean isInResolvedState(JiraIssue issue) {
+        return issue.getStatus().equals(IssueStatus.MODIFIED);
+    }
+
+    public static boolean isChangedAfterResolved(List<JiraChangelogGroup> changelog) {
+        Date resolvedDate = getLastResolvedDate(changelog);
+        return changelog.stream().anyMatch(group -> resolvedDate.before(group.getCreated())
+                && isNotAllowedChange(group.getItems()));
+    }
+
+    public static Date getLastResolvedDate(List<JiraChangelogGroup> changelog) {
+        JiraChangelogGroup lastResolved = changelog.stream()
+                .filter(group -> containsStatusChangeToResolved(group.getItems()))
+                .reduce((first, second) -> second).orElse(null);
+        return (lastResolved != null) ? lastResolved.getCreated() : new Date();
+    }
+
+    private static boolean containsStatusChangeToResolved(List<JiraChangelogItem> items) {
+        return items.stream().anyMatch(RulesHelper::isStatusChangeToResolved);
+    }
+
+    private static boolean isStatusChangeToResolved(JiraChangelogItem item) {
+        return item.getField().equalsIgnoreCase(STATUS) && item.getToString().equalsIgnoreCase(RESOLVED);
+    }
+
+    private static boolean isNotAllowedChange(List<JiraChangelogItem> items) {
+        return items.stream().anyMatch(item -> !item.getField().equalsIgnoreCase("Status"));
     }
 
     private static boolean checkPullRequestsAgainstEachComponentCodebase(JiraIssue issue, Collection<StreamComponent> streams, AphroditeClient aphrodite) {
