@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.atlassian.jira.rest.client.api.domain.ChangelogGroup;
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.FlagStatus;
@@ -32,8 +31,6 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 public final class RulesHelper {
 
     public static String PAYLOAD_TRACKER_PREFIX = "Payload Tracker";
-    private final static String STATUS = "Status";
-    private final static String RESOLVED = "Resolved";
 
     private RulesHelper(){}
 
@@ -157,6 +154,8 @@ public final class RulesHelper {
     }
 
     private static boolean isStatusChangeToResolved(JiraChangelogItem item) {
+        String STATUS = "Status";
+        String RESOLVED = "Resolved";
         return item.getField().equalsIgnoreCase(STATUS) && item.getToString().equalsIgnoreCase(RESOLVED);
     }
 
