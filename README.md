@@ -4,7 +4,7 @@
 
 ### What it is ? What would it help or solve ?
 
-*   A tool to ensure **BZ data and metada are compliant to Red Hat processes and expectations**, ex:
+*   A tool to ensure **BZ / Jira data and metada are compliant to Red Hat processes and expectations**, ex:
 
 *   If a BZ is switched to POST, it will check that a PR has been referenced
 *   or simply look at for a counterexample [BZ1160715](https://bugzilla.redhat.com/show_bug.cgi?id=1160715)
@@ -32,12 +32,24 @@ Of course, if you do find some tools or library that , please feel free to updat
 
 You need to have credentials to access BugZilla.
 
-$ java -cp ${BUGCLERK_HOME}/bugclerk-${VERSION}.jar org.jboss.jbossset.bugclerk.cli.BugClerkCLI 1199194  -u 'https://bugzilla.redhat.com/show_bug.cgi?id='
-
+The easiest way is to use bash scripts in src/main/bash:
+```
+./run-on-bugid.sh https://issues.stage.jboss.org/browse/${issue-id}
+./filter-based-run.sh
+```
+Getting some help:
+```
+java -Daphrodite.config="aphrodite-config.json" -jar ${BUGCLERK_HOME}/bugclerk-${VERSION}-shaded.jar --help
+```
+Try issue from Jira or Bugzilla:
+```
+$ java -cp ${BUGCLERK_HOME}/bugclerk-${VERSION}-shaded.jar org.jboss.jbossset.bugclerk.cli.BugClerkCLI https://issues.jboss.org/browse/JBEAP-8665
+$ java -cp ${BUGCLERK_HOME}/bugclerk-${VERSION}-shaded.jar org.jboss.jbossset.bugclerk.cli.BugClerkCLI https://bugzilla.redhat.com/show_bug.cgi?id=1199194
+```
 Or you can simply retrieve all the BZs in a filter and have Bugclerk analyze them:
-
-$ java -jar ${BUGCLERK_HOME}/bugclerk-${VERSION}.jar -H https://bugzilla.redhat.com/index.cgi -f 'https://bugzilla.redhat.com/buglist.cgi?cmdtype=runnamed&list_id=3525838&namedcmd=bz-created-on-EAP-in-the-last-hour&ctype=csv'
-
+```
+$ java -jar ${BUGCLERK_HOME}/bugclerk-${VERSION}-shaded.jar -H https://bugzilla.redhat.com/index.cgi -f 'https://bugzilla.redhat.com/buglist.cgi?cmdtype=runnamed&list_id=3525838&namedcmd=bz-created-on-EAP-in-the-last-hour&ctype=csv'
+```
 For commodity purpose, some launch scripts have been provided in src/main/bash.
 
 ## How to build it ?
