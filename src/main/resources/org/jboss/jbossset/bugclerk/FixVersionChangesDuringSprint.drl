@@ -48,5 +48,5 @@ rule "FixVersionChangesDuringSprint"
       $author : User() from $group.getAuthor();
       eval(RulesHelper.isFixVersionChangeDoneByAllowedUser($author, $sprint) == false);
   then
-    $candidate.addViolationOnce( new Violation("FixVersionChangesDuringSprint", "test violation", Severity.MAJOR) );
+    $candidate.addViolationOnce( new Violation("FixVersionChangesDuringSprint", "test violation", Severity.MINOR) );
 end
