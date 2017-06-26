@@ -22,15 +22,15 @@
 
 package org.jboss.jbossset.bugclerk.utils;
 
-import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
-import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.issue.trackers.jira.IssueHomeImpl;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraLabel;
 
+import javax.naming.NameNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Created by Marek Marusic <mmarusic@redhat.com> on 6/12/17.
@@ -39,55 +39,31 @@ public final class LabelsHelper {
     public static final String JBEAPProject = "JBoss Enterprise Application Platform";
     public static final String DOWNSTREAM_DEP = "downstream_dependency";
 
-    public static List<Issue> getIssuesMissingDownstreamLabel(JiraIssue issue, AphroditeClient aphrodite) {
-        List<Issue> issues = aphrodite.loadIssues(findLinkedIssues(issue));
+    public static boolean isIssueJBEAP(JiraIssue issue) {
+        return IssueHomeImpl.isIssueJBEAP(issue);
+    }
+
+    public static List<Issue> getIssuesMissingDownstreamLabel(JiraIssue issue) {
+        Stream<Issue> upstreamReferences = getUpstreamReferences(issue);
         List<Issue> issuesWithoutLabel = new ArrayList<>();
-        issues.stream().filter(i -> isUpstreamIssue((JiraIssue) i, issue)
-                && isMissingDownstreamLabel((JiraIssue) i)).forEach(issuesWithoutLabel::add);
+        upstreamReferences.filter(i -> isMissingDownstreamLabel((JiraIssue) i)).forEach(issuesWithoutLabel::add);
 
         return issuesWithoutLabel;
     }
 
-    public static List<String> findLinkedIssues(JiraIssue issue) {
-        List<String> upstreamIssues = new ArrayList<>();
-        if (issue.getDependsOn() != null)
-            issue.getDependsOn().forEach(i -> upstreamIssues.add(i.toString()));
-        if (issue.getBlocks() != null)
-            issue.getBlocks().forEach(i -> upstreamIssues.add(i.toString()));
-
-        return upstreamIssues;
-    }
-
-    private static boolean isUpstreamIssue(JiraIssue upstreamIssue, JiraIssue downstreamIssue) {
-        if (upstreamIssue == null || downstreamIssue == null)
-            return false;
-
-        if (!isIssueJBEAP(upstreamIssue))
-            return true;
-
-        String upstreamRelease = extractTargetRelease(upstreamIssue.getStreamStatus());
-        String downstreamRelease = extractTargetRelease(downstreamIssue.getStreamStatus());
-
-        return VersionComparator.isFirstVersionHigher(upstreamRelease, downstreamRelease);
-    }
-
-    public static boolean isIssueJBEAP(JiraIssue issue) {
-        return issue != null && issue.getProduct() != null && issue.getProduct().isPresent()
-                && issue.getProduct().get().equals(JBEAPProject);
-    }
-
-    private static String extractTargetRelease(Map<String, FlagStatus> streamStatus) {
-        // There should be max 1 key with value = FlagStatus.ACCEPTED or null in the stream status
-        return (streamStatus != null && streamStatus.size() > 0) ? streamStatus.keySet().iterator().next() : "";
+    private static Stream<Issue> getUpstreamReferences(JiraIssue issue) {
+        Stream<Issue> upstreamReferences = null;
+        try {
+            upstreamReferences = issue.getUpstreamReferences();
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return (upstreamReferences != null) ? upstreamReferences : new ArrayList<Issue>().stream();
     }
 
     private static boolean isMissingDownstreamLabel(JiraIssue issue) {
         JiraLabel downstreamDepLabel = new JiraLabel(DOWNSTREAM_DEP);
         return issue.getLabels().stream().noneMatch(downstreamDepLabel::equals);
-    }
-
-    public static boolean areMissingDownstremDepLabel(List<Issue> upstreamIssuesMissingLabel) {
-        return upstreamIssuesMissingLabel.size() != 0;
     }
 
     public static String getLinksOfIssues(List<Issue> issues) {

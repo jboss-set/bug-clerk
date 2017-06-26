@@ -35,7 +35,7 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraLabel;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.net.MalformedURLException;
+import javax.naming.NameNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
     private String JBEAPID = "EAP7-198";
     final String bugId = "1437945";
     private AphroditeClient aphroditeClient;
-    private List<Issue> issues;
+    private List<Issue> upstreamReferences = new ArrayList<>();
 
     @Test
     public void testIssueWithEmptyProductField() {
@@ -65,7 +65,7 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
     }
 
     private JiraIssue createJiraIssueMock() {
-        issues.clear();
+        upstreamReferences.clear();
         JiraIssue mock = MockUtils.mockJiraIssue(bugId, "A Summary...");
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.0.3");
         Mockito.when(mock.getProduct()).thenReturn(Optional.ofNullable(LabelsHelper.JBEAPProject));
@@ -74,42 +74,26 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
 
         List<URL> blocksIssues = new ArrayList<>();
         Mockito.when(mock.getDependsOn()).thenReturn(blocksIssues);
-        return mock;
-    }
 
-    @Test
-    public void testFindDependsOnIssues() {
-        issue = createJiraIssueMock();
-        addDependsOnIssue(WFLYID);
-        addDependsOnIssue(JBEAPID);
-
-        assertEquals(LabelsHelper.isIssueJBEAP(issue), true);
-        assertEquals(LabelsHelper.findLinkedIssues(issue).size(), 2);
-    }
-
-    private void addDependsOnIssue(String issueId) {
-        URL issueURL = null;
         try {
-            issueURL = new URL("https://issues.stage.jboss.org/browse/"+issueId);
-        } catch (MalformedURLException e) {
+            Mockito.when(mock.getUpstreamReferences()).thenReturn(upstreamReferences.stream());
+        } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
-
-        issue.getDependsOn().add(issueURL);
+        return mock;
     }
 
     @Test
     public void testWfcoreIssueHasDownstreamDepLabel() {
         issue = createJiraIssueMock();
-        addDependsOnIssue(WFLYID);
-        issues.add(createIssueWithDependecnyLabel(WFLYID));
+        upstreamReferences.add(createUpstreamIssueWithDependecnyLabel(WFLYID));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(issue)), checkName),
                 checkName, bugId, 0);
     }
 
-    private JiraIssue createIssueWithDependecnyLabel(String issueId) {
-        JiraIssue issue = createIssue(issueId);
+    private JiraIssue createUpstreamIssueWithDependecnyLabel(String issueId) {
+        JiraIssue issue = createUpstreamIssueWithOutDependencyLabel(issueId);
 
         List<JiraLabel> labels = new ArrayList<>();
         labels.add(new JiraLabel(LabelsHelper.DOWNSTREAM_DEP));
@@ -117,8 +101,8 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
         return issue;
     }
 
-    private JiraIssue createIssue(String issueId) {
-        JiraIssue issue = MockUtils.mockJiraIssue(issueId, "Summary right dependency label");
+    private JiraIssue createUpstreamIssueWithOutDependencyLabel(String issueId) {
+        JiraIssue issue = MockUtils.mockJiraIssue(issueId, "A Summary...");
         Mockito.when(issue.getProduct()).thenReturn(Optional.ofNullable(LabelsHelper.JBEAPProject));
         Map<String, FlagStatus> streamStatus = Collections.singletonMap("7.1.0.GA", FlagStatus.ACCEPTED);
         Mockito.when(issue.getStreamStatus()).thenReturn(streamStatus);
@@ -128,8 +112,7 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
     @Test
     public void testWflyMissingDownstreamDepLabel() {
         issue = createJiraIssueMock();
-        addDependsOnIssue(WFLYID);
-        issues.add(createIssue(WFLYID));
+        upstreamReferences.add(createUpstreamIssueWithOutDependencyLabel(WFLYID));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(issue)), checkName),
                 checkName, bugId, 1);
@@ -138,8 +121,7 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
     @Test
     public void testJBEAPIssueHasDownstreamDepLabel() {
         issue = createJiraIssueMock();
-        addDependsOnIssue(JBEAPID);
-        issues.add(createIssueWithDependecnyLabel(JBEAPID));
+        upstreamReferences.add(createUpstreamIssueWithDependecnyLabel(JBEAPID));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(issue)), checkName),
                 checkName, bugId, 0);
@@ -148,20 +130,10 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
     @Test
     public void testJBEAPMissingDownstreamDepLabel() {
         issue = createJiraIssueMock();
-        addDependsOnIssue(JBEAPID);
-        issues.add(createIssue(JBEAPID));
+        upstreamReferences.add(createUpstreamIssueWithOutDependencyLabel(JBEAPID));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(issue)), checkName),
                 checkName, bugId, 1);
-    }
-
-    @Override
-    protected AphroditeClient mockAphroditeClientIfNeeded() {
-        aphroditeClient = Mockito.mock(AphroditeClient.class);
-        issues = new ArrayList<>();
-
-        Mockito.when(aphroditeClient.loadIssues(Mockito.anyListOf(String.class))).thenReturn(issues);
-        return aphroditeClient;
     }
 
 }
