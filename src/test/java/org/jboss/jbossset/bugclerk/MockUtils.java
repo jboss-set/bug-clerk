@@ -128,6 +128,7 @@ public final class MockUtils {
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(DateUtils.threeMonthAgo()));
         Mockito.when(mock.getAssignee()).thenReturn(Optional.of(User.createWithEmail("jboss-set@redhat.com")));
         Mockito.when(mock.getReporter()).thenReturn(Optional.of(User.createWithEmail("Romain Pelisse <belaran@redhat.com>")));
+        Mockito.when(mock.getProduct()).thenReturn(Optional.ofNullable(null));
         return mock;
     }
 

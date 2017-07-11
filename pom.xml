@@ -55,6 +55,11 @@
       <artifactId>jboss-aphrodite-jira</artifactId>
       <version>${version.org.jboss.set.aphrodite}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.set</groupId>
+      <artifactId>jboss-aphrodite-simplecontainer</artifactId>
+      <version>${version.org.jboss.set.aphrodite}</version>
+    </dependency>
 
     <!-- Drools -->
     <dependency>
