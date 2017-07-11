@@ -23,9 +23,11 @@
 package org.jboss.jbossset.bugclerk.utils;
 
 import org.jboss.set.aphrodite.domain.Issue;
-import org.jboss.set.aphrodite.issue.trackers.jira.IssueHomeImpl;
+import org.jboss.set.aphrodite.domain.spi.IssueHome;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssueHomeImpl;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraLabel;
+import org.jboss.set.aphrodite.simplecontainer.SimpleContainer;
 
 import javax.naming.NameNotFoundException;
 import java.util.ArrayList;
@@ -40,11 +42,16 @@ public final class LabelsHelper {
     public static final String DOWNSTREAM_DEP = "downstream_dependency";
 
     public static boolean isIssueJBEAP(JiraIssue issue) {
-        return IssueHomeImpl.isIssueJBEAP(issue);
+        return JiraIssueHomeImpl.isIssueJBEAP(issue);
     }
 
     public static List<Issue> getIssuesMissingDownstreamLabel(JiraIssue issue) {
+        SimpleContainer container = (SimpleContainer) SimpleContainer.instance();
+        IssueHome issueHome = new JiraIssueHomeImpl();
+        container.register(IssueHome.class.getSimpleName(), issueHome);
+
         Stream<Issue> upstreamReferences = getUpstreamReferences(issue);
+
         List<Issue> issuesWithoutLabel = new ArrayList<>();
         upstreamReferences.filter(i -> isMissingDownstreamLabel((JiraIssue) i)).forEach(issuesWithoutLabel::add);
 

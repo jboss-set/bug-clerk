@@ -60,7 +60,7 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
     @Test
     public void testIssueWithEmptyProductField() {
         JiraIssue issuWithEmptyProduct = createJiraIssueMock();
-        Mockito.when(issuWithEmptyProduct.getProduct()).thenReturn(null);
+        Mockito.when(issuWithEmptyProduct.getProduct()).thenReturn(Optional.ofNullable(null));
         assertEquals(LabelsHelper.isIssueJBEAP(issuWithEmptyProduct), false);
     }
 
