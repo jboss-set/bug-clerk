@@ -79,5 +79,4 @@ public final class LabelsHelper {
         issues.forEach(i -> links.append(i.getURL()).append(" "));
         return links.toString();
     }
-
 }
