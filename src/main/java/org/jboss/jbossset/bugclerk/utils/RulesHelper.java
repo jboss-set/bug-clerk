@@ -31,6 +31,8 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 public final class RulesHelper {
 
     public static String PAYLOAD_TRACKER_PREFIX = "Payload Tracker";
+    private static final String STATUS = "Status";
+    private static final String RESOLVED = "Resolved";
 
     private RulesHelper(){}
 
@@ -154,8 +156,6 @@ public final class RulesHelper {
     }
 
     private static boolean isStatusChangeToResolved(JiraChangelogItem item) {
-        String STATUS = "Status";
-        String RESOLVED = "Resolved";
         return item.getField().equalsIgnoreCase(STATUS) && item.getToString().equalsIgnoreCase(RESOLVED);
     }
 

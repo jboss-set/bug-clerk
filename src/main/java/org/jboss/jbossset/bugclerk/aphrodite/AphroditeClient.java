@@ -1,12 +1,19 @@
 package org.jboss.jbossset.bugclerk.aphrodite;
 
+import static org.jboss.jbossset.bugclerk.utils.ThreadUtil.execute;
+
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import org.jboss.jbossset.bugclerk.aphrodite.callables.AddCommentTask;
+import org.jboss.jbossset.bugclerk.aphrodite.callables.AllStreamsTask;
+import org.jboss.jbossset.bugclerk.aphrodite.callables.GetPullRequest;
+import org.jboss.jbossset.bugclerk.aphrodite.callables.LoadIssuesTask;
+import org.jboss.jbossset.bugclerk.aphrodite.callables.RetrieveIssueTask;
+import org.jboss.jbossset.bugclerk.aphrodite.callables.SearchIssueByFilterTask;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.Aphrodite;
 import org.jboss.set.aphrodite.config.AphroditeConfig;
@@ -17,7 +24,6 @@ import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.PullRequest;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.spi.AphroditeException;
-import org.jboss.set.aphrodite.spi.NotFoundException;
 
 public class AphroditeClient {
 
@@ -41,54 +47,46 @@ public class AphroditeClient {
         }
     }
 
-    public List<Issue> retrievePayload(String filterUrl) {
-        try {
-            return aphrodite.searchIssuesByFilter(URLUtils.createURLFromString(filterUrl));
-        } catch (NotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    public void addComments(Map<Issue, Comment> comments) {
-        if ( ! Boolean.valueOf(System.getProperty("bugclerk.comments.dryRun")) )
-            aphrodite.addCommentToIssue(comments);
-        else
-            System.out.println("Updating comment is disable (dry run enabled), thus " + comments.size() + " issues were NOT updated with Bugclerk messages.");
-    }
-
-    public List<Issue> loadIssues(List<String> ids) {
-        return aphrodite.getIssues(ids.parallelStream().map(id -> URLUtils.createURLFromString(id))
-                .collect(Collectors.toList()));
-    }
-
-    public Optional<Issue> retrieveIssue(URL url) {
-        try {
-            return Optional.of(aphrodite.getIssue(url));
-        } catch (NotFoundException e) {
-            return Optional.empty();
-        }
-    }
-
-    public List<Stream> getAllStreams() {
-        return aphrodite.getAllStreams();
-    }
-
     public static IssueTrackerConfig buildTrackerConfig(String trackerUrl, String username, String password, TrackerType type) {
         return new IssueTrackerConfig(URLUtils.getServerUrl(trackerUrl), username, password, type, DEFAULT_ISSUE_LIMIT);
     }
 
-    public PullRequest getPullRequest(String pullRequestUrl) {
-        try {
-            return aphrodite.getPullRequest(URLUtils.createURLFromString(pullRequestUrl));
-        } catch (NotFoundException e) {
-            throw new IllegalArgumentException("No such Pull Requests:" + pullRequestUrl, e);
-        }
+    public List<Issue> retrievePayload(String filterUrl) {
+        return execute(new SearchIssueByFilterTask(aphrodite, filterUrl));
     }
 
-    public void close()  {
+    public void addComments(Map<Issue, Comment> comments) {
+        if (!Boolean.valueOf(System.getProperty("bugclerk.comments.dryRun")))
+            execute(new AddCommentTask(aphrodite, comments));
+        else
+            System.out.println("Updating comment is disable (dry run enabled), thus " + comments.size()
+                    + " issues were NOT updated with Bugclerk messages.");
+    }
+
+    public List<Issue> loadIssues(List<String> ids) {
+        return execute(new LoadIssuesTask(aphrodite, ids));
+    }
+
+    public Optional<Issue> retrieveIssue(URL url) {
+        return ifNullReturnsEmpty(execute(new RetrieveIssueTask(aphrodite, url)));
+    }
+
+    private static <T> Optional<T> ifNullReturnsEmpty(T value) {
+        return (value == null ? Optional.empty() : Optional.of(value));
+    }
+
+    public List<Stream> getAllStreams() {
+        return execute(new AllStreamsTask(aphrodite));
+    }
+
+    public PullRequest getPullRequest(String pullRequestUrl) {
+        return execute(new GetPullRequest(aphrodite, URLUtils.createURLFromString(pullRequestUrl)));
+    }
+
+    public void close() {
         try {
             aphrodite.close();
-        } catch ( Exception e) {
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
