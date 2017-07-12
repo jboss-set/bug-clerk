@@ -37,8 +37,8 @@ rule "MissingDownstreamDependencyLabel"
   salience 0
   dialect "mvel"
   when
-	$candidate : Candidate($jiraIssue: bug#JiraIssue,  filtered == false);
-	eval(LabelsHelper.isIssueJBEAP($jiraIssue))
+    $candidate : Candidate($jiraIssue: bug#JiraIssue,  filtered == false);
+    eval(LabelsHelper.isIssueJBEAP($jiraIssue))
     $list : List() from collect (Issue() from LabelsHelper.getIssuesMissingDownstreamLabel($jiraIssue)) ;
     $output : String() from LabelsHelper.getLinksOfIssues($list);
     eval($list.isEmpty() == false);
