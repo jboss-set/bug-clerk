@@ -67,6 +67,10 @@ public class AphroditeClient {
         return execute(new LoadIssuesTask(aphrodite, ids));
     }
 
+    public List<Issue> loadIssuesFromUrls(List<URL> urls) {
+        return aphrodite.getIssues(urls);
+    }
+
     public Optional<Issue> retrieveIssue(URL url) {
         return ifNullReturnsEmpty(execute(new RetrieveIssueTask(aphrodite, url)));
     }
