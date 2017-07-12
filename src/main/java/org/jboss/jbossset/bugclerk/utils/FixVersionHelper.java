@@ -28,8 +28,9 @@ import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Marek Marusic <mmarusic@redhat.com> on 7/11/17.
@@ -53,26 +54,22 @@ public class FixVersionHelper {
     }
 
     static List<Issue> filterIssuesWithDifferentFixVersionOrSprint(JiraIssue issue, List<Issue> incorporatedIssues) {
-
-        List<Issue> issuesWithWrongFixVersion = new ArrayList<>();
-        incorporatedIssues.stream()
+        return incorporatedIssues.stream()
                 .filter(i -> !haveIssuesEqualSpringAndFixVersion(issue, (JiraIssue) i))
-                .forEach(issuesWithWrongFixVersion::add);
-
-        return issuesWithWrongFixVersion;
+                .collect(Collectors.toList());
     }
 
     private static boolean haveIssuesEqualSpringAndFixVersion(JiraIssue issue, JiraIssue i) {
-        Release upgradeIssueGARelease = findFirstGARelease(issue.getReleases());
+        Optional<Release> upgradeIssueGARelease = findFirstGARelease(issue.getReleases());
 
         return upgradeIssueGARelease.equals(findFirstGARelease(i.getReleases()))
                 && issue.getSprintRelease().equals(i.getSprintRelease());
     }
 
-    private static Release findFirstGARelease(List<Release> releases) {
+    private static Optional<Release> findFirstGARelease(List<Release> releases) {
         if (releases == null)
             return null;
-        return releases.stream().filter(FixVersionHelper::isReleaseGA).findFirst().orElse(null);
+        return releases.stream().filter(FixVersionHelper::isReleaseGA).findFirst();
     }
 
     private static boolean isReleaseGA(Release r) {
