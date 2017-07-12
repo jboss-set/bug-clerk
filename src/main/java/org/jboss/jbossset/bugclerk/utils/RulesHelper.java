@@ -18,6 +18,7 @@ import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.domain.StreamComponent;
+import org.jboss.set.aphrodite.domain.User;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogGroup;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogItem;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
@@ -175,5 +176,34 @@ public final class RulesHelper {
                 if ( ! component.getCodebase().equals(aphrodite.getPullRequest(url.toString()).getCodebase()))
                     return true;
         return false;
+    }
+
+    public static JiraChangelogGroup getLastFixVersionChangeDuringSprint(JiraIssue issue) {
+        List<JiraChangelogGroup> changelog = issue.getChangelog();
+        Date lastSprintDate = getLastSprint(changelog, issue.getSprintRelease());
+
+        return changelog.stream().filter(group -> lastSprintDate.before(group.getCreated()))
+                .reduce((first, second) -> second).orElse(null);
+    }
+
+    private static Date getLastSprint(List<JiraChangelogGroup> changelog, String sprintRelease) {
+        JiraChangelogGroup lastSprint = changelog.stream().filter(group -> containsSprintChange(group.getItems(), sprintRelease))
+                .reduce((first, second) -> second).orElse(null);
+        return (lastSprint != null) ? lastSprint.getCreated() : new Date();
+    }
+
+    private static boolean containsSprintChange(List<JiraChangelogItem> items, String sprintRelease) {
+        return items.stream().anyMatch(item -> isSprintChange(item, sprintRelease));
+    }
+
+    private static boolean isSprintChange(JiraChangelogItem item, String sprintRelease) {
+        String toString = item.getToString();
+        String field = item.getField();
+        return field.equalsIgnoreCase("Sprint") && toString.equalsIgnoreCase(sprintRelease);
+    }
+
+    public static boolean isFixVersionChangeDoneByAllowedUser(User author, String sprintRelease) {
+        WhiteListSingleton whiteListSingleton = WhiteListSingleton.getInstance();
+        return whiteListSingleton.isInSprintWhiteList(author, sprintRelease);
     }
 }
