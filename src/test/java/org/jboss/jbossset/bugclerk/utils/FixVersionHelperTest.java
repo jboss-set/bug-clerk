@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -82,10 +83,10 @@ public class FixVersionHelperTest {
     private void testWithWrongVersions() {
         List<Issue> issuesWithDifferentVersion = createIssuesAndFilterIssueWithWrongVersion(correctVersion, wrongVersion);
         assertEquals("Check if there is 1 issue with wrong version.", 1, issuesWithDifferentVersion.size());
-
-        JiraIssue bugIssue = createIssueWithRelease(new Release(wrongVersion));
-        assertEquals("Check if the bug issue with wrong 7.0.8.GA version is found.", bugIssue,
-                (issuesWithDifferentVersion.size() > 0) ? issuesWithDifferentVersion.get(0) : null);
+        Optional<String> versionOfFoundIssue = (issuesWithDifferentVersion.size() > 0)
+                ? issuesWithDifferentVersion.get(0).getReleases().get(0).getVersion() : Optional.of("");
+        assertEquals("Check if the bug issue with wrong 7.0.8.GA version is found.", versionOfFoundIssue,
+                Optional.of(wrongVersion));
     }
 
     private List<Issue> createIssuesAndFilterIssueWithWrongVersion(String version, String version1) {
