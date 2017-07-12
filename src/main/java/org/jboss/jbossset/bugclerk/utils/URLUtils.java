@@ -21,6 +21,8 @@
  */
 package org.jboss.jbossset.bugclerk.utils;
 
+import org.jboss.set.aphrodite.domain.Issue;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -123,6 +125,13 @@ public final class URLUtils {
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Invalid URI:" + uri);
         }
+    }
+
+    public static String getStringWithLinksToIssues(List<Issue> issues) {
+        StringBuilder links = new StringBuilder();
+
+        issues.forEach(i -> links.append(i.getURL()).append(" "));
+        return links.toString();
     }
 
 }
