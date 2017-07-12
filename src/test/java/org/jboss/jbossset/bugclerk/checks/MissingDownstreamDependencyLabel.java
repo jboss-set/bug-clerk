@@ -135,5 +135,4 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(issue)), checkName),
                 checkName, bugId, 1);
     }
-
 }
