@@ -30,8 +30,8 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 public final class RulesHelper {
 
     public static String PAYLOAD_TRACKER_PREFIX = "Payload Tracker";
-    private final static String STATUS = "Status";
-    private final static String RESOLVED = "Resolved";
+    private static final String STATUS = "Status";
+    private static final String RESOLVED = "Resolved";
 
     private RulesHelper(){}
 
