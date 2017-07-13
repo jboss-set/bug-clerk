@@ -72,7 +72,32 @@ password = ********
 
 ## How to release ?
 
-Using the [Maven Release Plugin](http://maven.apache.org/maven-release/maven-release-plugin/), just follow its documentation. Then test using the run.sh and filter-based-run.sh scripts to ensure the resulting JAR is working properly. If new checks have been added, run the script update-rules-in-readme.sh and update the list at the bottom of this readme file.
+Using the [Maven Release Plugin](http://maven.apache.org/maven-release/maven-release-plugin/), just follow its documentation on how to use the plugin.
+
+However, prior to that, do the following "manual testing":
+
+1) Build Bugclerk
+
+    $ mvn clean install
+
+2) Test it using the run.sh and filter-based-run.sh scripts to ensure the resulting JAR is working properly:
+
+    $ export BUGCLERK_VERSION=<version-in-pom>  BUGCLERK_HOME=$(pwd)/target/
+    $ ./src/main/bash/filter-based-run.sh
+    ...
+    # go to JIRA and pick a *open* issue URL - (not a CLOSED or RESOLVED one)
+    $
+
+Obviously, checks that the report is properly generated and double checks, especially for new checks, that there is no false+.
+
+
+3) If new checks have been added, run the script update-rules-in-readme.sh and update the list at the bottom of this readme file.
+
+    # edit README.md and remove *all* the checks links.
+    $ ./src/main/bash/filter-based-run.sh >> README.txt
+
+4) Use the maven plugin to execute the release itself - be careful our scheme for versioning differs from the plugin expectations.
+
 
 ## **Checks**
 
