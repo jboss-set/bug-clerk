@@ -31,6 +31,8 @@ public class AphroditeClient {
 
     private static final int DEFAULT_ISSUE_LIMIT = 400;
 
+    private List<Stream> allStreams;
+
     public AphroditeClient() {
         try {
             aphrodite = Aphrodite.instance();
@@ -80,7 +82,11 @@ public class AphroditeClient {
     }
 
     public List<Stream> getAllStreams() {
-        return execute(new AllStreamsTask(aphrodite));
+        //Lazy loading of the streams
+        if (allStreams == null) {
+            allStreams = execute(new AllStreamsTask(aphrodite));
+        }
+        return allStreams;
     }
 
     public PullRequest getPullRequest(String pullRequestUrl) {

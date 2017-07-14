@@ -25,17 +25,37 @@ package org.jboss.jbossset.bugclerk;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.utils.GitHelper;
+import org.jboss.set.aphrodite.domain.Stream;
+
 import java.net.URL;
 import java.util.List;
+
+global org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient aphrodite;
 
 rule "PRLinksNotValid"
   salience 0
   dialect "mvel"
   when
     $candidate : Candidate( $jiraIssue: bug#JiraIssue, bug#JiraIssue.getPullRequests() != null, bug#JiraIssue.getPullRequests().isEmpty() != true, filtered == false )
-    $list : List() from collect (String() from GitHelper.getIncorrectPRs($jiraIssue));
+    $stream : Stream() from GitHelper.getStreamForIssue($jiraIssue, aphrodite);
+    $list : List() from collect (String() from GitHelper.getIncorrectPRs($jiraIssue, $stream));
     eval( ! $list.isEmpty() )
   then
     $candidate.addViolation(new Violation("PRLinksNotValid",
-    "Issue has " + $list.size() + " invalid pull requests: " + String.join(", ", $list), Severity.MINOR));
+        "Following PRs "+String.join(", ", $list)+" don't belong to the expected list of repositoires in '"+$stream.getName()+
+        "' stream specified in https://raw.githubusercontent.com/jboss-set/jboss-streams/master/streams.json",
+    Severity.MINOR));
+end
+
+rule "PRLinksNoStreamsFound"
+  salience 0
+  dialect "mvel"
+  when
+    $candidate : Candidate( $jiraIssue: bug#JiraIssue, bug#JiraIssue.getPullRequests() != null, bug#JiraIssue.getPullRequests().isEmpty() != true, filtered == false )
+    $stream : Stream() from GitHelper.getStreamForIssue($jiraIssue, aphrodite);
+    eval($stream.getName().equals("none"))
+  then
+    $candidate.addViolation(new Violation("PRLinksNoStreamsFound",
+         "No valid streams was found for this issue in the https://raw.githubusercontent.com/jboss-set/jboss-streams/master/streams.json.",
+    Severity.MINOR));
 end
