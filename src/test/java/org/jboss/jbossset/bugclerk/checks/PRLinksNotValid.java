@@ -24,88 +24,146 @@ package org.jboss.jbossset.bugclerk.checks;
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
+import org.jboss.jbossset.bugclerk.utils.LabelsHelper;
+import org.jboss.set.aphrodite.domain.FlagStatus;
+import org.jboss.set.aphrodite.domain.Stream;
+import org.jboss.set.aphrodite.domain.StreamComponent;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 
 public class PRLinksNotValid extends AbstractCheckRunner {
-
     private String summary;
-    private String bugId;
+    private String product;
+    private String targetRelease;
+    private String check;
 
     @Before
     public void resetMockData() {
         summary = "A Summary...";
+        targetRelease = "7.1.0.GA";
+        check = checkName;
     }
 
     @Test
     public void testWrongHost() {
-        bugId = "JBEAP-4367";
-
+        product = LabelsHelper.JBEAPProject;
         String pullRequest = "https://badHost.com/aeshell/aesh.git/pull/88";
-        test(pullRequest, 1);
-
+        mockIssueAndTest(pullRequest, 1);
     }
 
-    private void test(String pullRequest, int nbViolationExpected) {
+    private void mockIssueAndTest(String pullRequest, int nbViolationExpected) {
+        String bugId = "4367";
         JiraIssue issue = MockUtils.mockJiraIssue(bugId, summary);
         Mockito.when(issue.getSprintRelease()).thenReturn("EAP 7.0.3");
+        Mockito.when(issue.getProduct()).thenReturn(Optional.of(product));
+        Map<String, FlagStatus> streamStatus = Collections.singletonMap(targetRelease, FlagStatus.ACCEPTED);
+        Mockito.when(issue.getStreamStatus()).thenReturn(streamStatus);
 
         Mockito.when(issue.getPullRequests()).thenReturn(MockUtils.mockPullRequestsUrls(pullRequest));
-        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(issue)), checkName),
-                checkName, bugId, nbViolationExpected);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(issue)), check),
+                check, bugId, nbViolationExpected);
     }
 
     @Test
     public void testNotPRAndNotCommit() {
-        bugId = "WFCORE-4367";
-
-        String pullRequest = "https://github.com/aeshell/aesh.git/wrong/88";
-        test(pullRequest, 1);
+        product = "WildFly";
+        String pullRequest = "https://github.com/aeshell/aesh/wrong/88";
+        mockIssueAndTest(pullRequest, 1);
 
     }
 
     @Test
-    public void testInvalidOrganization() {
-        bugId = "WFCORE-4367";
-
-        String pullRequest = "https://github.com/aeshell/aesh.git/pull/88";
-        test(pullRequest, 1);
+    public void testInvalidPR() {
+        product = LabelsHelper.JBEAPProject;
+        String pullRequest = "https://github.com/pull/00";
+        mockIssueAndTest(pullRequest, 1);
     }
 
     @Test
-    public void testValidOrganization() {
-        bugId = "ELY-4367";
-
-        String pullRequest = "https://github.com/aeshell/aesh.git/pull/88";
-        test(pullRequest, 0);
+    public void testValidPRFor7Z() {
+        product = LabelsHelper.JBEAPProject;
+        String pullRequest = "https://github.com/aeshell/aesh/pull/266";
+        mockIssueAndTest(pullRequest, 0);
     }
 
     @Test
-    public void testValidPR() {
-        bugId = "JBEAP-4367";
+    public void testInValidPRFor70Z() {
+        product = LabelsHelper.JBEAPProject;
+        targetRelease = "7.0.z.GA";
+        String pullRequest = "https://github.com/aeshell/aesh/pull/266";
+        mockIssueAndTest(pullRequest, 1);
+    }
 
-        String pullRequest = "https://github.com/jbossas/aesh.git/pull/88";
-        test(pullRequest, 0);
+    @Test
+    public void testValidPRFor70Z() {
+        product = LabelsHelper.JBEAPProject;
+        targetRelease = "7.0.z.GA";
+        String pullRequest = "https://github.com/jbossas/jboss-dmr/pull/266";
+        mockIssueAndTest(pullRequest, 0);
     }
 
     @Test
     public void testValidCommit() {
-        bugId = "WFLY-4367";
-
-        String pullRequest = "https://github.com/wildfly/aesh.git/commit/8204147a19e1b7c2e137e7e8ddcc66c74ec54088";
-        test(pullRequest, 0);
+        product = "WildFly";
+        String pullRequest = "https://github.com/apache/commons-cli/commit/8204147a19e1b7c2e137e7e8ddcc66c74ec54088";
+        mockIssueAndTest(pullRequest, 0);
     }
 
     @Test
     public void testValidCommitWFCORE() {
-        bugId = "WFCORE-4367";
+        product = "WildFly";
+        String pullRequest = "https://github.com/apache/commons-cli/commit/8204147a19e1b7c2e137e7e8ddcc66c74ec54088";
+        mockIssueAndTest(pullRequest, 0);
+    }
 
-        String pullRequest = "https://github.com/wildfly/aesh.git/commit/8204147a19e1b7c2e137e7e8ddcc66c74ec54088";
-        test(pullRequest, 0);
+    @Test
+    public void testNoStreamsFound() {
+        product = LabelsHelper.JBEAPProject;
+        targetRelease = "WrongRelease";
+        check = "PRLinksNoStreamsFound";
+        String pullRequest = "https://github.com/apache/commons-cli/commit/8204147a19e1b7c2e137e7e8ddcc66c74ec54088";
+        mockIssueAndTest(pullRequest, 1);
+    }
+
+    @Override
+    protected AphroditeClient mockAphroditeClientIfNeeded() {
+        AphroditeClient aphroditeClient = super.mockAphroditeClientIfNeeded();
+        Mockito.when(aphroditeClient.getAllStreams()).thenReturn(createFakeStreams());
+        return aphroditeClient;
+    }
+
+    private List<Stream> createFakeStreams() {
+        List<Stream> allStreams = new ArrayList<>();
+        allStreams.add(createStreamWithRepo("wildfly", "https://github.com/apache/commons-cli.git"));
+        allStreams.add(createStreamWithRepo("jboss-eap-7.z.0", "https://github.com/aeshell/aesh.git"));
+        allStreams.add(createStreamWithRepo("jboss-eap-7.0.z", "https://github.com/jbossas/jboss-dmr"));
+        return allStreams;
+    }
+
+    private Stream createStreamWithRepo(String streamName, String repository) {
+        Stream stream = new Stream(streamName);
+        try {
+            StreamComponent component = new StreamComponent("Component", null, null, new URI(repository),
+                    null, null, null, null, null);
+            stream.addComponent(component);
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return stream;
     }
 }

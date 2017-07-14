@@ -22,47 +22,68 @@
 
 package org.jboss.jbossset.bugclerk.utils;
 
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
+import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssueHomeImpl;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Marek Marusic <mmarusic@redhat.com> on 6/21/17.
  */
 public class GitHelper {
 
-    public static List<String> getIncorrectPRs(JiraIssue issue) {
-        List<String> incorrectPRs = new ArrayList<>();
-
-        issue.getPullRequests().stream().filter(pr -> ! isPRCorrect(pr, getGitOrganization(issue.getURL())))
-                .forEach(pr-> incorrectPRs.add(pr.toString()));
-
-        return incorrectPRs;
+    public static Stream getStreamForIssue(JiraIssue issue, AphroditeClient aphroditeClient) {
+        String streamName = getStreamNameFromIssue(issue);
+        List<Stream> streams = aphroditeClient.getAllStreams();
+        return streams.stream().filter(stream -> stream.getName().contains(streamName))
+                .findFirst().orElse(new Stream("none"));
     }
 
-    private static boolean isPRCorrect(URL pullRequest, String githubOrganization) {
-        final String github = "https://github.com";
+    private static String getStreamNameFromIssue(JiraIssue issue) {
+        if (JiraIssueHomeImpl.isIssueJBEAP(issue)) {
+            String targetReleaseVersion = extractTargetReleaseVersion(issue);
+            return "jboss-eap-" + (targetReleaseVersion.endsWith(".z") ?
+                    targetReleaseVersion : getMajorVersion(targetReleaseVersion) + ".z.");
+        } else {
+            return "wildfly";
+        }
+    }
+
+    private static String extractTargetReleaseVersion(JiraIssue issue) {
+        final String releaseSuffix = ".GA";
+        String version = issue.getStreamStatus().size() > 0 ? issue.getStreamStatus().keySet().iterator().next() : "";
+        version = version.replace(releaseSuffix, "");
+        return version;
+    }
+
+    private static String getMajorVersion(String targetReleaseVersion) {
+        return targetReleaseVersion.split("\\.")[0];
+    }
+
+    public static List<String> getIncorrectPRs(JiraIssue issue, Stream stream) {
+        return issue.getPullRequests().stream().filter(pr -> !isPRCorrect(pr, stream))
+                .map(URL::toString).collect(Collectors.toList());
+    }
+
+    private static boolean isPRCorrect(URL pullRequest, Stream stream) {
         final String pull = "/pull/";
         final String commit = "/commit/";
+        String pullRequestStr = pullRequest.toString();
 
-        return pullRequest.toString().startsWith(github) && pullRequest.toString().contains(githubOrganization)
-                && (pullRequest.toString().contains(pull) || pullRequest.toString().contains(commit));
-    }
+        if (!pullRequestStr.contains(pull) && !pullRequestStr.contains(commit))
+            return false;
 
-    private static String getGitOrganization(URL url) {
-        final String JBEAP = "JBEAP";
-        final String WFCORE = "WFCORE";
-        final String WFLY = "WFLY";
-        final String jbossOrganization = "jbossas";
-        final String wildflyOrganization = "wildfly";
+        if (stream.getName().equals("none"))
+            return true;
 
-        String ghOrganization = "";
-        if (url.toString().contains(JBEAP) )
-            ghOrganization = jbossOrganization;
-        if (url.toString().contains(WFCORE) || url.toString().contains(WFLY))
-            ghOrganization = wildflyOrganization;
-        return ghOrganization;
+        return stream.getAllComponents().stream().anyMatch(s -> {
+            // remove ".git" from repo string
+            String repoToStr = s.getRepositoryURL().toString().replace(".git", "");
+            return pullRequestStr.contains(repoToStr);
+        });
     }
 }
