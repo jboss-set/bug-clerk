@@ -39,7 +39,6 @@ import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.Severity;
 import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.utils.StringUtils;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Issue;
 
@@ -51,7 +50,7 @@ public class ViolationsReportAsCommentBuilder {
     private static final String BUGCLERK_ISSUES_TRACKER = "https://github.com/jboss-set/bug-clerk/issues";
 
     private static final String COMMENT_MESSSAGE_HEADER = BugClerk.class.getSimpleName() + " (automated tool) noticed on "
-            + NOW + " the following" + " discrepencies in this entry:" + StringUtils.twoEOLs();
+            + NOW + " the following" + " discrepencies in this entry:" + twoEOLs();
 
     private static final String COMMENT_MESSAGE_FOOTER = "If the issues reported are erronous "
             + "or if you wish to ask for enhancement or new checks for " + BugClerk.class.getSimpleName()
