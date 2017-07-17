@@ -127,9 +127,9 @@ public final class RulesHelper {
         if ( release.getVersion().isPresent() ) {
             String branchName = release.getVersion().get();
             for (Stream stream : aphrodite.getAllStreams() )
-                if ( stream.getName().contains(branchName))
-                    if ( checkPullRequestsAgainstEachComponentCodebase(issue,stream.getAllComponents(), aphrodite ) )
-                        return true;
+                if ( stream.getName().contains(branchName)
+                        && checkPullRequestsAgainstEachComponentCodebase(issue,stream.getAllComponents(), aphrodite ))
+                    return true;
         }
         return false;
     }
@@ -172,8 +172,8 @@ public final class RulesHelper {
 
     private static boolean doesPullRequestsFilledAgainstAppropriateCodebase(List<URL> pullRequests, StreamComponent component, AphroditeClient aphrodite) {
         for ( URL url : pullRequests)
-            if ( url.toString().startsWith(component.getRepositoryURL().toString()))
-                if ( ! component.getCodebase().equals(aphrodite.getPullRequest(url.toString()).getCodebase()))
+            if ( url.toString().startsWith(component.getRepositoryURL().toString())
+                    && ! component.getCodebase().equals(aphrodite.getPullRequest(url.toString()).getCodebase()))
                     return true;
         return false;
     }
