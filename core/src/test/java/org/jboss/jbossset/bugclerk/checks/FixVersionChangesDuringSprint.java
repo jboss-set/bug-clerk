@@ -25,7 +25,6 @@ import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.jbossset.bugclerk.utils.RulesHelper;
 import org.jboss.set.aphrodite.domain.User;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogGroup;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogItem;
@@ -94,7 +93,7 @@ public class FixVersionChangesDuringSprint extends AbstractCheckRunner {
     private void testFixVersionChangeDoneByAllowedUser(boolean doneByAllowedUser) {
         JiraIssue jiraIssueMock = mockIssue();
 
-        JiraChangelogGroup fixVersionChangeGroup = RulesHelper.getLastFixVersionChangeDuringSprint(jiraIssueMock);
+        JiraChangelogGroup fixVersionChangeGroup = JiraChangelogHelpers.getLastFixVersionChangeDuringSprint(jiraIssueMock);
         assertEquals(fixVersionChangeGroup, lastFixVersionChange);
 
         int numberViolationExpected = doneByAllowedUser ? 0 : 1;

@@ -25,7 +25,6 @@ import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.jbossset.bugclerk.utils.RulesHelper;
 import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.jboss.set.aphrodite.domain.User;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogGroup;
@@ -95,7 +94,7 @@ public class ChangesInResolvedState extends AbstractCheckRunner {
 
         Date lastDateResolved = new GregorianCalendar(2000, 4, 1).getTime();
         addResolvedStateToChangelog(lastDateResolved);
-        assertEquals(RulesHelper.getLastResolvedDate(changelog), lastDateResolved);
+        assertEquals(JiraChangelogHelpers.getLastResolvedDate(changelog), lastDateResolved);
     }
 
     private void prepareChangelogWithResolvedStatus() {
@@ -134,7 +133,7 @@ public class ChangesInResolvedState extends AbstractCheckRunner {
         JiraIssue jiraIssueMock = createJiraIssueMock();
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(jiraIssueMock)), checkName),
                 checkName, bugId, numberViolationExpected);
-        assertEquals(RulesHelper.isChangedAfterResolved(changelog), violationExpected);
+        assertEquals(JiraChangelogHelpers.isChangedAfterResolved(changelog), violationExpected);
     }
 
     private JiraIssue createJiraIssueMock() {

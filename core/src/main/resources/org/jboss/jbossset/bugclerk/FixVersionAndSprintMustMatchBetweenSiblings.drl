@@ -28,7 +28,7 @@ import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Candidate;
 
-import org.jboss.jbossset.bugclerk.utils.RulesHelper;
+import org.jboss.jbossset.bugclerk.checks.RulesHelper;
 
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 

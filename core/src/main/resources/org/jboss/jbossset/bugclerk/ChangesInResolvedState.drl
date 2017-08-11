@@ -33,7 +33,8 @@ import java.util.Date;
 
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Severity;
-import org.jboss.jbossset.bugclerk.utils.RulesHelper;
+import org.jboss.jbossset.bugclerk.checks.JiraChangelogHelpers;
+import org.jboss.jbossset.bugclerk.checks.RulesHelper;
 
 global java.util.List list
 
@@ -42,7 +43,7 @@ rule "ChangesInResolvedState"
   dialect "mvel"
   when
     $candidate : Candidate($jiraIssue: bug#JiraIssue,  filtered == false);
-    eval(RulesHelper.isInResolvedState($jiraIssue) && RulesHelper.isChangedAfterResolved($jiraIssue.getChangelog()))
+    eval(RulesHelper.isInResolvedState($jiraIssue) && JiraChangelogHelpers.isChangedAfterResolved($jiraIssue.getChangelog()))
   then
     $candidate.addViolationOnce( new Violation("ChangesInResolvedState",
     "There are changes made after issue status set to Resolved.", Severity.MAJOR) );

@@ -30,7 +30,7 @@ import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.jboss.jbossset.bugclerk.Violation;
 
-import org.jboss.jbossset.bugclerk.utils.RulesHelper;
+import org.jboss.jbossset.bugclerk.checks.RulesHelper;
 
 global org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient aphrodite;
 

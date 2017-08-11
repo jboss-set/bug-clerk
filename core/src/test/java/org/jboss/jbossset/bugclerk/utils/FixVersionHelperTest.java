@@ -22,7 +22,13 @@
 
 package org.jboss.jbossset.bugclerk.utils;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.jboss.jbossset.bugclerk.MockUtils;
+import org.jboss.jbossset.bugclerk.checks.FixVersionHelper;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueType;
@@ -30,11 +36,6 @@ import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Marek Marusic <mmarusic@redhat.com> on 7/12/17.

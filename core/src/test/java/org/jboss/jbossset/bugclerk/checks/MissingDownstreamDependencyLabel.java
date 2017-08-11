@@ -23,10 +23,8 @@
 package org.jboss.jbossset.bugclerk.checks;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
-import org.jboss.jbossset.bugclerk.utils.LabelsHelper;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
-import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
@@ -36,6 +34,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.naming.NameNotFoundException;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +53,6 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
     private String WFLYID = "WFLY-6673";
     private String JBEAPID = "EAP7-198";
     final String bugId = "1437945";
-    private AphroditeClient aphroditeClient;
     private List<Issue> upstreamReferences = new ArrayList<>();
 
     @Test

@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jbossset.bugclerk.utils;
+package org.jboss.jbossset.bugclerk.checks;
 
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.spi.IssueHome;

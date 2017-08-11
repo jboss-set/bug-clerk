@@ -28,7 +28,7 @@ import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Severity;
 
-import org.jboss.jbossset.bugclerk.utils.RulesHelper;
+import org.jboss.jbossset.bugclerk.checks.PayloadHelpers;
 
 import org.jboss.set.aphrodite.domain.IssueType;
 
@@ -43,9 +43,9 @@ rule "PayloadComponentUpgradeShouldHaveAFix"
     // Is this a component upgrade ?
     $candidate : Candidate( $issue: bug, $url: bug.getURL, bug.getType().toString().equalsIgnoreCase(IssueType.UPGRADE.toString()), ! filtered);
     // Does this component upgrade blocks a payload ?
-    eval ( RulesHelper.isOneOfThoseIssueAPayload($issue.getBlocks(), payloadTrackerIndexedByURL, aphrodite) == true );
+    eval ( PayloadHelpers.isOneOfThoseIssueAPayload($issue.getBlocks(), payloadTrackerIndexedByURL, aphrodite) == true );
     // Does it has a dependency to a fix that belong to the payload tracker ?
-    eval ( RulesHelper.doesAnIssueBelongToPayloadTracker( $issue.getDependsOn() , issuesIndexedByURL, payloadTrackerIndexedByURL) == false );
+    eval ( PayloadHelpers.doesAnIssueBelongToPayloadTracker( $issue.getDependsOn() , issuesIndexedByURL, payloadTrackerIndexedByURL) == false );
   then
     $candidate.addViolationOnce(new Violation(drools.getRule().getName(), "The following issue belong to one or payload tracker, but has no component fix:" + $issue.getTrackerId().get() ));
 end

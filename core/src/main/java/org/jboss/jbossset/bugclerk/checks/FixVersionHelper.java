@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jbossset.bugclerk.utils;
+package org.jboss.jbossset.bugclerk.checks;
 
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.Issue;
@@ -53,7 +53,7 @@ public class FixVersionHelper {
         return aphrodite.loadIssuesFromUrls(issue.getLinkedIncorporatesIssues());
     }
 
-    static List<Issue> filterIssuesWithDifferentFixVersionOrSprint(JiraIssue issue, List<Issue> incorporatedIssues) {
+    public static List<Issue> filterIssuesWithDifferentFixVersionOrSprint(JiraIssue issue, List<Issue> incorporatedIssues) {
         return incorporatedIssues.stream()
                 .filter(i -> !haveIssuesEqualSpringAndFixVersion(issue, (JiraIssue) i))
                 .collect(Collectors.toList());

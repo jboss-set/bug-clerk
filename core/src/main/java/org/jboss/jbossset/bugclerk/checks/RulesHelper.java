@@ -1,10 +1,9 @@
-package org.jboss.jbossset.bugclerk.utils;
+package org.jboss.jbossset.bugclerk.checks;
 
 import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
 
 import java.net.URL;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,13 +13,10 @@ import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueStatus;
-import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.domain.StreamComponent;
 import org.jboss.set.aphrodite.domain.User;
-import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogGroup;
-import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogItem;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 /**
  * <p>Regroups a set of static method used by some checks.</p>
@@ -30,13 +26,9 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
  */
 public final class RulesHelper {
 
-    public static String PAYLOAD_TRACKER_PREFIX = "Payload Tracker";
-    private static final String STATUS = "Status";
-    private static final String RESOLVED = "Resolved";
-
     private RulesHelper(){}
 
-    private static Optional<Issue> retrieveIssueIfNotFoundIn(URL block,Map<URL, Issue> payloadTrackerIndexedByURL, AphroditeClient aphrodite) {
+    static Optional<Issue> retrieveIssueIfNotFoundIn(URL block,Map<URL, Issue> payloadTrackerIndexedByURL, AphroditeClient aphrodite) {
         Optional<Issue> blockingIssue;
         Issue issue = payloadTrackerIndexedByURL.get(block);
         if ( issue == null && aphrodite != null ) // Aphrodite would 'null' only in unit test case
@@ -46,28 +38,10 @@ public final class RulesHelper {
         return blockingIssue;
     }
 
-    public static boolean isOneOfThoseIssueAPayload(List<URL> issues, Map<URL, Issue> payloadTrackerIndexedByURL, AphroditeClient aphrodite) {
-        for ( URL block : issues ) {
-            Optional<Issue> blockingIssue = retrieveIssueIfNotFoundIn(block, payloadTrackerIndexedByURL, aphrodite);
-            if ( blockingIssue != null && blockingIssue.isPresent() && blockingIssue.get().getSummary().isPresent() && blockingIssue.get().getSummary().get().contains(PAYLOAD_TRACKER_PREFIX) )
-                return true;
-        }
-        return false;
-    }
-
     public static boolean isOneOfThoseIssueAComponentUpgrade(List<URL> issues, Map<URL, Issue> issuesIndexedByURL) {
         for ( URL block : issues ) {
             Issue issue = issuesIndexedByURL.get(block);
             if ( issue != null && issue.getType().equals(UPGRADE) )
-                return true;
-        }
-        return false;
-    }
-
-    public static boolean doesAnIssueBelongToPayloadTracker(List<URL> issues, Map<URL, Issue> issuesIndexedByURL, Map<URL, Issue> payloadTrackerIndexedByURL) {
-        for ( URL url : issues ) {
-            Issue issue = issuesIndexedByURL.get(url);
-            if ( issue != null && issue.getType().equals(IssueType.BUG) && payloadTrackerIndexedByURL.containsKey(url) )
                 return true;
         }
         return false;
@@ -138,31 +112,6 @@ public final class RulesHelper {
         return issue.getStatus().equals(IssueStatus.MODIFIED);
     }
 
-    public static boolean isChangedAfterResolved(List<JiraChangelogGroup> changelog) {
-        Date resolvedDate = getLastResolvedDate(changelog);
-        return changelog.stream().anyMatch(group -> resolvedDate.before(group.getCreated())
-                && isNotAllowedChange(group.getItems()));
-    }
-
-    public static Date getLastResolvedDate(List<JiraChangelogGroup> changelog) {
-        JiraChangelogGroup lastResolved = changelog.stream()
-                .filter(group -> containsStatusChangeToResolved(group.getItems()))
-                .reduce((first, second) -> second).orElse(null);
-        return (lastResolved != null) ? lastResolved.getCreated() : new Date();
-    }
-
-    private static boolean containsStatusChangeToResolved(List<JiraChangelogItem> items) {
-        return items.stream().anyMatch(RulesHelper::isStatusChangeToResolved);
-    }
-
-    private static boolean isStatusChangeToResolved(JiraChangelogItem item) {
-        return item.getField().equalsIgnoreCase(STATUS) && item.getToString().equalsIgnoreCase(RESOLVED);
-    }
-
-    private static boolean isNotAllowedChange(List<JiraChangelogItem> items) {
-        return items.stream().anyMatch(item -> !item.getField().equalsIgnoreCase("Status"));
-    }
-
     private static boolean checkPullRequestsAgainstEachComponentCodebase(JiraIssue issue, Collection<StreamComponent> streams, AphroditeClient aphrodite) {
         for ( StreamComponent component : streams )
             if ( doesPullRequestsFilledAgainstAppropriateCodebase(issue.getPullRequests(),component,aphrodite) )
@@ -176,30 +125,6 @@ public final class RulesHelper {
                     && ! component.getCodebase().equals(aphrodite.getPullRequest(url.toString()).getCodebase()))
                     return true;
         return false;
-    }
-
-    public static JiraChangelogGroup getLastFixVersionChangeDuringSprint(JiraIssue issue) {
-        List<JiraChangelogGroup> changelog = issue.getChangelog();
-        Date lastSprintDate = getLastSprint(changelog, issue.getSprintRelease());
-
-        return changelog.stream().filter(group -> lastSprintDate.before(group.getCreated()))
-                .reduce((first, second) -> second).orElse(null);
-    }
-
-    private static Date getLastSprint(List<JiraChangelogGroup> changelog, String sprintRelease) {
-        JiraChangelogGroup lastSprint = changelog.stream().filter(group -> containsSprintChange(group.getItems(), sprintRelease))
-                .reduce((first, second) -> second).orElse(null);
-        return (lastSprint != null) ? lastSprint.getCreated() : new Date();
-    }
-
-    private static boolean containsSprintChange(List<JiraChangelogItem> items, String sprintRelease) {
-        return items.stream().anyMatch(item -> isSprintChange(item, sprintRelease));
-    }
-
-    private static boolean isSprintChange(JiraChangelogItem item, String sprintRelease) {
-        String toString = item.getToString();
-        String field = item.getField();
-        return field.equalsIgnoreCase("Sprint") && toString.equalsIgnoreCase(sprintRelease);
     }
 
     public static boolean isFixVersionChangeDoneByAllowedUser(User author, String sprintRelease) {

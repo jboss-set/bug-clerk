@@ -31,7 +31,7 @@ import java.util.Date;
 
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Severity;
-import org.jboss.jbossset.bugclerk.utils.FixVersionHelper;
+import org.jboss.jbossset.bugclerk.checks.FixVersionHelper;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
 
 global java.util.List list
