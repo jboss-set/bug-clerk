@@ -71,82 +71,83 @@
              </execution>
           </executions>
         </plugin>
-        <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
-        <executions>
-          <execution>
-            <id>javadoc</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>javadoc</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-    <pluginManagement>
-      <plugins>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <configuration>
-            <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
-            <consoleOutput>true</consoleOutput>
-            <failsOnError>true</failsOnError>
-            <useFile />
-            <linkXRef>false</linkXRef>
-          </configuration>
-          <dependencies>
-            <dependency>
-            <groupId>org.wildfly.checkstyle</groupId>
-            <artifactId>wildfly-checkstyle-config</artifactId>
-            <version>${org.wildfly.checkstyle-config.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>com.puppycrawl.tools</groupId>
-              <artifactId>checkstyle</artifactId>
-              <version>${version.checkstyle}</version>
-              <exclusions>
-                <exclusion>
-                  <groupId>com.sun</groupId>
-                  <artifactId>tools</artifactId>
-                </exclusion>
-              </exclusions>
-            </dependency>
-          </dependencies>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.10.3</version>
           <executions>
             <execution>
-              <id>check-style</id>
+              <id>javadoc</id>
               <phase>compile</phase>
               <goals>
-                <goal>checkstyle</goal>
+                <goal>javadoc</goal>
               </goals>
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-pmd-plugin</artifactId>
-          <version>3.5</version>
-          <executions>
-            <execution>
-              <id>pmd-cpd</id>
-              <phase>compile</phase>
-              <goals>
-                <goal>pmd</goal>
-                <goal>cpd</goal>
-              </goals>
-              <configuration>
-                <linkXref>true</linkXref>²
-                <sourceEncoding>utf-8</sourceEncoding>
-                <rulesets>
-                  <ruleset>https://raw.githubusercontent.com/jboss-set/bug-clerk/master/pmd.xml</ruleset>
-                </rulesets>
-              </configuration>
-            </execution>
-          </executions>
+      </plugins>
+      <pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <configuration>
+              <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+              <useFile />
+              <linkXRef>false</linkXRef>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.wildfly.checkstyle</groupId>
+                <artifactId>wildfly-checkstyle-config</artifactId>
+                <version>${org.wildfly.checkstyle-config.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>com.puppycrawl.tools</groupId>
+                <artifactId>checkstyle</artifactId>
+                <version>${version.checkstyle}</version>
+                <exclusions>
+                  <exclusion>
+                    <groupId>com.sun</groupId>
+                    <artifactId>tools</artifactId>
+                  </exclusion>
+                </exclusions>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>check-style</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>checkstyle</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>3.5</version>
+            <executions>
+              <execution>
+                <id>pmd-cpd</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>pmd</goal>
+                  <goal>cpd</goal>
+                </goals>
+                <configuration>
+                  <linkXref>true</linkXref>²
+                  <sourceEncoding>utf-8</sourceEncoding>
+                  <rulesets>
+                    <ruleset>https://raw.githubusercontent.com/jboss-set/bug-clerk/master/pmd.xml</ruleset>
+                  </rulesets>
+                </configuration>
+              </execution>
+            </executions>
          </plugin>
       </plugins>
     </pluginManagement>
