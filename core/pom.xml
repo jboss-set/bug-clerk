@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jboss.jbossset</groupId>
+    <artifactId>bugclerk</artifactId>
+    <version>1.0.1.Final-SNAPSHOT</version>
+    <!--relativePath /-->
+  </parent>
+
+  <groupId>org.jboss.jbossset</groupId>
+  <artifactId>bugclerk-core</artifactId>
+  <version>1.0.1.Final-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <description>Bugclerk - Core</description>
+
+  <dependencies>
+    <!-- Aphrodite - libs to all things trackery and repository -->
+    <dependency>
+      <groupId>org.jboss.set</groupId>
+	  <artifactId>jboss-aphrodite-common</artifactId>
+	  <version>${version.org.jboss.set.aphrodite}</version>
+	</dependency>
+    <dependency>
+      <groupId>org.jboss.set</groupId>
+      <artifactId>jboss-aphrodite-domain</artifactId>
+      <version>${version.org.jboss.set.aphrodite}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.set</groupId>
+      <artifactId>jboss-aphrodite-jira</artifactId>
+      <version>${version.org.jboss.set.aphrodite}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.set</groupId>
+      <artifactId>jboss-aphrodite-simplecontainer</artifactId>
+      <version>${version.org.jboss.set.aphrodite}</version>
+    </dependency>
+
+    <!-- Drools -->
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-api</artifactId>
+      <version>${version.org.drools}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-core</artifactId>
+      <version>${version.org.drools}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-compiler</artifactId>
+      <version>${version.org.drools}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-decisiontables</artifactId>
+      <version>${version.org.drools}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-templates</artifactId>
+      <version>${version.org.drools}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-internal</artifactId>
+      <version>${version.org.drools}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.10</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Tests dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.18.1</version>
+        <configuration>
+          <excludes>
+            <exclude>org/jboss/jbossset/bugclerk/TestSuite.java</exclude>
+          </excludes>
+          <includes>
+            <!-- Some internal tests -->
+            <include>org/jboss/jbossset/bugclerk/utils/URLUtilsTest.java</include>
+            <include>org/jboss/jbossset/bugclerk/ReportEngineTest.java</include>
+            <include>org/jboss/jbossset/bugclerk/utils/StringUtilsTest.java</include>
+            <include>org/jboss/jbossset/bugclerk/comments/CommentPatternMatcherTest.java</include>
+            <!-- All tests based on checks -->
+            <include>org/jboss/jbossset/bugclerk/checks/*.java</include>
+            <!-- Integration tests - fired only if -Dbugclerk.run.cli.tests=true is passed to mvn -->
+            <!-- include>org/jboss/jbossset/bugclerk/cli/*.java</include-->
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>0.7.2.201409121644</version>
+              <configuration>
+                <excludes>
+                  <!-- can't really unit test CLI behavior -->
+                  <exclude>org/jboss/jbossset/bugclerk/cli/*.class</exclude>
+                  <!-- same with logging function -->
+                  <exclude>org/jboss/jbossset/bugclerk/utils/LoggingUtils.class</exclude>
+                  <!-- bugzilla client layer is just a wrapper -->
+                  <exclude>org/jboss/jbossset/bugclerk/bugzilla/BugzillaClient.class</exclude>
+                  <!-- loaders are pointless to test without a proper backend -->
+                  <exclude>org/jboss/jbossset/bugclerk/bugzilla/*Loader*.class</exclude>
+                  <!-- not really worth covering -->
+                  <exclude>org/jboss/jbossset/bugclerk/PerformanceMonitor.class</exclude>
+                  <!-- testing POJO is really pointless -->
+                  <exclude>org/jboss/jbossset/bugclerk/Candidate.class</exclude>
+                  <exclude>org/jboss/jbossset/bugclerk/Violation.class</exclude>
+                </excludes>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>pre-unit-test</id>
+                  <goals>
+                    <goal>prepare-agent</goal>
+                  </goals>
+              </execution>
+              <execution>
+                <id>post-unit-test</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.14</version>
+            <configuration>
+              <argLine>${failsafe.argLine}</argLine>
+            </configuration>
+            <executions>
+              <execution>
+              <id>integration-test</id>
+              <goals>
+                <goal>integration-test</goal>
+              </goals>
+              </execution>
+              <execution>
+                <id>verify</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+             </execution>
+          </executions>
+        </plugin>
+      <!-- plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.5</version>
+        <executions>
+          <execution>
+            <id>pmd-cpd</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>pmd</goal>
+              <goal>cpd</goal>
+            </goals>
+            <configuration>
+              <linkXref>true</linkXref>²
+              <sourceEncoding>utf-8</sourceEncoding>
+              <rulesets>
+                <ruleset>${project.basedir}/src/main/resources/pmd.xml</ruleset>
+              </rulesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+        <executions>
+          <execution>
+            <id>javadoc</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <configuration>
+            <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+            <consoleOutput>true</consoleOutput>
+            <failsOnError>true</failsOnError>
+            <useFile />
+            <linkXRef>false</linkXRef>
+          </configuration>
+          <dependencies>
+            <dependency>
+            <groupId>org.wildfly.checkstyle</groupId>
+            <artifactId>wildfly-checkstyle-config</artifactId>
+            <version>${org.wildfly.checkstyle-config.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${version.checkstyle}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>com.sun</groupId>
+                  <artifactId>tools</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>check-style</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>checkstyle</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <linkJavadoc>true</linkJavadoc>
+          <javadocDir>${project.build.directory}/site/apidocs</javadocDir>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.5</version>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>
+
