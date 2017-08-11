@@ -57,10 +57,8 @@ public final class BugClerkWithFilterCLI {
     }
 
     private static int runBugClerk(List<Issue> issues, AphroditeClient aphrodite, BugClerkInvocatioWithFilterArguments arguments) {
-        BugClerk bc = new BugClerk(aphrodite);
-        BugClerkArguments bcArgs = buildArgumentsFrom(arguments);
-        bcArgs.setIssues(issues);
-        return bc.runAndReturnsViolations(bcArgs);
+        return new BugClerk(aphrodite, BugClerkCLI.instantiateConfiguration(buildArgumentsFrom(arguments)))
+            .runAndReturnsViolations(issues);
     }
 
     private static BugClerkArguments buildArgumentsFrom(BugClerkInvocatioWithFilterArguments arguments) {

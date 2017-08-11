@@ -22,6 +22,7 @@
 package org.jboss.jbossset.bugclerk.cli;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
+import org.jboss.jbossset.bugclerk.BugclerkConfiguration;
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 
 public final class BugClerkCLI {
@@ -39,7 +40,9 @@ public final class BugClerkCLI {
 
             AphroditeClient aphrodite = new AphroditeClient();
             arguments.setIssues(aphrodite.loadIssues(arguments.getIds()));
-            new BugClerk(aphrodite).runAndReturnsViolations(BugClerkArguments.validateArgs(arguments));
+            BugClerkArguments validatedArgs = BugClerkArguments.validateArgs(arguments);
+            new BugClerk(aphrodite, BugClerkCLI.instantiateConfiguration(validatedArgs))
+                    .runAndReturnsViolations(validatedArgs.getIssues());
             aphrodite.close();
         } catch (Throwable t) {
             System.out.println(t.getMessage());
@@ -47,5 +50,15 @@ public final class BugClerkCLI {
                 System.out.println(t.getCause().getMessage());
             System.exit(PROGRAM_THROWN_EXCEPTION);
         }
+    }
+
+    public static BugclerkConfiguration instantiateConfiguration(BugClerkArguments arguments) {
+        BugclerkConfiguration configuration = new BugclerkConfiguration();
+        configuration.setDebug(arguments.isDebug());
+        configuration.setFailOnViolation(arguments.isFailOnViolation());
+        configuration.setHtmlReportFilename(arguments.getHtmlReportFilename());
+        configuration.setXmlReportFilename(arguments.getXmlReportFilename());
+        configuration.setReportToBz(arguments.isReportToBz());
+        return configuration;
     }
 }

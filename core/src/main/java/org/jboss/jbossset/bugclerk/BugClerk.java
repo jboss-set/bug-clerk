@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import javax.xml.transform.stream.StreamSource;
 
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
-import org.jboss.jbossset.bugclerk.cli.BugClerkArguments;
 import org.jboss.jbossset.bugclerk.comments.ViolationsReportAsCommentBuilder;
 import org.jboss.jbossset.bugclerk.reports.BugClerkReportEngine;
 import org.jboss.jbossset.bugclerk.reports.ReportEngine;
@@ -38,14 +37,17 @@ import org.jboss.jbossset.bugclerk.reports.xml.BugClerkReport;
 import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.jbossset.bugclerk.utils.OutputInputStreamUtils;
 import org.jboss.jbossset.bugclerk.utils.XMLUtils;
+import org.jboss.set.aphrodite.domain.Issue;
 
 public class BugClerk {
 
     private final AphroditeClient aphrodite;
     private final PerformanceMonitor monitor = new PerformanceMonitor();
+    private final BugclerkConfiguration configuration;
 
-    public BugClerk(AphroditeClient aphrodite) {
+    public BugClerk(AphroditeClient aphrodite, BugclerkConfiguration configuration) {
         this.aphrodite = aphrodite;
+        this.configuration = configuration;
     }
 
     protected Collection<Candidate> processEntriesAndReportViolations(List<Candidate> candidates) {
@@ -65,11 +67,11 @@ public class BugClerk {
         return reportEngine.createReport(violationByBugId);
     }
 
-    public int runAndReturnsViolations(BugClerkArguments arguments) {
-        LoggingUtils.configureLogger(arguments.isDebug());
+    public int runAndReturnsViolations(List<Issue> ids) {
+        LoggingUtils.configureLogger(configuration.isDebug());
 
-        LoggingUtils.getLogger().info("Loading data for " + arguments.getIds().size() + " issues.");
-        List<Candidate> candidates = arguments.getIssues().parallelStream().map(issue -> new Candidate(issue))
+        LoggingUtils.getLogger().info("Loading data for " + ids.size() + " issues.");
+        List<Candidate> candidates = ids.parallelStream().map(issue -> new Candidate(issue))
                 .collect(Collectors.toList());
         LoggingUtils.getLogger().info("Loading data from tracker took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
@@ -78,36 +80,35 @@ public class BugClerk {
         String report = buildReport(violations);
 
         LoggingUtils.getLogger().fine("Report produced, running post analysis actions");
-        postAnalysisActions(arguments, violations, report);
+        postAnalysisActions(violations, report);
 
         LoggingUtils.getLogger().fine("Analysis took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         LoggingUtils.getLogger().info(report);
 
-        reportsGeneration(arguments, violations);
+        reportsGeneration(violations);
         LoggingUtils.getLogger().fine("Generating XML/HTML Report:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
         return candidates.size();
     }
 
-    protected void reportsGeneration(BugClerkArguments arguments, Collection<Candidate> violationByBugId) {
-        if (arguments.isXMLReport() || arguments.isHtmlReport()) {
+    protected void reportsGeneration(Collection<Candidate> violationByBugId) {
+        if (configuration.isXMLReport() || configuration.isHtmlReport()) {
             BugClerkReport xmlReport = buildBugClerkReport(violationByBugId);
-            if (arguments.isXMLReport())
+            if (configuration.isXMLReport())
                 BugClerkReportEngine.printXmlReport(xmlReport,
-                        OutputInputStreamUtils.getOutputStreamForFile(arguments.getXmlReportFilename()));
-            if (arguments.isHtmlReport())
+                        OutputInputStreamUtils.getOutputStreamForFile(configuration.getXmlReportFilename()));
+            if (configuration.isHtmlReport())
                 XMLUtils.xmlToXhtml(xmlReport,
                         new StreamSource(this.getClass().getResourceAsStream(BugClerkReportEngine.XSLT_FILENAME)),
-                        OutputInputStreamUtils.getStreamResultForFile(arguments.getHtmlReportFilename()));
+                        OutputInputStreamUtils.getStreamResultForFile(configuration.getHtmlReportFilename()));
         }
     }
 
-    protected static String getXmlReportFilename(BugClerkArguments arguments) {
-        return arguments.getXmlReportFilename() == null ? arguments.getHtmlReportFilename() + ".xml" : arguments
-                .getXmlReportFilename();
+    protected String getXmlReportFilename() {
+        return configuration.getXmlReportFilename() == null ? configuration.getHtmlReportFilename() + ".xml" : configuration.getXmlReportFilename();
     }
 
-    protected void postAnalysisActions(BugClerkArguments arguments, Collection<Candidate> candidates, String report) {
-        if (! candidates.isEmpty() && arguments.isReportToBz()) {
+    protected void postAnalysisActions(Collection<Candidate> candidates, String report) {
+        if (! candidates.isEmpty() && configuration.isReportToBz()) {
             LoggingUtils.getLogger().info("Updating Bugzilla entries - if needed.");
             aphrodite.addComments(new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(candidates));
             LoggingUtils.getLogger().info("Bugzilla entries updated - if needed.");

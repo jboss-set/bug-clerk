@@ -56,14 +56,6 @@ public class CommonArguments {
         this.htmlReportFilename = htmlReportFilename;
     }
 
-    public boolean isXMLReport() {
-        return !(this.xmlReportFilename == null || "".equals(this.xmlReportFilename));
-    }
-
-    public boolean isHtmlReport() {
-        return !(this.htmlReportFilename == null || "".equals(this.htmlReportFilename));
-    }
-
     public boolean isReportToBz() {
         return reportToBz;
     }
