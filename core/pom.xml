@@ -173,30 +173,8 @@
                   <goal>verify</goal>
                 </goals>
              </execution>
-          </executions>
-        </plugin>
-      <!-- plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.5</version>
-        <executions>
-          <execution>
-            <id>pmd-cpd</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>pmd</goal>
-              <goal>cpd</goal>
-            </goals>
-            <configuration>
-              <linkXref>true</linkXref>²
-              <sourceEncoding>utf-8</sourceEncoding>
-              <rulesets>
-                <ruleset>${project.basedir}/src/main/resources/pmd.xml</ruleset>
-              </rulesets>
-            </configuration>
-          </execution>
         </executions>
-      </plugin-->
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
