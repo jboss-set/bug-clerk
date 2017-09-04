@@ -34,7 +34,7 @@ import org.mockito.MockitoAnnotations;
 
 public abstract class AbstractCheckRunner {
 
-    protected RuleEngine engine;
+    protected RulesEngine engine;
     protected final String checkName;
 
     protected static final String DEV_ACK_FLAG = "devel_ack";
@@ -52,7 +52,7 @@ public abstract class AbstractCheckRunner {
 
     @Before
     public void initRuleEngine() {
-        this.engine = new RuleEngine(new HashMap<String, Object>(0),mockAphroditeClientIfNeeded());
+        this.engine = new RulesEngine(new HashMap<String, Object>(0),mockAphroditeClientIfNeeded());
     }
 
     protected AphroditeClient mockAphroditeClientIfNeeded() {

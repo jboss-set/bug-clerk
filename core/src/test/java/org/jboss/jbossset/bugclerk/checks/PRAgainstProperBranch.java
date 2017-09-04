@@ -29,7 +29,7 @@ import java.util.HashMap;
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
-import org.jboss.jbossset.bugclerk.RuleEngine;
+import org.jboss.jbossset.bugclerk.RulesEngine;
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Codebase;
@@ -47,13 +47,13 @@ public class PRAgainstProperBranch extends AbstractCheckRunner {
     private String bugId;
 
     private static final String MOCK_PULL_REQUEST_ID = "https://github.com/aeshell/aesh.git/pull/88";
-    
+
     @Before
     public void resetMockData() {
         bugId = "JBEAP-4367";
         summary = "A Summary...";
     }
-     
+
     @Before
     public void initRuleEngine() {
         AphroditeClient client = Mockito.mock(AphroditeClient.class);
@@ -65,31 +65,31 @@ public class PRAgainstProperBranch extends AbstractCheckRunner {
                 return mockPullRequest();
             }
         });
-        this.engine = new RuleEngine(new HashMap<String, Object>(0),client);
+        this.engine = new RulesEngine(new HashMap<String, Object>(0),client);
     }
-        
+
     private PullRequest mockPullRequest() {
         Codebase codebase = new Codebase("0.7");
         PullRequest mock = Mockito.mock(PullRequest.class);
         Mockito.when(mock.getCodebase()).thenReturn(codebase);
         return mock;
     }
-        
+
     @Test
     public void noViolationIfPrAgainstProjectNotInCodeBases() { // because streams may not up to date
         JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(bugId, summary);
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.0.3");
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.0.z"));
-        Mockito.when(mock.getPullRequests()).thenReturn(MockUtils.mockPullRequestsUrls("https://github.com/jbossas/jboss-eap7/pull/1259"));   
+        Mockito.when(mock.getPullRequests()).thenReturn(MockUtils.mockPullRequestsUrls("https://github.com/jbossas/jboss-eap7/pull/1259"));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
     }
-    
+
     @Test
     public void violationIfPrAgainstProjectInCodeBasesButWrongBranch() {
         JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(bugId, summary);
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.0.3");
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.0.z"));
-        Mockito.when(mock.getPullRequests()).thenReturn(MockUtils.mockPullRequestsUrls(MOCK_PULL_REQUEST_ID));        
+        Mockito.when(mock.getPullRequests()).thenReturn(MockUtils.mockPullRequestsUrls(MOCK_PULL_REQUEST_ID));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 1);
     }
 }

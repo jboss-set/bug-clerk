@@ -24,6 +24,7 @@ package org.jboss.jbossset.bugclerk.checks;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
@@ -49,7 +50,7 @@ public class NoFlagsCheck extends AbstractCheckRunner {
         Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(new GregorianCalendar(2000, 0, 1).getTime()));
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
         Mockito.when(mock.getStage()).thenReturn(new Stage());
-        final Collection<Candidate> violations = engine.processBugEntry(CollectionUtils.asSetOf(new Candidate(mock)));
+        final Collection<Candidate> violations = engine.runChecksOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), Collections.emptyList());
         // as long as we have no NullPointerExceptions and some Violations, we're good.
         assertTrue(violations.size() > 0);
     }

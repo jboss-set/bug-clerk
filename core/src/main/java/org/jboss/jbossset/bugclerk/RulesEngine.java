@@ -35,7 +35,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.AgendaFilter;
 import org.kie.api.runtime.rule.Match;
 
-public class RuleEngine {
+public class RulesEngine {
 
     private final KieSession ksession;
     static final String KIE_SESSION = "BzCheck";
