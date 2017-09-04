@@ -33,7 +33,7 @@ import com.beust.jcommander.Parameter;
 public class BugClerkArguments extends CommonArguments implements IVariableArity {
 
     @Parameter(description = "Issue IDs", variableArity = true, required = true)
-    private final List<String> ids = new ArrayList<String>();
+    private final List<String> ids = new ArrayList<String>(0);
 
     private List<Issue> issues;
 
