@@ -27,6 +27,7 @@ import org.junit.runners.Suite;
         org.jboss.jbossset.bugclerk.checks.BZMissingUpstream.class,
         org.jboss.jbossset.bugclerk.checks.FixVersionAndSprintMustMatchBetweenSiblings.class,
         org.jboss.jbossset.bugclerk.checks.PRAgainstProperBranch.class,
+        org.jboss.jbossset.bugclerk.checks.ComponentUpgradeReadyForQaDepsCheck.class,
         org.jboss.jbossset.bugclerk.ReportEngineTest.class,
         // FIXME: Fails within Eclipse: org.jboss.jbossset.bugclerk.BuildReportToUpdateTracker.class,
         org.jboss.jbossset.bugclerk.comments.CommentPatternMatcherTest.class,
