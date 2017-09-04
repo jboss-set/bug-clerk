@@ -108,7 +108,7 @@ public class BugClerk {
     }
 
     protected void postAnalysisActions(Collection<Candidate> candidates, String report) {
-        if (! candidates.isEmpty() && configuration.isReportToBz()) {
+        if (! candidates.isEmpty() && configuration.isReportViolation()) {
             LoggingUtils.getLogger().info("Updating Bugzilla entries - if needed.");
             aphrodite.addComments(new ViolationsReportAsCommentBuilder().reportViolationToBugTracker(candidates));
             LoggingUtils.getLogger().info("Bugzilla entries updated - if needed.");

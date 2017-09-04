@@ -10,7 +10,7 @@ public class BugclerkConfiguration {
 
     private String htmlReportFilename;
 
-    private boolean reportToBz = false;
+    private boolean reportViolation = false;
 
     private boolean failOnViolation = false;
 
@@ -38,12 +38,12 @@ public class BugclerkConfiguration {
         this.htmlReportFilename = htmlReportFilename;
     }
 
-    public boolean isReportToBz() {
-        return reportToBz;
+    public boolean isReportViolation() {
+        return reportViolation;
     }
 
-    public void setReportToBz(boolean reportToBz) {
-        this.reportToBz = reportToBz;
+    public void setReportViolation(boolean reportViolation) {
+        this.reportViolation = reportViolation;
     }
 
     public boolean isFailOnViolation() {
