@@ -50,7 +50,6 @@ public final class BugClerkWithFilterCLI {
         int status = 0;
         if (arguments.isFailOnViolation())
             status = nbViolation;
-
         // Jenkins and/or Maven deemed that invoking exit, even with 0 value, is a failure, hence this workaround :(
         if (status != 0)
             System.exit(status);
@@ -66,6 +65,7 @@ public final class BugClerkWithFilterCLI {
         bcArgs.setReportToBz(arguments.isReportToBz());
         bcArgs.setXmlReportFilename(arguments.getXmlReportFilename());
         bcArgs.setHtmlReportFilename(arguments.getHtmlReportFilename());
+        bcArgs.setChecknames(arguments.getChecknames());
         return bcArgs;
     }
 }

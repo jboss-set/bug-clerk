@@ -51,8 +51,12 @@ public class BugClerk {
     }
 
     protected Collection<Candidate> processEntriesAndReportViolations(List<Candidate> candidates) {
-        RuleEngine ruleEngine = new RuleEngine(new HashMap<String, Object>(0), this.aphrodite);
-        Collection<Candidate> violations = ruleEngine.processBugEntry(candidates);
+        return processEntriesAndReportViolations(candidates, configuration.getChecknames());
+    }
+
+    protected Collection<Candidate> processEntriesAndReportViolations(List<Candidate> candidates, Collection<String> checknames) {
+        RulesEngine ruleEngine = new RulesEngine(new HashMap<String, Object>(0), this.aphrodite);
+        Collection<Candidate> violations = ruleEngine.runChecksOnBugs(candidates, checknames);
         ruleEngine.shutdownRuleEngine();
         return violations;
     }

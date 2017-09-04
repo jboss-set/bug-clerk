@@ -21,6 +21,10 @@
  */
 package org.jboss.jbossset.bugclerk.cli;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.BugclerkConfiguration;
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
@@ -42,7 +46,7 @@ public final class BugClerkCLI {
             arguments.setIssues(aphrodite.loadIssues(arguments.getIds()));
             BugClerkArguments validatedArgs = BugClerkArguments.validateArgs(arguments);
             new BugClerk(aphrodite, BugClerkCLI.instantiateConfiguration(validatedArgs))
-                    .runAndReturnsViolations(validatedArgs.getIssues());
+            .runAndReturnsViolations(validatedArgs.getIssues());
             aphrodite.close();
         } catch (Throwable t) {
             System.out.println(t.getMessage());
@@ -52,13 +56,18 @@ public final class BugClerkCLI {
         }
     }
 
-    public static BugclerkConfiguration instantiateConfiguration(BugClerkArguments arguments) {
+    private static Collection<String> extractChecknamesFromArgs(CommonArguments arguments) {
+        return ! "".equals(arguments.getChecknames()) ? Arrays.asList(arguments.getChecknames().split(",")) : new ArrayList<String>(0);
+    }
+
+    public static BugclerkConfiguration instantiateConfiguration(CommonArguments arguments) {
         BugclerkConfiguration configuration = new BugclerkConfiguration();
         configuration.setDebug(arguments.isDebug());
         configuration.setFailOnViolation(arguments.isFailOnViolation());
         configuration.setHtmlReportFilename(arguments.getHtmlReportFilename());
         configuration.setXmlReportFilename(arguments.getXmlReportFilename());
-        configuration.setReportToBz(arguments.isReportToBz());
+        configuration.setReportViolation(arguments.isReportToBz());
+        configuration.setChecknames(extractChecknamesFromArgs(arguments));
         return configuration;
     }
 }

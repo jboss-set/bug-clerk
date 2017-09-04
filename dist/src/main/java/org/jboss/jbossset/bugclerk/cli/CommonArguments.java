@@ -24,6 +24,9 @@ public class CommonArguments {
     @Parameter(names = { "-F", "--fail-on-violation" }, description = "exit program with status equals to number of violations", required = false)
     private boolean failOnViolation = false;
 
+    @Parameter(names = { "-r","--rules" }, description = "Checks, by names - separated by comma, to enable for the run", required = false)
+    private String checknames = "";
+
     public boolean isDebug() {
         return debug;
     }
@@ -72,11 +75,19 @@ public class CommonArguments {
         this.failOnViolation = isFailOnViolation;
     }
 
+    public String getChecknames() {
+        return checknames;
+    }
+
+    public void setChecknames(String checknames) {
+        this.checknames = checknames;
+    }
+
     @Override
     public String toString() {
         return "CommonArguments [help=" + help + ", debug=" + debug + ", xmlReportFilename=" + xmlReportFilename
                 + ", htmlReportFilename=" + htmlReportFilename + ", reportToBz=" + reportToBz + ", failOnViolation="
-                + failOnViolation + "]";
+                + failOnViolation + ", checknames=" + checknames + "]";
     }
 
 }

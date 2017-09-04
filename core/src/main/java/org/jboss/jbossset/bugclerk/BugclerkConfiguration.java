@@ -1,6 +1,7 @@
 package org.jboss.jbossset.bugclerk;
 
-
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class BugclerkConfiguration {
 
@@ -13,6 +14,8 @@ public class BugclerkConfiguration {
     private boolean reportViolation = false;
 
     private boolean failOnViolation = false;
+
+    private Collection<String> checknames = new ArrayList<String>(0);
 
     public boolean isDebug() {
         return debug;
@@ -60,5 +63,20 @@ public class BugclerkConfiguration {
 
     public boolean isHtmlReport() {
         return !(this.htmlReportFilename == null || "".equals(this.htmlReportFilename));
+    }
+
+    public Collection<String> getChecknames() {
+        return checknames;
+    }
+
+    public void setChecknames(Collection<String> checknames) {
+        this.checknames = checknames;
+    }
+
+    @Override
+    public String toString() {
+        return "BugclerkConfiguration [debug=" + debug + ", xmlReportFilename=" + xmlReportFilename + ", htmlReportFilename="
+                + htmlReportFilename + ", reportToBz=" + reportViolation + ", failOnViolation=" + failOnViolation + ", checknames="
+                + checknames + "]";
     }
 }
