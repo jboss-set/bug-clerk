@@ -76,7 +76,14 @@ public class BugClerk {
         LoggingUtils.getLogger().info("Loading data from tracker took:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
 
         Collection<Candidate> violations = processEntriesAndReportViolations(candidates);
-        LoggingUtils.getLogger().info("Found " + violations.size() + " violations:");
+        int nbViolations = 0;
+        for ( Candidate candidate : violations ) {
+            if ( ! candidate.getViolations().isEmpty() ) {
+             LoggingUtils.getLogger().info("Issue:" + candidate.getBug().getTrackerId().get() + " has " + candidate.getViolations().size() );
+             nbViolations += candidate.getViolations().size();
+            }
+        }
+        LoggingUtils.getLogger().info("Found " + nbViolations + " violations:");
         String report = buildReport(violations);
 
         LoggingUtils.getLogger().fine("Report produced, running post analysis actions");
@@ -87,7 +94,7 @@ public class BugClerk {
 
         reportsGeneration(violations);
         LoggingUtils.getLogger().fine("Generating XML/HTML Report:" + monitor.returnsTimeElapsedAndRestartClock() + "s.");
-        return candidates.size();
+        return nbViolations;
     }
 
     protected void reportsGeneration(Collection<Candidate> violationByBugId) {
