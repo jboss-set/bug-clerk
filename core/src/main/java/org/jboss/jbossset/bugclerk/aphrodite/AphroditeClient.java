@@ -36,7 +36,7 @@ public class AphroditeClient {
     public AphroditeClient() {
         try {
             aphrodite = Aphrodite.instance();
-        } catch (AphroditeException e) {
+        } catch (Throwable e) {
             throw new IllegalStateException(e);
         }
     }
