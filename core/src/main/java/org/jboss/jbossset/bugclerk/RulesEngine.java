@@ -40,20 +40,12 @@ public class RulesEngine {
     private final KieSession ksession;
     static final String KIE_SESSION = "BzCheck";
 
-    public RuleEngine(Map<String, Object> externalGlobals,AphroditeClient client) {
-        Map<String, Object> globals = buildGlobalsMap(client);
+    public RulesEngine(Map<String, Object> externalGlobals,AphroditeClient client) {
+        ksession = createKSession(KIE_SESSION);
+        Map<String, Object> globals = extractRulesGlobalsFrom(client);
         if (! externalGlobals.isEmpty() )
             globals.putAll(externalGlobals);
-        ksession = createKSession(KIE_SESSION);
         globals.entrySet().forEach(e -> ksession.getGlobals().set(e.getKey(), e.getValue()));
-    }
-
-    protected Map<String, Object> buildGlobalsMap(AphroditeClient client) {
-        Map<String, Object> globalsMaps = new HashMap<String, Object>(2);
-        globalsMaps.put("issuesIndexedByURL", new HashMap<URL,Issue>());
-        globalsMaps.put("payloadTrackerIndexedByURL", new HashMap<URL,Issue>());
-        if ( client != null ) globalsMaps.put("aphrodite", client);
-        return globalsMaps;
     }
 
     public static KieSession createKSession(final String sessionName) {
@@ -62,12 +54,6 @@ public class RulesEngine {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public Collection<Candidate> processBugEntry(Collection<Candidate> candidates) {
-        addCandidatesToFacts(candidates);
-        ksession.fireAllRules();
-        return retrieveViolationsFromKSession(ksession);
     }
 
     @SuppressWarnings("unchecked")
@@ -80,10 +66,11 @@ public class RulesEngine {
     }
 
     private AgendaFilter createAgendaForCheck(final Collection<String> checknames) {
+
         return new AgendaFilter() {
             @Override
             public boolean accept(Match match) {
-                return checknames.contains(match.getRule().getName());
+                return ( checknames.isEmpty() ) ? true : checknames.contains(match.getRule().getName());
             }
         };
     }
@@ -103,6 +90,14 @@ public class RulesEngine {
         addCandidatesToFacts(candidates);
         ksession.fireAllRules(createAgendaForCheck(Arrays.asList(checkname)));
         return (Collection<Candidate>) ksession.getObjects(new ClassObjectFilter(Candidate.class));
+    }
+
+    protected static Map<String, Object> extractRulesGlobalsFrom(AphroditeClient client) {
+        Map<String, Object> aphroditeRelatedGlobalsMap = new HashMap<String, Object>(2);
+        aphroditeRelatedGlobalsMap.put("issuesIndexedByURL", new HashMap<URL,Issue>());
+        aphroditeRelatedGlobalsMap.put("payloadTrackerIndexedByURL", new HashMap<URL,Issue>());
+        if ( client != null ) aphroditeRelatedGlobalsMap.put("aphrodite", client);
+        return aphroditeRelatedGlobalsMap;
     }
 
     public void shutdownRuleEngine() {
