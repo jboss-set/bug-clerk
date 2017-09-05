@@ -13,6 +13,7 @@ import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.domain.StreamComponent;
@@ -130,5 +131,9 @@ public final class RulesHelper {
     public static boolean isFixVersionChangeDoneByAllowedUser(User author, String sprintRelease) {
         WhiteListSingleton whiteListSingleton = WhiteListSingleton.getInstance();
         return whiteListSingleton.isInSprintWhiteList(author, sprintRelease);
+    }
+
+    public static boolean isComponentUpgrade(Issue issue) {
+        return issue.getType().equals(IssueType.UPGRADE);
     }
 }

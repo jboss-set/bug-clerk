@@ -43,6 +43,8 @@ import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResul
 import static org.junit.Assert.assertEquals;
 
 public class ChangesInResolvedState extends AbstractCheckRunner {
+    private static String RESOLVED_STATUS = "Resolved";
+    
     private String bugId;
     private List<JiraChangelogGroup> changelog;
     private IssueStatus issueStatus;
@@ -94,7 +96,7 @@ public class ChangesInResolvedState extends AbstractCheckRunner {
 
         Date lastDateResolved = new GregorianCalendar(2000, 4, 1).getTime();
         addResolvedStateToChangelog(lastDateResolved);
-        assertEquals(JiraChangelogHelpers.getLastResolvedDate(changelog), lastDateResolved);
+        assertEquals(JiraChangelogHelpers.getLastSetToStatusDate(changelog,RESOLVED_STATUS), lastDateResolved);
     }
 
     private void prepareChangelogWithResolvedStatus() {
@@ -104,7 +106,7 @@ public class ChangesInResolvedState extends AbstractCheckRunner {
     }
 
     private void addResolvedStateToChangelog(Date dateResolved) {
-        addGroupWithItem(new JiraChangelogItem("Status", "null", "null", "null", "Resolved"), dateResolved);
+        addGroupWithItem(new JiraChangelogItem("Status", "null", "null", "null", RESOLVED_STATUS), dateResolved);
     }
 
     private void addPRToChangelog(Date dateCreated) {
@@ -118,7 +120,7 @@ public class ChangesInResolvedState extends AbstractCheckRunner {
     }
 
     private void addStatusChangeToOnQA(Date dateCreated) {
-        addGroupWithItem(new JiraChangelogItem("Status", "null", "Resolved", "null",
+        addGroupWithItem(new JiraChangelogItem("Status", "null", RESOLVED_STATUS, "null",
                 "Ready for QA"), dateCreated);
     }
 
@@ -133,7 +135,7 @@ public class ChangesInResolvedState extends AbstractCheckRunner {
         JiraIssue jiraIssueMock = createJiraIssueMock();
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(jiraIssueMock)), checkName),
                 checkName, bugId, numberViolationExpected);
-        assertEquals(JiraChangelogHelpers.isChangedAfterResolved(changelog), violationExpected);
+        assertEquals(JiraChangelogHelpers.isChangedAfterSetToStatus(changelog, RESOLVED_STATUS), violationExpected);
     }
 
     private JiraIssue createJiraIssueMock() {

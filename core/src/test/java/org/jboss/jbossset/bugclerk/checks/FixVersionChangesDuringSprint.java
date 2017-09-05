@@ -58,7 +58,6 @@ public class FixVersionChangesDuringSprint extends AbstractCheckRunner {
         changelog = new ArrayList<>();
     }
 
-
     @Test
     public void testAllowedUserChangedFixVersion() {
         createChangelogWithVersionChangeAndSprint();

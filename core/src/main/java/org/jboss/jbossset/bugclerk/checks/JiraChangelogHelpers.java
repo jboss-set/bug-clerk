@@ -2,6 +2,7 @@ package org.jboss.jbossset.bugclerk.checks;
 
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogGroup;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogItem;
@@ -9,16 +10,14 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 
 public final class JiraChangelogHelpers {
 
-    private static final String STATUS = "Status";
-    private static final String RESOLVED = "Resolved";
+    private static final String STATUS_FIELD_NAME = "Status";
+    private static final String SPRINT_FIELD_NAME = "Sprint";
 
     private JiraChangelogHelpers() {}
 
     public static JiraChangelogGroup getLastFixVersionChangeDuringSprint(JiraIssue issue) {
         List<JiraChangelogGroup> changelog = issue.getChangelog();
-        Date lastSprintDate = getLastSprint(changelog, issue.getSprintRelease());
-
-        return changelog.stream().filter(group -> lastSprintDate.before(group.getCreated()))
+        return changelog.stream().filter(group -> getLastSprint(changelog, issue.getSprintRelease()).before(group.getCreated()))
                 .reduce((first, second) -> second).orElse(null);
     }
 
@@ -33,36 +32,29 @@ public final class JiraChangelogHelpers {
     }
 
     private static boolean isSprintChange(JiraChangelogItem item, String sprintRelease) {
-        String toString = item.getToString();
-        String field = item.getField();
-        return field.equalsIgnoreCase("Sprint") && toString.equalsIgnoreCase(sprintRelease);
+        return item.getField().equalsIgnoreCase(SPRINT_FIELD_NAME) && item.getToString().equalsIgnoreCase(sprintRelease);
     }
 
-    public static boolean isChangedAfterResolved(List<JiraChangelogGroup> changelog) {
-        Date resolvedDate = getLastResolvedDate(changelog);
-        return changelog.stream().anyMatch(group -> resolvedDate.before(group.getCreated())
+    public static boolean isChangedAfterSetToStatus(List<JiraChangelogGroup> changelog, String status) {
+        return isChangedAfterDate(changelog, getLastSetToStatusDate(changelog, status));
+    }
+
+    public static Date getLastSetToStatusDate(List<JiraChangelogGroup> changelog, String status) {
+        return getDateUsingPredicate(changelog,new PredicateLastDateOfStatusChangeTo(status));
+    }
+
+    private static boolean isChangedAfterDate(List<JiraChangelogGroup> changelog, Date date) {
+        return changelog.stream().anyMatch(group -> date.before(group.getCreated())
                 && isNotAllowedChange(group.getItems()));
     }
 
-    public static Date getLastResolvedDate(List<JiraChangelogGroup> changelog) {
-        JiraChangelogGroup lastResolved = changelog.stream()
-                .filter(group -> containsStatusChangeToResolved(group.getItems()))
+    private static Date getDateUsingPredicate(List<JiraChangelogGroup> changelog, Predicate<JiraChangelogGroup> p ) {
+        JiraChangelogGroup lastResolved = changelog.stream().filter(p)
                 .reduce((first, second) -> second).orElse(null);
         return (lastResolved != null) ? lastResolved.getCreated() : new Date();
     }
 
-    private static boolean containsStatusChangeToResolved(List<JiraChangelogItem> items) {
-        return items.stream().anyMatch(JiraChangelogHelpers::isStatusChangeToResolved);
-    }
-
-    private static boolean isStatusChangeToResolved(JiraChangelogItem item) {
-        return item.getField().equalsIgnoreCase(STATUS) && item.getToString().equalsIgnoreCase(RESOLVED);
-    }
-
-
     private static boolean isNotAllowedChange(List<JiraChangelogItem> items) {
-        return items.stream().anyMatch(item -> !item.getField().equalsIgnoreCase("Status"));
+        return items.stream().anyMatch(item -> !item.getField().equalsIgnoreCase(STATUS_FIELD_NAME));
     }
-
-
 }
