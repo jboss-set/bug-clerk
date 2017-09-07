@@ -10,7 +10,6 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 
 public final class JiraChangelogHelpers {
 
-    private static final String STATUS_FIELD_NAME = "Status";
     private static final String SPRINT_FIELD_NAME = "Sprint";
 
     private JiraChangelogHelpers() {}
@@ -36,25 +35,25 @@ public final class JiraChangelogHelpers {
     }
 
     public static boolean isChangedAfterSetToStatus(List<JiraChangelogGroup> changelog, String status) {
-        return isChangedAfterDate(changelog, getLastSetToStatusDate(changelog, status));
+        return isChangedAfterDate(changelog, getLastSetToStatusDate(changelog, status), new CheckIfAnythingButStatusIsChanged());
+    }
+
+    public static boolean isStatusChangedAfterSetToStatus(List<JiraChangelogGroup> changelog, String status) {
+        return isChangedAfterDate(changelog, getLastSetToStatusDate(changelog, status), new CheckIfStatusChanged() );
+    }
+
+    private static boolean isChangedAfterDate(List<JiraChangelogGroup> changelog, Date date, Predicate<List<JiraChangelogItem>> changelogFilteringPolicy) {
+        return changelog.stream().anyMatch(group -> date.before(group.getCreated())
+                && changelogFilteringPolicy.test(group.getItems()));
     }
 
     public static Date getLastSetToStatusDate(List<JiraChangelogGroup> changelog, String status) {
         return getDateUsingPredicate(changelog,new PredicateLastDateOfStatusChangeTo(status));
     }
 
-    private static boolean isChangedAfterDate(List<JiraChangelogGroup> changelog, Date date) {
-        return changelog.stream().anyMatch(group -> date.before(group.getCreated())
-                && isNotAllowedChange(group.getItems()));
-    }
-
     private static Date getDateUsingPredicate(List<JiraChangelogGroup> changelog, Predicate<JiraChangelogGroup> p ) {
         JiraChangelogGroup lastResolved = changelog.stream().filter(p)
                 .reduce((first, second) -> second).orElse(null);
         return (lastResolved != null) ? lastResolved.getCreated() : new Date();
-    }
-
-    private static boolean isNotAllowedChange(List<JiraChangelogItem> items) {
-        return items.stream().anyMatch(item -> !item.getField().equalsIgnoreCase(STATUS_FIELD_NAME));
     }
 }
