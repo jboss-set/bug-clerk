@@ -2,8 +2,9 @@
 
 readonly APHRODITE_CONFIG=${APHRODITE_CONFIG:-"$(pwd)/aphrodite-config.json"}
 
-readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-'0.9.0-SNAPSHOT'}
-readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'target'}
+readonly BUGCLERK_HOME=${BUGCLERK_HOME:-'.'}
+readonly BUGCLERK_VERSION=${BUGCLERK_VERSION:-${project.version}}
+readonly JAR_NAME=${JAR_NAME:-'bugclerk-dist'}
 
 readonly MAIN_CLASS=${MAIN_CLASS:-'org.jboss.jbossset.bugclerk.cli.BugClerkCLI'}
 
@@ -19,8 +20,9 @@ if [ -z "${BUGCLERK_VERSION}" ]; then
   exit 4
 fi
 
-if [ ! -e "${BUGCLERK_HOME}/bugclerk-${BUGCLERK_VERSION}.jar" ]; then
-  echo "No jar file in directory: ${BUGCLERK_HOME}."
+readonly FULL_PATH_TO_JAR="${BUGCLERK_HOME}/${JAR_NAME}-${BUGCLERK_VERSION}-shaded.jar"
+if [ ! -e "${FULL_PATH_TO_JAR}" ]; then
+  echo "No jar file in directory: ${FULL_PATH_TO_JAR}."
   exit 4
 fi
 
@@ -30,6 +32,6 @@ if [ -z "${BUG_ID}" ]; then
 fi
 
 java -Daphrodite.config=${APHRODITE_CONFIG} \
-     -cp "${BUGCLERK_HOME}/bugclerk-${BUGCLERK_VERSION}-shaded.jar" \
+     -cp "${FULL_PATH_TO_JAR}" \
      "${MAIN_CLASS}" \
      "${BUG_ID}" ${@}

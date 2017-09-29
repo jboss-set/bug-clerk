@@ -34,6 +34,10 @@ You need to have credentials to access BugZilla.
 
 The easiest way is to use bash scripts in src/main/bash:
 ```
+export APHRODITE_CONFIG=path/to/aphrodite-config.json
+export BUGCLERK_VERSION=<version-in-pom>
+export BUGCLERK_HOME=<dir-containing-jar>
+
 ./run-on-bugid.sh https://issues.stage.jboss.org/browse/${issue-id}
 ./filter-based-run.sh
 ```
