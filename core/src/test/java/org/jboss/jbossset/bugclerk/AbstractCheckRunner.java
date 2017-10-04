@@ -45,9 +45,11 @@ public abstract class AbstractCheckRunner {
     protected static final String INDEX_ISSUE_RULE = "IndexIssueByURL";
 
     protected static final SortedSet<Comment> NO_COMMENTS = new TreeSet<Comment>();
+    private AphroditeClient mock;
 
     public AbstractCheckRunner() {
         checkName = this.getClass().getSimpleName();
+        mock = Mockito.mock(AphroditeClient.class);
     }
 
     @Before
@@ -56,7 +58,7 @@ public abstract class AbstractCheckRunner {
     }
 
     protected AphroditeClient mockAphroditeClientIfNeeded() {
-        return Mockito.mock(AphroditeClient.class);
+        return mock;
     }
 
     @Before
