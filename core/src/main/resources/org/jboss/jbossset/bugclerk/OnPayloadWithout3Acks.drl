@@ -24,20 +24,26 @@ package org.jboss.jbossset.bugclerk;
 
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.Release;
+import org.jboss.jbossset.bugclerk.checks.PayloadHelpers;
 
 import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.Severity;
 
 global java.util.List list
+global java.util.Map payloadTrackerIndexedByURL;
+global org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient aphrodite;
 
 rule "OnPayloadWithout3Acks"
   salience 0
   dialect "mvel"
   when
-    $candidate : Candidate(bug.stage.getStateMap.get(Flag.QE) != FlagStatus.ACCEPTED ||
+    $candidate : Candidate((bug.stage.getStateMap.get(Flag.QE) != FlagStatus.ACCEPTED ||
                            bug.stage.getStateMap.get(Flag.DEV) != FlagStatus.ACCEPTED ||
-                           bug.stage.getStateMap.get(Flag.PM) != FlagStatus.ACCEPTED,
-                           filtered == false);
+                           bug.stage.getStateMap.get(Flag.PM) != FlagStatus.ACCEPTED),
+                           eval (PayloadHelpers.isInPayload(bug, payloadTrackerIndexedByURL, aphrodite) == true),
+                           filtered == false
+                           );
   then
     $candidate.addViolation( new Violation(drools.getRule().getName(), "Issue in on the payload but is missing some acks.", Severity.MAJOR) );
 
