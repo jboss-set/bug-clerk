@@ -83,7 +83,7 @@ public class BugClerk {
         int nbViolations = 0;
         for ( Candidate candidate : violations ) {
             if ( ! candidate.getViolations().isEmpty() ) {
-             LoggingUtils.getLogger().info("Issue:" + candidate.getBug().getTrackerId().get() + " has " + candidate.getViolations().size() );
+             LoggingUtils.getLogger().fine("Issue:" + candidate.getBug().getTrackerId().get() + " has " + candidate.getViolations().size() );
              nbViolations += candidate.getViolations().size();
             }
         }
