@@ -32,7 +32,7 @@ if [ ! -e "${FULL_PATH_TO_JAR}" ]; then
 fi
 
 cd "${BUGCLERK_HOME}"
-java -Daphrodite.config="${APHRODITE_CONFIG}" \
+java ${JAVA_OPTS} -Daphrodite.config="${APHRODITE_CONFIG}" \
      -jar ${FULL_PATH_TO_JAR} \
      -f "${FILTER_URL}" \
      ${@}
