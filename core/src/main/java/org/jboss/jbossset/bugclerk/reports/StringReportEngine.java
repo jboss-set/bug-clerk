@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jboss.jbossset.bugclerk.Candidate;
-import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Violation;
 
 public class StringReportEngine implements ReportEngine<String> {
 

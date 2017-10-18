@@ -27,7 +27,7 @@ import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.IssueType;
 
 
-import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Violation;
 
 rule "ComponentUpgradeMissingFixList"
   salience 0

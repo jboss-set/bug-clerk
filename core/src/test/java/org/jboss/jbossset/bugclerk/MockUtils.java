@@ -21,10 +21,12 @@ import org.jboss.set.aphrodite.domain.IssueEstimation;
 import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.jboss.set.aphrodite.domain.IssueType;
 import org.jboss.set.aphrodite.domain.Release;
+import org.jboss.set.aphrodite.domain.Severity;
 import org.jboss.set.aphrodite.domain.Stage;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.domain.StreamComponent;
 import org.jboss.set.aphrodite.domain.User;
+import org.jboss.set.aphrodite.domain.Violation;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.mockito.Mockito;
 

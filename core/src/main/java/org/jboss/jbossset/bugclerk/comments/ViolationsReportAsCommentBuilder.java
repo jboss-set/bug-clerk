@@ -37,10 +37,10 @@ import java.util.stream.Collectors;
 
 import org.jboss.jbossset.bugclerk.BugClerk;
 import org.jboss.jbossset.bugclerk.Candidate;
-import org.jboss.jbossset.bugclerk.Severity;
-import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Violation;
+import org.jboss.set.aphrodite.domain.Severity;
 
 public class ViolationsReportAsCommentBuilder {
 

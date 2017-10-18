@@ -29,8 +29,8 @@ import org.jboss.set.aphrodite.domain.IssueEstimation;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Flag;
 
-import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.Severity;
+import org.jboss.set.aphrodite.domain.Violation;
+import org.jboss.set.aphrodite.domain.Severity;
 
 rule "BZShouldHaveTimeEstimate_PostOrModified"
 	salience 0

@@ -21,6 +21,8 @@
  */
 package org.jboss.jbossset.bugclerk;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +40,7 @@ import org.jboss.jbossset.bugclerk.utils.LoggingUtils;
 import org.jboss.jbossset.bugclerk.utils.OutputInputStreamUtils;
 import org.jboss.jbossset.bugclerk.utils.XMLUtils;
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Violation;
 
 public class BugClerk {
 
@@ -58,6 +61,17 @@ public class BugClerk {
         RulesEngine ruleEngine = new RulesEngine(new HashMap<String, Object>(0), this.aphrodite);
         Collection<Candidate> violations = ruleEngine.runChecksOnBugs(candidates, checknames);
         ruleEngine.shutdownRuleEngine();
+        return violations;
+    }
+
+    public List<Violation> getViolationsOnIssue(Issue issue, Collection<String> cheknames) {
+        Candidate candidate = new Candidate(issue);
+        Collection<Candidate> canditates = processEntriesAndReportViolations(Arrays.asList(candidate), cheknames);
+        List<Violation> violations = new ArrayList<Violation>(0);
+        for ( Candidate checkedIssue : canditates ) {
+            if ( ! checkedIssue.getViolations().isEmpty() && checkedIssue.getBug().getTrackerId().equals(issue.getTrackerId()) )
+                violations.addAll(checkedIssue.getViolations());
+        }
         return violations;
     }
 
@@ -83,7 +97,7 @@ public class BugClerk {
         int nbViolations = 0;
         for ( Candidate candidate : violations ) {
             if ( ! candidate.getViolations().isEmpty() ) {
-             LoggingUtils.getLogger().info("Issue:" + candidate.getBug().getTrackerId().get() + " has " + candidate.getViolations().size() );
+             LoggingUtils.getLogger().fine("Issue:" + candidate.getBug().getTrackerId().get() + " has " + candidate.getViolations().size() );
              nbViolations += candidate.getViolations().size();
             }
         }

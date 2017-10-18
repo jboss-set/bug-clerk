@@ -27,8 +27,8 @@ import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.jbossset.bugclerk.checks.PayloadHelpers;
 
-import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.Severity;
+import org.jboss.set.aphrodite.domain.Violation;
+import org.jboss.set.aphrodite.domain.Severity;
 
 global java.util.List list
 global java.util.Map payloadTrackerIndexedByURL;

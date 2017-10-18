@@ -29,8 +29,8 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 
 import java.util.Date;
 
-import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.Severity;
+import org.jboss.set.aphrodite.domain.Violation;
+import org.jboss.set.aphrodite.domain.Severity;
 import org.jboss.jbossset.bugclerk.checks.FixVersionHelper;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
 

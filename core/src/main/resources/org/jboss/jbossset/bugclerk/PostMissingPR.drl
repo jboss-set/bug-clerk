@@ -25,7 +25,7 @@ package org.jboss.jbossset.bugclerk;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.Comment;
 
-import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Violation;
 
 rule "PostMissingPR"
   salience 0

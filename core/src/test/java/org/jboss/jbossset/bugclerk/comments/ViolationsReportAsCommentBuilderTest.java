@@ -2,13 +2,13 @@ package org.jboss.jbossset.bugclerk.comments;
 
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
-import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.checks.AssignedButStillOnSET;
 import org.jboss.jbossset.bugclerk.checks.PostMissingPR;
 import org.jboss.jbossset.bugclerk.checks.PostMissingPmAck;
 import org.jboss.jbossset.bugclerk.utils.StringUtils;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Violation;
 import org.junit.Before;
 import org.junit.Test;
 
