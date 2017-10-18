@@ -1,22 +1,27 @@
 package org.jboss.jbossset.bugclerk.checks;
 
+import static org.jboss.set.aphrodite.domain.FlagStatus.ACCEPTED;
+import static org.jboss.set.aphrodite.domain.FlagStatus.SET;
+
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Optional;
+
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
 import org.jboss.jbossset.bugclerk.Candidate;
 import org.jboss.jbossset.bugclerk.MockUtils;
 import org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
-import org.jboss.set.aphrodite.domain.*;
+import org.jboss.set.aphrodite.domain.Flag;
+import org.jboss.set.aphrodite.domain.FlagStatus;
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.IssueType;
+import org.jboss.set.aphrodite.domain.Release;
+import org.jboss.set.aphrodite.domain.Stage;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.jboss.set.aphrodite.domain.FlagStatus.ACCEPTED;
-import static org.jboss.set.aphrodite.domain.FlagStatus.SET;
 
 public class OnPayloadWithout3Acks extends AbstractCheckRunner {
 

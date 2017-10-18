@@ -32,7 +32,7 @@
 
     <version.drools>6.5.0.Final</version.drools>
     <version.org.drools>${version.drools}</version.org.drools>
-    <version.org.jboss.set.aphrodite>aphrodite-0.7.0.Final</version.org.jboss.set.aphrodite>
+    <version.org.jboss.set.aphrodite>0.7.3-SNAPSHOT</version.org.jboss.set.aphrodite>
     <version.org.kie>${version.drools}</version.org.kie>
   </properties>
 

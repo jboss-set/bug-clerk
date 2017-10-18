@@ -28,7 +28,7 @@ import org.jboss.set.aphrodite.domain.IssueStatus;
 
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
-import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Violation;
 
 import org.jboss.jbossset.bugclerk.checks.RulesHelper;
 

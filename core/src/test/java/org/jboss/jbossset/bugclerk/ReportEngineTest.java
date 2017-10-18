@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.reports.ReportEngine;
 import org.jboss.jbossset.bugclerk.reports.StringReportEngine;
+import org.jboss.set.aphrodite.domain.Violation;
 import org.junit.Before;
 import org.junit.Test;
 

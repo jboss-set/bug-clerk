@@ -27,7 +27,7 @@ import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.jboss.set.aphrodite.domain.FlagStatus;
 
-import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Violation;
 
 import java.util.HashMap;
 import java.util.Map;

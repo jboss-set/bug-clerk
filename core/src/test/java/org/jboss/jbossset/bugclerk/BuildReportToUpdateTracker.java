@@ -11,6 +11,8 @@ import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.jbossset.bugclerk.comments.ViolationsReportAsCommentBuilder;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Violation;
+import org.jboss.set.aphrodite.domain.Severity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

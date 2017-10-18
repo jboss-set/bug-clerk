@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Violation;
 
 public class Candidate {
 

@@ -23,7 +23,7 @@
 package org.jboss.jbossset.bugclerk;
 
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
-import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.set.aphrodite.domain.Violation;
 import org.jboss.jbossset.bugclerk.checks.GitHelper;
 import org.jboss.set.aphrodite.domain.Stream;
 

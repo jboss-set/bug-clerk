@@ -49,6 +49,10 @@ public class AphroditeClient {
         }
     }
 
+    public AphroditeClient(Aphrodite aphrodite) {
+        this.aphrodite = aphrodite;
+    }
+
     public static IssueTrackerConfig buildTrackerConfig(String trackerUrl, String username, String password, TrackerType type) {
         return new IssueTrackerConfig(URLUtils.getServerUrl(trackerUrl), username, password, type, DEFAULT_ISSUE_LIMIT);
     }

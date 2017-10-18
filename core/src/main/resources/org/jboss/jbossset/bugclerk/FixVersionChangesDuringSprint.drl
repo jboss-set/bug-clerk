@@ -32,8 +32,8 @@ import org.jboss.set.aphrodite.issue.trackers.jira.JiraChangelogGroup;
 
 import java.util.Date;
 
-import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.Severity;
+import org.jboss.set.aphrodite.domain.Violation;
+import org.jboss.set.aphrodite.domain.Severity;
 import org.jboss.jbossset.bugclerk.checks.JiraChangelogHelpers;
 
 global java.util.List list

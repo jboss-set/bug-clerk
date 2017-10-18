@@ -11,11 +11,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.jboss.jbossset.bugclerk.Candidate;
-import org.jboss.jbossset.bugclerk.Violation;
 import org.jboss.jbossset.bugclerk.reports.xml.BugClerkReport;
 import org.jboss.jbossset.bugclerk.reports.xml.BugReport;
 import org.jboss.jbossset.bugclerk.reports.xml.ViolationDescription;
 import org.jboss.set.aphrodite.domain.Flag;
+import org.jboss.set.aphrodite.domain.Violation;
 
 public final class BugClerkReportEngine implements ReportEngine<BugClerkReport> {
 

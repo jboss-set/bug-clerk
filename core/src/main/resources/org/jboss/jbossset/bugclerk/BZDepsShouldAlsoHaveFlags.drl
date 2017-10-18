@@ -26,8 +26,8 @@ import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.IssueStatus;
 
-import org.jboss.jbossset.bugclerk.Violation;
-import org.jboss.jbossset.bugclerk.Severity;
+import org.jboss.set.aphrodite.domain.Violation;
+import org.jboss.set.aphrodite.domain.Severity;
 
 rule "BZDepsShouldAlsoHaveFlags"
   salience 0
