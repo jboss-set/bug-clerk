@@ -1,0 +1,51 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2015, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+package org.jboss.jbossset.bugclerk;
+
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+
+import org.jboss.jbossset.bugclerk.Violation;
+import org.jboss.jbossset.bugclerk.Severity;
+
+import org.jboss.jbossset.bugclerk.checks.PayloadHelpers;
+
+import org.jboss.set.aphrodite.domain.IssueType;
+import org.jboss.set.aphrodite.domain.IssueStatus;
+
+import org.jboss.jbossset.bugclerk.checks.GitHelper
+
+global org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient aphrodite;
+
+rule "IssueStateModifiedAfterPrMerged"
+  dialect "mvel"
+  when
+    $candidate : Candidate( bug.getStatus().equals(IssueStatus.POST),
+                            bug#JiraIssue.getPullRequests() != null, bug#JiraIssue.getPullRequests().size() > 0,
+                            $jiraIssue: bug#JiraIssue,
+    					    !filtered
+    					    );
+    eval(GitHelper.allPRsClosed($jiraIssue.getPullRequests(), aphrodite))
+  then
+    $candidate.addViolationOnce(new Violation(drools.getRule().getName(), "All pull requests linked to this issue are closed - issue state should be either \"Assigned\" or \"Resolved\"." ));
+end

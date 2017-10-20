@@ -3,10 +3,14 @@ package org.jboss.jbossset.bugclerk.aphrodite;
 import static org.jboss.jbossset.bugclerk.utils.ThreadUtil.execute;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.jboss.jbossset.bugclerk.aphrodite.callables.AddCommentTask;
 import org.jboss.jbossset.bugclerk.aphrodite.callables.AllStreamsTask;
@@ -14,6 +18,7 @@ import org.jboss.jbossset.bugclerk.aphrodite.callables.GetPullRequest;
 import org.jboss.jbossset.bugclerk.aphrodite.callables.LoadIssuesTask;
 import org.jboss.jbossset.bugclerk.aphrodite.callables.RetrieveIssueTask;
 import org.jboss.jbossset.bugclerk.aphrodite.callables.SearchIssueByFilterTask;
+import org.jboss.jbossset.bugclerk.utils.ThreadUtil;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.Aphrodite;
 import org.jboss.set.aphrodite.config.AphroditeConfig;
@@ -32,6 +37,8 @@ public class AphroditeClient {
     private static final int DEFAULT_ISSUE_LIMIT = 400;
 
     private List<Stream> allStreams;
+
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     public AphroditeClient() {
         try {
@@ -90,7 +97,20 @@ public class AphroditeClient {
     }
 
     public PullRequest getPullRequest(String pullRequestUrl) {
-        return execute(new GetPullRequest(aphrodite, URLUtils.createURLFromString(pullRequestUrl)));
+        return getPullRequest(URLUtils.createURLFromString(pullRequestUrl));
+    }
+
+    public PullRequest getPullRequest(URL pullRequestUrl) {
+        return execute(new GetPullRequest(aphrodite, pullRequestUrl));
+    }
+
+    public List<PullRequest> getPullRequests(List<URL> urls) {
+        // TODO: move functionality to load multiple PRs in parallel to Aphrodite
+        List<Callable<PullRequest>> tasks = new ArrayList<>(urls.size());
+        for (URL url: urls) {
+            tasks.add(new GetPullRequest(aphrodite, url));
+        }
+        return ThreadUtil.executeParallel(tasks, executorService);
     }
 
     public void close() {
