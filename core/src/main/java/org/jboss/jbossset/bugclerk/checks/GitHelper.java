@@ -22,14 +22,16 @@
 
 package org.jboss.jbossset.bugclerk.checks;
 
-import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
-import org.jboss.set.aphrodite.domain.Stream;
-import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
-import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssueHomeImpl;
-
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
+import org.jboss.set.aphrodite.domain.PullRequest;
+import org.jboss.set.aphrodite.domain.PullRequestState;
+import org.jboss.set.aphrodite.domain.Stream;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssueHomeImpl;
 
 /**
  * Created by Marek Marusic <mmarusic@redhat.com> on 6/21/17.
@@ -85,5 +87,31 @@ public class GitHelper {
             String repoToStr = s.getRepositoryURL().toString().replace(".git", "");
             return pullRequestStr.contains(repoToStr);
         });
+    }
+
+    /**
+     * @param prUrls list of PR URLs
+     * @param client AphroditeClient
+     * @return true, if PRs in given list are merged
+     */
+    public static boolean allPRsClosed(List<URL> prUrls, AphroditeClient client) {
+        // TODO: with current version of Aphrodite it's not possible to determine whether
+        // TODO: PR was merged or closed
+        if (prUrls.isEmpty()) {
+            return false;
+        }
+
+        List<PullRequest> pullRequests = client.getPullRequests(prUrls);
+        if (pullRequests.size() < prUrls.size()) {
+            // some PRs not retrieved, so we don't know if they are closed
+            return false;
+        }
+
+        for (PullRequest pullRequest : pullRequests) {
+            if (pullRequest.getState().equals(PullRequestState.OPEN)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

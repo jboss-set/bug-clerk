@@ -31,7 +31,11 @@ if [ -z "${BUG_ID}" ]; then
   exit 1
 fi
 
+JAVA_OPTS=""
+#JAVA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 $JAVA_OPTS"
+
 java -Daphrodite.config=${APHRODITE_CONFIG} \
      -cp "${FULL_PATH_TO_JAR}" \
+     $JAVA_OPTS \
      "${MAIN_CLASS}" \
      "${BUG_ID}" ${@}
