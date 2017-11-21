@@ -100,7 +100,7 @@ public class FixVersionChangesDuringSprint extends AbstractCheckRunner {
     }
 
     private JiraIssue mockIssue() {
-        JiraIssue jiraIssueMock = MockUtils.mockJiraIssue(bugId, "A Summary...");
+        JiraIssue jiraIssueMock = MockUtils.mockJira(bugId, "A Summary...");
         Mockito.when(jiraIssueMock.getSprintRelease()).thenReturn("EAP 7.0.3");
         Mockito.when(jiraIssueMock.getChangelog()).thenReturn(changelog);
         return jiraIssueMock;

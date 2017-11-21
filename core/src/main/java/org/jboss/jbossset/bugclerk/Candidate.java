@@ -81,6 +81,15 @@ public class Candidate {
         this.violations.add(violation);
     }
 
+    public boolean isJIRA() {
+        //return this.bug instanceof JiraIssue;
+        if(bug.getTrackerType().toString().equalsIgnoreCase("jira")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /*
      * Some violation maybe be reported several times by drools engine,
      * it used to be compensante by using insertLogical (instead of insert)

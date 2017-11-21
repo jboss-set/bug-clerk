@@ -65,7 +65,7 @@ public class FixVersionHelperTest {
     }
 
     public static JiraIssue createIssueMock() {
-        JiraIssue mock = MockUtils.mockJiraIssue(bugId, "A Summary...");
+        JiraIssue mock = MockUtils.mockJira(bugId, "A Summary...");
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.0.3");
         return mock;
     }

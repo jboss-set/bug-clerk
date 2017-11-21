@@ -1,5 +1,5 @@
 /*
-q * JBoss, Home of Professional Open Source.
+ * JBoss, Home of Professional Open Source.
  * Copyright 2015, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
@@ -81,8 +81,7 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         final String checkName = super.checkName;
         final String issueId = "14380";
         
-        JiraIssue mock = MockUtils.mockJiraIssue(issueId, "A simple BZ issue...");
-        Mockito.when(mock.getSprintRelease()).thenReturn("");
+        JiraIssue mock = MockUtils.mockJira(issueId, "A simple BZ issue...");
         Mockito.when(mock.getDependsOn()).thenReturn(new ArrayList<URL>());
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, issueId,0);
@@ -94,8 +93,7 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         final String issueId = "14380";
 
         Issue sibling = MockUtils.mockBug(issueId,"Summary");
-        JiraIssue mock = MockUtils.mockJiraIssue("JBEAP-666", "A simple BZ issue...");
-        Mockito.when(mock.getSprintRelease()).thenReturn("");        
+        JiraIssue mock = MockUtils.mockJira("JBEAP-666", "A simple BZ issue...");
         mock.setDependsOn(CollectionUtils.asListOf(sibling.getURL()));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
@@ -112,12 +110,12 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         Release sevenOhTwo = new Release("7.0.2");
         List<Release> releases = CollectionUtils.asListOf(sevenOhOne, sevenOhTwo);
         
-        JiraIssue sibling = MockUtils.mockJiraIssue(issueId,"Summary");
+        JiraIssue sibling = MockUtils.mockJira(issueId,"Summary");
         Mockito.when(sibling.getSprintRelease()).thenReturn("a Sprint version");
         sibling.setReleases(releases);
         
     
-        JiraIssue mock = MockUtils.mockJiraIssue("JBEAP-666", "A simple BZ issue...");
+        JiraIssue mock = MockUtils.mockJira("JBEAP-666", "A simple BZ issue...");
         Mockito.when(mock.getSprintRelease()).thenReturn("a different sprint version");
         mock.setReleases(CollectionUtils.asListOf(sevenOhOne));
 
@@ -141,12 +139,12 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         
         List<Release> releases = mockReleases(commonReleaseVersion, "7.0.2");
         
-        JiraIssue sibling = MockUtils.mockJiraIssue(issueId,"Summary");
+        JiraIssue sibling = MockUtils.mockJira(issueId,"Summary");
         Mockito.when(sibling.getSprintRelease()).thenReturn(commonSprintVersion);
         sibling.setReleases(releases);
         
     
-        JiraIssue mock = MockUtils.mockJiraIssue("JBEAP-666", "A simple BZ issue...");
+        JiraIssue mock = MockUtils.mockJira("JBEAP-666", "A simple BZ issue...");
         Mockito.when(mock.getSprintRelease()).thenReturn(commonSprintVersion);
         mock.setReleases(CollectionUtils.asListOf(new Release(commonReleaseVersion)));
 
@@ -161,8 +159,7 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         final String checkName = super.checkName;
         final String issueId = "JBEAP-666";
         
-        JiraIssue mock = MockUtils.mockJiraIssue(issueId, "summary");
-        Mockito.when(mock.getSprintRelease()).thenReturn("");
+        JiraIssue mock = MockUtils.mockJira(issueId, "summary");
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, issueId,0);
