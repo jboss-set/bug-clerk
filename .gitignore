@@ -6,6 +6,7 @@ dependency-reduced-pom.xml
 .project
 .settings
 .metadata
+*/*.checkstyle
 # Idea Files
 .idea/
 bugclerk.iml
