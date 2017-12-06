@@ -115,7 +115,7 @@ public class ComponentUpgradeModifiedAfterSetToReadyForQA extends AbstractCheckR
     }
 
     private JiraIssue createJiraIssueMock(IssueType type) {
-        JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(bugId, "A Summary...");
+        JiraIssue mock = (JiraIssue) MockUtils.mockJira(bugId, "A Summary...");
         Mockito.when(mock.getType()).thenReturn(type);
         Mockito.when(mock.getChangelog()).thenReturn(changelog);
         Mockito.when(mock.getStatus()).thenReturn(issueStatus);

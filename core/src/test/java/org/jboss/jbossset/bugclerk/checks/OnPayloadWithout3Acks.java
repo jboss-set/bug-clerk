@@ -149,8 +149,7 @@ public class OnPayloadWithout3Acks extends AbstractCheckRunner {
 
 
     private JiraIssue mock(String release, FlagStatus dev, FlagStatus qe, FlagStatus pm) {
-        final JiraIssue mock = MockUtils.mockJiraIssue(bugId, "summary");
-        Mockito.when(mock.getSprintRelease()).thenReturn("");
+        final JiraIssue mock = MockUtils.mockJira(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
         Stage stage = new Stage();

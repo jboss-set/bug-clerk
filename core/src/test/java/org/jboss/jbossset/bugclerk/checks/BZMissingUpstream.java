@@ -31,6 +31,7 @@ import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.config.TrackerType;
 import org.jboss.set.aphrodite.domain.Comment;
 import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -53,7 +54,7 @@ public class BZMissingUpstream extends AbstractCheckRunner {
         final String bzId = "147586";
         final String upstreamJiraIssueId = "https://" + RulesHelper.JIRA_TRACKER_HOSTNAME + "/JBEAP-666";
 
-        Issue jiraUpstreamIssue = MockUtils.mockBug(upstreamJiraIssueId, "upstream issue");
+        JiraIssue jiraUpstreamIssue = MockUtils.mockJira(upstreamJiraIssueId, "upstream issue");
         Mockito.when(jiraUpstreamIssue.getURL()).thenReturn(URLUtils.createURLFromString(upstreamJiraIssueId));
         Mockito.when(jiraUpstreamIssue.getTrackerType()).thenReturn(TrackerType.JIRA);
         

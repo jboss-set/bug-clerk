@@ -66,7 +66,7 @@ public class PRLinksNotValid extends AbstractCheckRunner {
 
     private void mockIssueAndTest(String pullRequest, int nbViolationExpected) {
         String bugId = "4367";
-        JiraIssue issue = MockUtils.mockJiraIssue(bugId, summary);
+        JiraIssue issue = MockUtils.mockJira(bugId, summary);
         Mockito.when(issue.getSprintRelease()).thenReturn("EAP 7.0.3");
         Mockito.when(issue.getProduct()).thenReturn(Optional.of(product));
         Map<String, FlagStatus> streamStatus = Collections.singletonMap(targetRelease, FlagStatus.ACCEPTED);

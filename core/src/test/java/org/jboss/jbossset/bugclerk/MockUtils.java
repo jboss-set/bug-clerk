@@ -82,18 +82,36 @@ public final class MockUtils {
         }
     }
 
+    public static JiraIssue mockJira(String bugId, String summary) {
+        return mockJira(bugId, buildURL(bugId), summary);
+    }
 
     public static Issue mockBug(String bugId, String summary) {
         return mockBug(bugId, buildURL(bugId), summary);
     }
 
+    public static JiraIssue mockJira(String bugId, URL bugURL, String summary) {
+        JiraIssue mock = (JiraIssue) populateMock(bugId, bugURL, summary, createMockStub(TrackerType.JIRA));
+        List<Release> releases = mockReleases("6.4.0","");
+        Mockito.when(mock.getReleases()).thenReturn(releases);
+        Mockito.when(mock.getSprintRelease()).thenReturn("");
+        Mockito.when(mock.getStreamStatus()).thenReturn(new HashMap<>());
+        return mock;
+    }
+    
     public static Issue mockBug(String bugId, URL bugURL, String summary) {
         Issue mock = populateMock(bugId, bugURL, summary, createMockStub(TrackerType.BUGZILLA));
         List<Release> releases = mockReleases("6.4.0","");
         Mockito.when(mock.getReleases()).thenReturn(releases);
         return mock;
     }
-
+    /**
+     * 
+     * @param bugId
+     * @param summary
+     * @return
+     * @deprecated
+     */
     public static JiraIssue mockJiraIssue(String bugId, String summary) {
         JiraIssue issue = (JiraIssue) createMockStub(TrackerType.JIRA);
         return populateMock(bugId, buildJiraUrlFromId(bugId), summary, issue);

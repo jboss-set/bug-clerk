@@ -77,7 +77,7 @@ public class PRAgainstProperBranch extends AbstractCheckRunner {
 
     @Test
     public void noViolationIfPrAgainstProjectNotInCodeBases() { // because streams may not up to date
-        JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(bugId, summary);
+        JiraIssue mock = (JiraIssue) MockUtils.mockJira(bugId, summary);
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.0.3");
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.0.z"));
         Mockito.when(mock.getPullRequests()).thenReturn(MockUtils.mockPullRequestsUrls("https://github.com/jbossas/jboss-eap7/pull/1259"));
@@ -86,7 +86,7 @@ public class PRAgainstProperBranch extends AbstractCheckRunner {
 
     @Test
     public void violationIfPrAgainstProjectInCodeBasesButWrongBranch() {
-        JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(bugId, summary);
+        JiraIssue mock = (JiraIssue) MockUtils.mockJira(bugId, summary);
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.0.3");
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.0.z"));
         Mockito.when(mock.getPullRequests()).thenReturn(MockUtils.mockPullRequestsUrls(MOCK_PULL_REQUEST_ID));

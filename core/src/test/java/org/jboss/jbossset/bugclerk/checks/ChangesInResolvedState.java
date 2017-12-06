@@ -139,7 +139,7 @@ public class ChangesInResolvedState extends AbstractCheckRunner {
     }
 
     private JiraIssue createJiraIssueMock() {
-        JiraIssue mock = (JiraIssue) MockUtils.mockJiraIssue(bugId, "A Summary...");
+        JiraIssue mock = (JiraIssue) MockUtils.mockJira(bugId, "A Summary...");
         Mockito.when(mock.getChangelog()).thenReturn(changelog);
         Mockito.when(mock.getStatus()).thenReturn(issueStatus);
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.0.3");

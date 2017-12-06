@@ -64,7 +64,7 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
 
     private JiraIssue createJiraIssueMock() {
         upstreamReferences.clear();
-        JiraIssue mock = MockUtils.mockJiraIssue(bugId, "A Summary...");
+        JiraIssue mock = MockUtils.mockJira(bugId, "A Summary...");
         Mockito.when(mock.getSprintRelease()).thenReturn("EAP 7.0.3");
         Mockito.when(mock.getProduct()).thenReturn(Optional.ofNullable(LabelsHelper.JBEAPProject));
         Map<String, FlagStatus> streamStatus = Collections.singletonMap("7.0.7.GA", FlagStatus.ACCEPTED);
@@ -100,7 +100,7 @@ public class MissingDownstreamDependencyLabel extends AbstractCheckRunner {
     }
 
     private JiraIssue createUpstreamIssueWithOutDependencyLabel(String issueId) {
-        JiraIssue issue = MockUtils.mockJiraIssue(issueId, "A Summary...");
+        JiraIssue issue = MockUtils.mockJira(issueId, "A Summary...");
         Mockito.when(issue.getProduct()).thenReturn(Optional.ofNullable(LabelsHelper.JBEAPProject));
         Map<String, FlagStatus> streamStatus = Collections.singletonMap("7.1.0.GA", FlagStatus.ACCEPTED);
         Mockito.when(issue.getStreamStatus()).thenReturn(streamStatus);
