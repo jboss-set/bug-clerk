@@ -28,21 +28,6 @@
       <artifactId>jcommander</artifactId>
       <version>1.23</version>
     </dependency>
-
-    <!-- Tests dependencies -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>

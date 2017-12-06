@@ -16,7 +16,7 @@
   <name>Bug Clerk</name>
   <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
 
-	<modules>
+    <modules>
       <module>dist</module>
       <module>core</module>
     </modules>
@@ -34,6 +34,7 @@
     <version.org.drools>${version.drools}</version.org.drools>
     <version.org.jboss.set.aphrodite>aphrodite-0.7.0.Final</version.org.jboss.set.aphrodite>
     <version.org.kie>${version.drools}</version.org.kie>
+    <version.enforcer.plugin>3.0.0-M1</version.enforcer.plugin>
   </properties>
 
   <scm>
@@ -43,8 +44,121 @@
     <tag>HEAD</tag>
   </scm>
 
+  <dependencies>
+    <!-- Tests dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.7.10</version>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+          <groupId>com.atlassian.util.concurrent</groupId>
+           <artifactId>atlassian-util-concurrent</artifactId>
+          <version>2.4.2</version>
+      </dependency>
+      <dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+          <version>11.0.2</version>
+      </dependency>
+      <dependency>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+          <version>1.1.3</version>
+      </dependency>
+      <dependency>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+          <version>1.7</version>
+      </dependency>
+      <dependency>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+          <version>2.4</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jboss.set</groupId>
+          <artifactId>jboss-aphrodite-bugzilla</artifactId>
+          <version>${version.org.jboss.set.aphrodite}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>junit</groupId>
+                  <artifactId>junit</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.jboss.set</groupId>
+          <artifactId>jboss-aphrodite-jira</artifactId>
+          <version>${version.org.jboss.set.aphrodite}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.apache.httpcomponents</groupId>
+                  <artifactId>httpmime</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <plugins>
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-enforcer-plugin</artifactId>
+         <version>${version.enforcer.plugin}</version>
+         <executions>
+           <execution>
+               <id>ban-bad-dependencies</id>
+               <goals>
+                   <goal>enforce</goal>
+               </goals>
+               <configuration>
+                   <rules>
+                       <dependencyConvergence/>
+                       <requireMavenVersion>
+                           <version>3.3.9</version>
+                       </requireMavenVersion>
+                       <requireJavaVersion>
+                           <version>1.8</version>
+                       </requireJavaVersion>
+                       <requireOS>
+                           <family>unix</family>
+                       </requireOS>
+                   </rules>
+               </configuration>
+           </execution>
+         </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
