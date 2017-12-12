@@ -52,8 +52,8 @@ public class PayloadFixesMustHaveComponentUpgrade extends AbstractCheckRunner {
         URL mockUrl = MockUtils.buildURL(bugId);
         URL payloadTrackerUrl = MockUtils.buildURL(payloadId);
 
-        mock = MockUtils.mockBug(bugId, mockUrl, "summary");
-        payloadTracker = MockUtils.mockBug(payloadId, payloadTrackerUrl, "EAP 6.6.6 - Payload Tracker");
+        mock = MockUtils.mockBzIssue(bugId, mockUrl, "summary");
+        payloadTracker = MockUtils.mockBzIssue(payloadId, payloadTrackerUrl, "EAP 6.6.6 - Payload Tracker");
         Mockito.when(payloadTracker.getDependsOn()).thenReturn(CollectionUtils.asListOf(mockUrl));
         Mockito.when(mock.getBlocks()).thenReturn(CollectionUtils.asListOf(payloadTrackerUrl));
     }
@@ -70,7 +70,7 @@ public class PayloadFixesMustHaveComponentUpgrade extends AbstractCheckRunner {
         URL payloadTrackerUrl = MockUtils.buildURL(payloadId);
         URL componentUpgrade = MockUtils.buildURL(componentUpgradeId);
 
-        Issue componentUpgradeIssue = MockUtils.mockBug(componentUpgradeId, componentUpgrade, "Component Upgrade");
+        Issue componentUpgradeIssue = MockUtils.mockBzIssue(componentUpgradeId, componentUpgrade, "Component Upgrade");
         Mockito.when(componentUpgradeIssue.getType()).thenReturn(IssueType.UPGRADE);
         Mockito.when(mock.getBlocks()).thenReturn(CollectionUtils.asListOf(payloadTrackerUrl, componentUpgrade));
         assertResultsIsAsExpected(engine.runChecksOnBugs(CollectionUtils.asSetOf(new Candidate(mock), new Candidate(payloadTracker), new Candidate(componentUpgradeIssue)), checknames), checkName,bugId, 0);
@@ -82,7 +82,7 @@ public class PayloadFixesMustHaveComponentUpgrade extends AbstractCheckRunner {
         URL payloadTrackerUrl = MockUtils.buildURL(payloadId);
         URL componentUpgrade = MockUtils.buildURL(componentUpgradeId);
 
-        Issue componentUpgradeIssue = MockUtils.mockBug(componentUpgradeId, componentUpgrade, "Component Upgrade");
+        Issue componentUpgradeIssue = MockUtils.mockBzIssue(componentUpgradeId, componentUpgrade, "Component Upgrade");
         Mockito.when(componentUpgradeIssue.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getBlocks()).thenReturn(CollectionUtils.asListOf(payloadTrackerUrl, componentUpgrade));
         assertResultsIsAsExpected(engine.runChecksOnBugs(CollectionUtils.asSetOf(new Candidate(mock), new Candidate(payloadTracker), new Candidate(componentUpgradeIssue)), checknames), checkName,bugId);

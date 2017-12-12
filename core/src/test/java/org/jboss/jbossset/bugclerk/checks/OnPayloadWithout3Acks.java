@@ -71,13 +71,13 @@ public class OnPayloadWithout3Acks extends AbstractCheckRunner {
         URL payloadTrackerUrl = MockUtils.buildURL(payloadId);
 
         // set up payload tracker
-        Issue payloadTracker = MockUtils.mockBug(payloadId, payloadTrackerUrl, "EAP 6.4.18 - Payload Tracker");
+        Issue payloadTracker = MockUtils.mockBzIssue(payloadId, payloadTrackerUrl, "EAP 6.4.18 - Payload Tracker");
         Mockito.when(payloadTracker.getType()).thenReturn(IssueType.BUG);
         Mockito.when(payloadTracker.getDependsOn()).thenReturn(CollectionUtils.asListOf(upgradeURL));
         Mockito.when(mockAphroditeClientIfNeeded().retrieveIssue(Mockito.any())).thenReturn(Optional.of(payloadTracker));
 
         // set up tested bug
-        final Issue bzIssue = MockUtils.mockBug(bugId, upgradeURL, "summary");
+        final Issue bzIssue = MockUtils.mockBzIssue(bugId, upgradeURL, "summary");
         Mockito.when(bzIssue.getStatus()).thenReturn(IssueStatus.POST);
         Mockito.when(bzIssue.getBlocks()).thenReturn(Arrays.asList(payloadTrackerUrl));
         Stage stage = new Stage();
@@ -99,13 +99,13 @@ public class OnPayloadWithout3Acks extends AbstractCheckRunner {
         URL payloadTrackerUrl = MockUtils.buildURL(payloadId);
 
         // set up payload tracker
-        Issue payloadTracker = MockUtils.mockBug(payloadId, payloadTrackerUrl, "EAP 6.4.18 - Payload Tracker");
+        Issue payloadTracker = MockUtils.mockBzIssue(payloadId, payloadTrackerUrl, "EAP 6.4.18 - Payload Tracker");
         Mockito.when(payloadTracker.getType()).thenReturn(IssueType.BUG);
         Mockito.when(payloadTracker.getDependsOn()).thenReturn(CollectionUtils.asListOf(upgradeURL));
         Mockito.when(mockAphroditeClientIfNeeded().retrieveIssue(Mockito.any())).thenReturn(Optional.of(payloadTracker));
 
         // set up tested bug
-        final Issue bzIssue = MockUtils.mockBug(bugId, upgradeURL, "summary");
+        final Issue bzIssue = MockUtils.mockBzIssue(bugId, upgradeURL, "summary");
         Mockito.when(bzIssue.getStatus()).thenReturn(IssueStatus.POST);
         Stage stage = new Stage();
         stage.setStatus(Flag.DEV, SET);
@@ -126,13 +126,13 @@ public class OnPayloadWithout3Acks extends AbstractCheckRunner {
         URL payloadTrackerUrl = MockUtils.buildURL(payloadId);
 
         // set up payload tracker
-        Issue payloadTracker = MockUtils.mockBug(payloadId, payloadTrackerUrl, "EAP 6.4.18 - Payload Tracker");
+        Issue payloadTracker = MockUtils.mockBzIssue(payloadId, payloadTrackerUrl, "EAP 6.4.18 - Payload Tracker");
         Mockito.when(payloadTracker.getType()).thenReturn(IssueType.BUG);
         Mockito.when(payloadTracker.getDependsOn()).thenReturn(CollectionUtils.asListOf(upgradeURL));
         Mockito.when(mockAphroditeClientIfNeeded().retrieveIssue(Mockito.any())).thenReturn(Optional.of(payloadTracker));
 
         // set up tested bug
-        final Issue bzIssue = MockUtils.mockBug(bugId, upgradeURL, "summary");
+        final Issue bzIssue = MockUtils.mockBzIssue(bugId, upgradeURL, "summary");
         Mockito.when(bzIssue.getStatus()).thenReturn(IssueStatus.POST);
         Mockito.when(bzIssue.getBlocks()).thenReturn(Arrays.asList(payloadTrackerUrl));
         Stage stage = new Stage();

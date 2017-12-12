@@ -14,7 +14,7 @@ public class IssueWorkedOnButNotQAAcked extends AbstractCheckRunner {
     @Test
     public void issueInAssignedStatePendingQAAckShouldFail() {
         String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.ASSIGNED);
         Stage stage = new Stage();
         stage.setStatus(Flag.DEV, FlagStatus.ACCEPTED);
@@ -28,7 +28,7 @@ public class IssueWorkedOnButNotQAAcked extends AbstractCheckRunner {
     @Test
     public void issueInAssignedStateWithRejectedQAAckShouldFail() {
         String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.ASSIGNED);
         Stage stage = new Stage();
         stage.setStatus(Flag.DEV, FlagStatus.ACCEPTED);
@@ -42,7 +42,7 @@ public class IssueWorkedOnButNotQAAcked extends AbstractCheckRunner {
     @Test
     public void issueInAssignedStateWithApprovedQAAckShouldPass() {
         String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.ASSIGNED);
         Stage stage = new Stage();
         stage.setStatus(Flag.DEV, FlagStatus.ACCEPTED);

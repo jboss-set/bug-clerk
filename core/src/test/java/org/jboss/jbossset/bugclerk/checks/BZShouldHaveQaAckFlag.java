@@ -75,7 +75,7 @@ public class BZShouldHaveQaAckFlag extends AbstractCheckRunner {
 
     @Before
     public void testSpecificStubbingForBug() {
-        mock = MockUtils.mockBug(bugId, "summary");
+        mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.VERIFIED);
     }
 }

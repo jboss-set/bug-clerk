@@ -39,7 +39,7 @@ public final class BugClerkMockingHelper {
     public static Collection<Candidate> buildTestSubjectWithComment(String bugId, String comment) {
         List<Comment> comments = new ArrayList<Comment>();
         comments.add(MockUtils.mockComment("0", comment, bugId));
-        Issue mock = MockUtils.mockBug(bugId, "summary");
+        Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getComments()).thenReturn(comments);
         return CollectionUtils.asSetOf(new Candidate(mock));
     }

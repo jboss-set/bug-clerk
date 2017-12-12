@@ -51,7 +51,7 @@ public class SummaryContainsPatchButTypeIsNotSupportPatch extends AbstractCheckR
     }
 
     protected Issue prepareMock(String summary, IssueType type) {
-        final Issue mock = MockUtils.mockBug(bugId, summary);
+        final Issue mock = MockUtils.mockBzIssue(bugId, summary);
         Mockito.when(mock.getType()).thenReturn(type);
         return mock;
     }

@@ -44,10 +44,10 @@ public class BZDepsShouldAlsoHaveFlags extends AbstractCheckRunner {
     public void bzOnModifiedAndHasDevFlag() {
         final String dependencyId = "14380";
 
-        Issue dependency = MockUtils.mockBug(dependencyId, "dependency payload");
+        Issue dependency = MockUtils.mockBzIssue(dependencyId, "dependency payload");
         Mockito.when(dependency.getStage()).thenReturn(buildStageMapForDeps());
 
-        Issue payload = MockUtils.mockBug("143794", "payload bug");
+        Issue payload = MockUtils.mockBzIssue("143794", "payload bug");
         payload.getDependsOn().add(dependency.getURL());
         Mockito.when(payload.getStage()).thenReturn(buildStageMapForPayload());
 

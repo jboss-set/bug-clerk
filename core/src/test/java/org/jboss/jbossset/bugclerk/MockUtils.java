@@ -83,11 +83,11 @@ public final class MockUtils {
     }
 
 
-    public static Issue mockBug(String bugId, String summary) {
-        return mockBug(bugId, buildURL(bugId), summary);
+    public static Issue mockBzIssue(String bugId, String summary) {
+        return mockBzIssue(bugId, buildURL(bugId), summary);
     }
 
-    public static Issue mockBug(String bugId, URL bugURL, String summary) {
+    public static Issue mockBzIssue(String bugId, URL bugURL, String summary) {
         Issue mock = populateMock(bugId, bugURL, summary, createMockStub(TrackerType.BUGZILLA));
         List<Release> releases = mockReleases("6.4.0","");
         Mockito.when(mock.getReleases()).thenReturn(releases);
@@ -177,7 +177,7 @@ public final class MockUtils {
     public static  List<Issue> generateMockIssues(int nbIssue, String idPrefix, String summaryPrefix) {
        List<Issue> issues = new ArrayList<>(nbIssue);
         for ( int i = 1; i < (nbIssue + 1); i++ )
-            issues.add(MockUtils.mockBug(idPrefix + i, summaryPrefix + i));
+            issues.add(MockUtils.mockBzIssue(idPrefix + i, summaryPrefix + i));
         return issues;
     }
 

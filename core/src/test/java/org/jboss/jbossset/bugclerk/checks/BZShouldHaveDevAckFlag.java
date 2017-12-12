@@ -89,7 +89,7 @@ public class BZShouldHaveDevAckFlag extends AbstractCheckRunner {
 
     @Before
     public void testSpecificStubbingForBug() {
-        mock = MockUtils.mockBug("12345", "summary");
+        mock = MockUtils.mockBzIssue("12345", "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
     }
 }

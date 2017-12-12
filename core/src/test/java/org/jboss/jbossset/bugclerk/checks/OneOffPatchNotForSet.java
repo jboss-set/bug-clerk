@@ -40,7 +40,7 @@ public class OneOffPatchNotForSet extends AbstractCheckRunner {
 
     @Test
     public void violationIfOneOff() {
-        mock = MockUtils.mockBug(bugId, "summary");
+        mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(IssueType.ONE_OFF);
         assertResultsIsAsExpected(engine.runCheckOnBugs(buildTestSubjectWithComment(mock, "comment"), checkName), checkName,
                 bugId);
@@ -48,7 +48,7 @@ public class OneOffPatchNotForSet extends AbstractCheckRunner {
 
     @Test
     public void violationIfSupportPatch() {
-        mock = MockUtils.mockBug(bugId, "summary");
+        mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(IssueType.SUPPORT_PATCH);
         assertResultsIsAsExpected(engine.runCheckOnBugs(buildTestSubjectWithComment(mock, "comment"), checkName), checkName,
                 bugId);
@@ -56,9 +56,9 @@ public class OneOffPatchNotForSet extends AbstractCheckRunner {
 
     @Test
     public void falsePositive() {
-        mock = MockUtils.mockBug(bugId, "summary");
+        mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
 
-        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asListOf(new Candidate(MockUtils.mockBug("123", "summary"))),checkName),checkName,bugId,0);
+        assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asListOf(new Candidate(MockUtils.mockBzIssue("123", "summary"))),checkName),checkName,bugId,0);
     }
 }

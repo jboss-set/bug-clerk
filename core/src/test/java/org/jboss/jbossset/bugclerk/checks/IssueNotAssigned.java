@@ -44,7 +44,7 @@ public class IssueNotAssigned extends AbstractCheckRunner {
 
     @Before
     public void prepareBugMock() {
-        mock = MockUtils.mockBug(bugId, "summary");
+        mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.NEW);
     }
 

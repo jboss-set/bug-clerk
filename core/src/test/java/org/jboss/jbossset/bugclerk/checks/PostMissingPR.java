@@ -43,7 +43,7 @@ public class PostMissingPR extends AbstractCheckRunner {
     @Test
     public void violationIfPRappearsInAComment() {
         final String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
@@ -56,7 +56,7 @@ public class PostMissingPR extends AbstractCheckRunner {
         final String payload = "Where did you find that one?\n \n I copied the wrong one, I was testing for a case and I cherry picked it into my branch and built it, looks like I copied from there, where the has was different.\n \n Wildfly is:\n \n commit 3f0118a695aa7350e63fef395e2b4c61eb3932e4\n Author: Brian Stansberry <brian.stansberry@redhat.com>\n Date: Thu Apr 18 20:24:17 2013 -0500\n \n AS7-6949 Don't read child resource twice; avoid NPE\n \n \n 6.x PR:\n https://github.com/jbossas/jboss-eap/pull/2273\n";
 
        
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(buildTestSubjectWithComment(mock, payload), checkName), checkName,bugId, 0);
@@ -67,7 +67,7 @@ public class PostMissingPR extends AbstractCheckRunner {
         final String bugId = "143794";
         final String payload = "PR is there : https://github.com/jbossas/redhat-picketlink/commit/43a7fc4b2bd1438f23b22ffbdcbb341aa45ba885";
 
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(buildTestSubjectWithComment(mock, payload), checkName), checkName, bugId, 0);

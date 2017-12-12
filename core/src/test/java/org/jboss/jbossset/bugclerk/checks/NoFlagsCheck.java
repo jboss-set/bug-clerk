@@ -46,7 +46,7 @@ public class NoFlagsCheck extends AbstractCheckRunner {
     @Test
     public void testNoFlags() {
         final String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(new GregorianCalendar(2000, 0, 1).getTime()));
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
         Mockito.when(mock.getStage()).thenReturn(new Stage());

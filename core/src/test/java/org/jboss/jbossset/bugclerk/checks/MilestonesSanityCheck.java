@@ -52,7 +52,7 @@ public class MilestonesSanityCheck extends AbstractCheckRunner {
 
     @Test
     public void noViolationIfReleasesNotEmpty() {
-        Issue mock = MockUtils.mockBug(bugId, summary);
+        Issue mock = MockUtils.mockBzIssue(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("6.3.0", ""));
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
@@ -62,7 +62,7 @@ public class MilestonesSanityCheck extends AbstractCheckRunner {
 
     @Test
     public void noViolationIfNotModified() {
-        Issue mock = MockUtils.mockBug(bugId, summary);
+        Issue mock = MockUtils.mockBzIssue(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.POST);
@@ -72,7 +72,7 @@ public class MilestonesSanityCheck extends AbstractCheckRunner {
 
     @Test
     public void noViolationIfTypeIsComponentUpgrade() {
-        Issue mock = MockUtils.mockBug(bugId, summary);
+        Issue mock = MockUtils.mockBzIssue(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
         Mockito.when(mock.getType()).thenReturn(IssueType.UPGRADE);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.MODIFIED);
@@ -82,7 +82,7 @@ public class MilestonesSanityCheck extends AbstractCheckRunner {
 
     @Test
     public void violation() {
-        Issue mock = MockUtils.mockBug(bugId, summary);
+        Issue mock = MockUtils.mockBzIssue(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(new ArrayList<Release>(0));
         Mockito.when(mock.getType()).thenReturn(IssueType.BUG);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.MODIFIED);

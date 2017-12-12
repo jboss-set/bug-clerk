@@ -41,7 +41,7 @@ public class ViolationsReportAsCommentBuilderTest {
             violations.put(issue,MockUtils.generateMockViolationsForIssue(issue.getTrackerId().get(), checknames));
         // Run and asserts
         Collection<Candidate> candidates = new ArrayList<Candidate>(1);
-        Candidate candidate = new Candidate(MockUtils.mockBug("mockId", "summary"));
+        Candidate candidate = new Candidate(MockUtils.mockBzIssue("mockId", "summary"));
         candidates.add(candidate);
         for (Map.Entry<Issue, Comment> entry: builder.reportViolationToBugTracker(candidates).entrySet() ) {
             for ( String checkname : checknames ) {

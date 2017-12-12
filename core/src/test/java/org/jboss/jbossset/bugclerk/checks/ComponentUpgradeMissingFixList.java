@@ -42,7 +42,7 @@ public class ComponentUpgradeMissingFixList extends AbstractCheckRunner {
     @Test
     public void violationIfNoDependsOnAndComponentUpgradeType() {
         final String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(TYPE);
         Mockito.when(mock.getDependsOn()).thenReturn(new ArrayList<URL>());
 

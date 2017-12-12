@@ -50,7 +50,7 @@ public class ComponentUpgradeReadyForQaDepsCheck extends AbstractCheckRunner {
     @Test
     public void noViolationIfNoDependsOn() {
         final String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(TYPE);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.ON_QA);
         Mockito.when(mock.getDependsOn()).thenReturn(new ArrayList<URL>());
@@ -62,12 +62,12 @@ public class ComponentUpgradeReadyForQaDepsCheck extends AbstractCheckRunner {
     @Test
     public void noViolationIfOneDependencyOnQA() {
         
-        final Issue dep = MockUtils.mockBug("JBEAP-667", "dependency");
+        final Issue dep = MockUtils.mockBzIssue("JBEAP-667", "dependency");
         Mockito.when(dep.getStatus()).thenReturn(IssueStatus.ON_QA);
         URL urlDep = URLUtils.createURLFromString(JIRA_SERVER + "JBEAP-666");
         Mockito.when(dep.getURL()).thenReturn(urlDep);
         final String bugId = "JBEAP-666";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getType()).thenReturn(TYPE);
         Mockito.when(mock.getStatus()).thenReturn(IssueStatus.ON_QA);
         Mockito.when(mock.getDependsOn()).thenReturn(Arrays.asList(urlDep));
@@ -88,11 +88,11 @@ public class ComponentUpgradeReadyForQaDepsCheck extends AbstractCheckRunner {
 
         final String bugId = "JBEAP-666";
         final String depId = "JBEAP-667";
-        final Issue dep = MockUtils.mockBug(depId, "dependency");
+        final Issue dep = MockUtils.mockBzIssue(depId, "dependency");
         Mockito.when(dep.getStatus()).thenReturn(IssueStatus.ASSIGNED);
         URL urlDep = URLUtils.createURLFromString(JIRA_SERVER + depId);
         Mockito.when(dep.getURL()).thenReturn(urlDep);
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         URL urlBug = URLUtils.createURLFromString(JIRA_SERVER + bugId);
         Mockito.when(mock.getURL()).thenReturn(urlBug);
         Mockito.when(mock.getType()).thenReturn(TYPE);

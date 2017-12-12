@@ -45,14 +45,14 @@ public class ReleaseVersionMismatch extends AbstractCheckRunner {
 
     @Test
     public void violationIfFlagPresentNotMatching() {
-        Issue mock = MockUtils.mockBug(bugId, summary);
+        Issue mock = MockUtils.mockBzIssue(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("6.3.0", ""));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 1);
     }
 
     @Test
     public void noViolationIfFlagPresentIsMatching() {
-        Issue mock = MockUtils.mockBug(bugId, summary);
+        Issue mock = MockUtils.mockBzIssue(bugId, summary);
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("6.4.0", ""));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
     }

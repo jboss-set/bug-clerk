@@ -82,7 +82,7 @@ public class BZShouldHaveTimeEstimate extends AbstractCheckRunner {
 
     @Before
     public void prepareMock() {        
-        mock = MockUtils.mockBug(this.bugId, "summary");
+        mock = MockUtils.mockBzIssue(this.bugId, "summary");
         Mockito.when(mock.getEstimation()).thenReturn(Optional.of(new IssueEstimation(3, 3)));
         mock.getStage().getStateMap().put(Flag.DEV, FlagStatus.ACCEPTED);
     }

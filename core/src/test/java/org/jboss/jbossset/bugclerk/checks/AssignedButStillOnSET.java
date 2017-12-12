@@ -63,7 +63,7 @@ public class AssignedButStillOnSET extends AbstractCheckRunner {
     }
 
     protected Issue prepareMock(IssueStatus status, String assignedTo) {
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getStatus()).thenReturn(status);
         Mockito.when(mock.getAssignee()).thenReturn(Optional.of(User.createWithEmail(assignedTo)));
         return mock;

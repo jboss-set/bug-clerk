@@ -37,7 +37,7 @@ public class BuildReportToUpdateTracker {
         List<Comment> mockComments = MockUtils.mockCommentsWithOneItem("1", text, bugId);
         List<Violation> violations = MockUtils.mockViolationsListWithOneItem(bugId, checkname);
 
-        mock = MockUtils.mockBug(bugId, checkname);
+        mock = MockUtils.mockBzIssue(bugId, checkname);
         Mockito.when(mock.getComments()).thenReturn(mockComments);
 
         mockLoadedResults = new ArrayList<Candidate>(1);

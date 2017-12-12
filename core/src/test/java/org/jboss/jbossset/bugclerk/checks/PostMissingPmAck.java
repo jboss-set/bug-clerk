@@ -47,7 +47,7 @@ public class PostMissingPmAck extends AbstractCheckRunner {
     @Test
     public void violationIfPostAndThreeWeeksAgo() {
         final String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
 
         assertResultsIsAsExpected(
                 engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(testSpecificStubbingForBug(mock))), checkName),
@@ -57,7 +57,7 @@ public class PostMissingPmAck extends AbstractCheckRunner {
     @Test
     public void noViolationIfTwoWeeksOld() {
         final String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(DateUtils.twoWeeksAgo()));
 
         assertResultsIsAsExpected(
@@ -68,7 +68,7 @@ public class PostMissingPmAck extends AbstractCheckRunner {
     @Test
     public void noViolationIfNoPR() {
         final String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getLastUpdated()).thenReturn(Optional.of(DateUtils.threeWeeksAgo()));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,
@@ -78,7 +78,7 @@ public class PostMissingPmAck extends AbstractCheckRunner {
     @Test
     public void noViolationIfPmAcked() {
         final String bugId = "143794";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         mock.getStage().getStateMap().put(Flag.PM, FlagStatus.ACCEPTED);
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName,

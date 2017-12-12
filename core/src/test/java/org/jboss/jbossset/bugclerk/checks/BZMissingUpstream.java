@@ -40,57 +40,57 @@ public class BZMissingUpstream extends AbstractCheckRunner {
     public void bzIssueButNoDeps() {
         final String checkName = super.checkName + "_NoDeps";
         final String issueId = "14380";
-        
-        Issue mock = MockUtils.mockBug(issueId, "BZ issue with no deps");
+
+        Issue mock = MockUtils.mockBzIssue(issueId, "BZ issue with no deps");
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, issueId);
     }
-    
+
     @Test
     public void bzHasDepsIncludingOneJIRAissue() {
         final String checkName = super.checkName + "_WithDeps";
         final String bzId = "147586";
         final String upstreamJiraIssueId = "https://" + RulesHelper.JIRA_TRACKER_HOSTNAME + "/JBEAP-666";
 
-        Issue jiraUpstreamIssue = MockUtils.mockBug(upstreamJiraIssueId, "upstream issue");
+        Issue jiraUpstreamIssue = MockUtils.mockBzIssue(upstreamJiraIssueId, "upstream issue");
         Mockito.when(jiraUpstreamIssue.getURL()).thenReturn(URLUtils.createURLFromString(upstreamJiraIssueId));
         Mockito.when(jiraUpstreamIssue.getTrackerType()).thenReturn(TrackerType.JIRA);
-        
-        Issue bzIssue = MockUtils.mockBug(bzId, "BZ issue");     
+
+        Issue bzIssue = MockUtils.mockBzIssue(bzId, "BZ issue");
         Mockito.when(bzIssue.getDependsOn()).thenReturn(CollectionUtils.asListOf(URLUtils.createURLFromString(upstreamJiraIssueId)));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.buildCollectionOfCandidates(bzIssue, jiraUpstreamIssue), checkName), checkName, bzId,0);
     }
-    
+
     @Test
     public void bzHasDepsButNoJIRAissue() {
         final String checkName = super.checkName + "_WithDeps";
         final String bzId = "111";
         final String bzDependencyId = "666";
 
-        Issue bzDependency = MockUtils.mockBug(bzDependencyId, "other BZ deps");
-        
-        Issue bzIssue = MockUtils.mockBug(bzId, "BZ issue");
+        Issue bzDependency = MockUtils.mockBzIssue(bzDependencyId, "other BZ deps");
+
+        Issue bzIssue = MockUtils.mockBzIssue(bzId, "BZ issue");
         Mockito.when(bzIssue.getDependsOn()).thenReturn(CollectionUtils.asListOf(MockUtils.buildURL(bzDependencyId)));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.buildCollectionOfCandidates(bzIssue, bzDependency), checkName), checkName, bzId);
     }
-    
+
     @Test
     public void noUpstreamButExplanationInComment() {
         final String checkName = super.checkName + "_WithDeps";
         final String bzId = "111";
         final String bzDependencyId = "666";
 
-        Issue bzDependency = MockUtils.mockBug(bzDependencyId, "other BZ deps");
-        
-        Issue bzIssue = MockUtils.mockBug(bzId, "BZ issue");
+        Issue bzDependency = MockUtils.mockBzIssue(bzDependencyId, "other BZ deps");
+
+        Issue bzIssue = MockUtils.mockBzIssue(bzId, "BZ issue");
         Mockito.when(bzIssue.getDependsOn()).thenReturn(CollectionUtils.asListOf(MockUtils.buildURL(bzDependencyId)));
-        
+
         Comment comment = MockUtils.mockComment("0", "There is no upstream issue required because...", bzId);
-        
+
         Mockito.when(bzIssue.getComments()).thenReturn(CollectionUtils.asListOf(comment));
-        
+
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.buildCollectionOfCandidates(bzIssue, bzDependency), checkName), checkName, bzId,0);
     }
 }

@@ -45,7 +45,7 @@ public class IssueOnPayloadButNotAssigned extends AbstractCheckRunner {
     @Test
     public void testUserIsNotSetButReleasesNotEmpty() {
         final String bugId = "JBEAP-12345";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.1.0"));
         Mockito.when(mock.getAssignee()).thenReturn(Optional.of(new User("","")));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 1);
@@ -54,7 +54,7 @@ public class IssueOnPayloadButNotAssigned extends AbstractCheckRunner {
     @Test
     public void testNoMatchWhenUserIsSetWithEmailAndReleasesNotEmpty() {
         final String bugId = "JBEAP-12345";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getReleases()).thenReturn(MockUtils.mockReleases("7.2.0"));
         Mockito.when(mock.getAssignee()).thenReturn(Optional.of(User.createWithEmail("Romain Pelisse")));
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
@@ -63,7 +63,7 @@ public class IssueOnPayloadButNotAssigned extends AbstractCheckRunner {
     @Test
     public void testNoMatchWhenUserIsNotSetButNoReleasesEither() {
         final String bugId = "JBEAP-12345";
-        final Issue mock = MockUtils.mockBug(bugId, "summary");
+        final Issue mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getReleases()).thenReturn(Collections.emptyList());    
         assertResultsIsAsExpected(engine.runCheckOnBugs(CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, bugId, 0);
     }

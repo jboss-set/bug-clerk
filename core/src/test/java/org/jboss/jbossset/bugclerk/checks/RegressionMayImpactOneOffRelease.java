@@ -70,7 +70,7 @@ public class RegressionMayImpactOneOffRelease extends AbstractCheckRunner {
     }
 
     protected Candidate prepareOneOff() {
-        final Issue oneOff = MockUtils.mockBug(oneOffBugId, "it's a one-off");
+        final Issue oneOff = MockUtils.mockBzIssue(oneOffBugId, "it's a one-off");
         Mockito.when(oneOff.getType()).thenReturn(IssueType.ONE_OFF);
         URL url = buildUrlForId(originalBugId);
         URL url2 = buildUrlForId(originalBugId);
@@ -98,7 +98,7 @@ public class RegressionMayImpactOneOffRelease extends AbstractCheckRunner {
 
     protected Candidate prepareOriginal(String regressionText) {
         final List<Comment> comments = MockUtils.mockCommentsWithOneItem("1", regressionText, originalBugId);
-        final Issue originalOne = MockUtils.mockBug(originalBugId, "it's the original one");
+        final Issue originalOne = MockUtils.mockBzIssue(originalBugId, "it's the original one");
         Mockito.when(originalOne.getDependsOn()).thenReturn(buildUrlListForOneUrl(buildUrlForId(oneOffBugId)));
         Mockito.when(originalOne.getType()).thenReturn(IssueType.SUPPORT_PATCH);
         Mockito.when(originalOne.getComments()).thenReturn(comments);

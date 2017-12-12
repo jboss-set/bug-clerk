@@ -44,7 +44,7 @@ public class HighPriorityIssueNotAssigned extends AbstractCheckRunner {
 
     @Before
     public void prepareBugMock() {
-        mock = MockUtils.mockBug(bugId, "summary");
+        mock = MockUtils.mockBzIssue(bugId, "summary");
         Mockito.when(mock.getPriority()).thenReturn(IssuePriority.CRITICAL);
         Mockito.when(mock.getAssignee()).thenReturn(Optional.empty());
         Mockito.when(mock.getCreationTime()).thenReturn(Optional.of(DateUtils.threeWeeksAgo()));

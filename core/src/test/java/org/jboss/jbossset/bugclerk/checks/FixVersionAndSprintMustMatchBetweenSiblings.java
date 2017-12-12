@@ -70,7 +70,7 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         final String checkName = super.checkName;
         final String issueId = "14380";
         
-        Issue mock = MockUtils.mockBug(issueId, "A simple BZ issue...");
+        Issue mock = MockUtils.mockBzIssue(issueId, "A simple BZ issue...");
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, issueId,0);        
@@ -93,7 +93,7 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         final String checkName = super.checkName;
         final String issueId = "14380";
 
-        Issue sibling = MockUtils.mockBug(issueId,"Summary");
+        Issue sibling = MockUtils.mockBzIssue(issueId,"Summary");
         JiraIssue mock = MockUtils.mockJiraIssue("JBEAP-666", "A simple BZ issue...");
         Mockito.when(mock.getSprintRelease()).thenReturn("");        
         mock.setDependsOn(CollectionUtils.asListOf(sibling.getURL()));

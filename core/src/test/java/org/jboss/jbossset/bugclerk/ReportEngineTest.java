@@ -18,7 +18,7 @@ public class ReportEngineTest {
     }
 
     public Candidate buildCandidateWithViolations(String bugId, String checkname) {
-        Candidate candidate = new Candidate(MockUtils.mockBug(bugId, "summary"));
+        Candidate candidate = new Candidate(MockUtils.mockBzIssue(bugId, "summary"));
         for ( Violation v : MockUtils.mockViolationsListWithOneItem(bugId, checkname) )
             candidate.addViolation(v);
         return candidate;
