@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.IssueStatus;
+import org.jboss.set.aphrodite.domain.IssueType;
 /**
  * <p>Regroups a set of static method used by some checks.</p>
  *
@@ -26,5 +27,10 @@ public final class DependencyResolverHelper {
     public static boolean checksDependencyStatus(List<URL> dependencies, IssueStatus status, AphroditeClient aphrodite) {
         return aphrodite.loadIssuesFromUrls(dependencies).stream().
                             filter(issue -> ! issue.getStatus().equals(status)).findAny().isPresent();
+    }
+
+    public static boolean checksIfDependencyIsAComponentUpgrade(List<URL> dependencies, AphroditeClient aphrodite) {
+        return aphrodite.loadIssuesFromUrls(dependencies).stream().
+                            filter(issue -> issue.getType().equals(IssueType.UPGRADE)).findAny().isPresent();
     }
 }
