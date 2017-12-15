@@ -1,6 +1,8 @@
 package org.jboss.jbossset.bugclerk;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.jbossset.bugclerk.checks.utils.DateUtils;
 import org.jboss.jbossset.bugclerk.utils.URLUtils;
 import org.jboss.set.aphrodite.config.TrackerType;
@@ -20,13 +23,18 @@ import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueEstimation;
 import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.jboss.set.aphrodite.domain.IssueType;
+import org.jboss.set.aphrodite.domain.PullRequest;
+import org.jboss.set.aphrodite.domain.PullRequestState;
 import org.jboss.set.aphrodite.domain.Release;
+import org.jboss.set.aphrodite.domain.Repository;
 import org.jboss.set.aphrodite.domain.Stage;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.domain.StreamComponent;
 import org.jboss.set.aphrodite.domain.User;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public final class MockUtils {
 
@@ -226,4 +234,90 @@ public final class MockUtils {
         stream.addComponent(component);
         return stream;
     }
+
+    public static PullRequest mockPullRequest(final String url, final String title, final String branch, final PullRequestState state) throws MalformedURLException {
+        final PullRequest pullRequest = Mockito.mock(PullRequest.class);
+        Mockito.when(pullRequest.getURL()).thenReturn(new URL(url));
+        Mockito.when(pullRequest.getCodebase()).thenReturn(new Codebase(branch));
+        Mockito.when(pullRequest.getState()).thenReturn(state);
+        Mockito.when(pullRequest.getTitle()).thenReturn(title);
+        return pullRequest;
+    }
+
+    public static void mockPullRequestReturn(final AphroditeClient client, final PullRequest... requests) {
+        Mockito.when(client.getPullRequest(Mockito.any())).then(new Answer<PullRequest>() {
+
+            @Override
+            public PullRequest answer(InvocationOnMock invocation) throws Throwable {
+                final String args = (String) invocation.getArguments()[0];
+                for (PullRequest pr : requests) {
+                    if (pr.getURL().toString().equals(args))
+                        return pr;
+                }
+                return null;
+            }
+        });
+    }
+
+    public static StreamComponent mockStreamComponent(final String cmpName, final String codeBaseName, final String url) throws URISyntaxException {
+        final StreamComponent mockComponent = Mockito.mock(StreamComponent.class);
+        final Codebase mockCodebase = Mockito.mock(Codebase.class);
+
+        Mockito.when(mockCodebase.getName()).thenReturn(codeBaseName);
+        Mockito.when(mockComponent.getName()).thenReturn(cmpName);
+        Mockito.when(mockComponent.getCodebase()).thenReturn(mockCodebase);
+        Mockito.when(mockComponent.getRepositoryURL()).thenReturn(new URI(url));
+        return mockComponent;
+    }
+    
+    public static Stream mockStream(final String name, final String[] componentNames, final String[] cbs, final String[] urls) throws URISyntaxException {
+        final Stream mock = Mockito.mock(Stream.class);
+        Mockito.when(mock.getName()).thenReturn(name);
+        String cmpName = null, codeBaseName= null, url = null;
+        final List<StreamComponent> components = new ArrayList<>();
+        for(int index =0; index<componentNames.length; index++) {
+            cmpName = componentNames[index];
+            codeBaseName = cbs[index];
+            url = urls[index];
+            final StreamComponent mockComponent = Mockito.mock(StreamComponent.class);
+            //final Codebase mockCodebase = Mockito.mock(Codebase.class);
+
+            //Mockito.when(mockCodebase.getName()).thenReturn(codeBaseName);
+            Mockito.when(mockComponent.getName()).thenReturn(cmpName);
+            //Mockito.when(mockComponent.getCodebase()).thenReturn(mockCodebase);
+            Mockito.when(mockComponent.getCodebase()).thenReturn(new Codebase(codeBaseName));
+            Mockito.when(mockComponent.getRepositoryURL()).thenReturn(new URI(url));
+            components.add(mockComponent);
+        }
+        Mockito.when(mock.getAllComponents()).thenReturn(components);
+        Mockito.when(mock.getComponent(Mockito.anyString())).then(new Answer<StreamComponent>() {
+
+            @Override
+            public StreamComponent answer(InvocationOnMock invocation) throws Throwable {
+                final String args = (String) invocation.getArguments()[0];
+                for (StreamComponent pr : components) {
+                    if (pr.getName().equals(args))
+                        return pr;
+                }
+                return null;
+            }
+        });
+        return mock;
+    }
+
+    public static void mockStreamReturn(AphroditeClient mockAphroditeClientIfNeeded, Stream...streams) {
+        final List<Stream> allStreams = new ArrayList<>();
+        for(Stream s:streams) {
+            allStreams.add(s);
+        }
+        Mockito.when(mockAphroditeClientIfNeeded.getAllStreams()).thenReturn(allStreams);
+    }
+
+    public static void mockRepository(PullRequest pullRequest, String url, List<Codebase> codebases) throws MalformedURLException {
+        Repository repo = Mockito.mock(Repository.class);
+        Mockito.when(repo.getURL()).thenReturn(new URL(url));
+        Mockito.when(repo.getCodebases()).thenReturn(codebases);
+        Mockito.when(pullRequest.getRepository()).thenReturn(repo);
+    }
+
 }

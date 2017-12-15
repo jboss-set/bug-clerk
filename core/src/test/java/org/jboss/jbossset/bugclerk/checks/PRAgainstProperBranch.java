@@ -24,6 +24,8 @@ package org.jboss.jbossset.bugclerk.checks;
 import static org.jboss.jbossset.bugclerk.checks.utils.AssertsHelper.assertResultsIsAsExpected;
 import static org.mockito.Matchers.anyString;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
 import org.jboss.jbossset.bugclerk.AbstractCheckRunner;
@@ -72,6 +74,12 @@ public class PRAgainstProperBranch extends AbstractCheckRunner {
         Codebase codebase = new Codebase("0.7");
         PullRequest mock = Mockito.mock(PullRequest.class);
         Mockito.when(mock.getCodebase()).thenReturn(codebase);
+        try {
+            Mockito.when(mock.getURL()).thenReturn(new URL("https://chingchong.com/test"));
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return mock;
     }
 
