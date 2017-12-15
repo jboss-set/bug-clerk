@@ -1,0 +1,55 @@
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2015, Red Hat, Inc., and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+package org.jboss.jbossset.bugclerk;
+
+import org.jboss.set.aphrodite.domain.Issue;
+import org.jboss.set.aphrodite.domain.Comment;
+import org.jboss.set.aphrodite.domain.PullRequest;
+import org.jboss.set.aphrodite.domain.Stream;
+import org.jboss.set.aphrodite.domain.StreamComponent;
+import org.jboss.jbossset.bugclerk.utils.PullRequestUtils
+import org.jboss.jbossset.bugclerk.utils.ReleaseUtils;
+
+import org.jboss.jbossset.bugclerk.Violation;
+global org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient aphrodite;
+
+rule "IssueComponentVersionVsPullRequestBranch"
+  salience 0
+  dialect "mvel"
+  when
+    // issue.version=component(stream)->pull-request.branch
+    //only for JBEAP/JIRA at the moment.
+    $candidate : Candidate(bug.getURL().toString().contains("JBEAP"), bug#JiraIssue, bug#JiraIssue.getPullRequests() != null, 
+    bug#JiraIssue.getPullRequests().isEmpty() != true);
+    //nasty: https://access.redhat.com/solutions/533813
+    $stream : Stream(name == ReleaseUtils.streamReleaseName("jboss-eap-",$candidate.getBug().getReleases())) from aphrodite.allStreams;
+	$pullRequest : PullRequest(
+   	getRepository()!=null,
+    	ReleaseUtils.getStreamComponent($stream.allComponents,getRepository().getURL())!=null
+   	, !ReleaseUtils.getStreamComponent($stream.allComponents,getRepository().getURL()).codebase.equals(codebase)
+    ) from PullRequestUtils.fetchPullRequests(aphrodite,((JiraIssue)$candidate.bug).pullRequests);
+  then
+    $candidate.addViolation( new Violation(drools.getRule().getName(), "Pull request '"+$pullRequest.getURL()+"' branch '"
+    +$pullRequest.codebase.name+"' does not match stream component '"+ReleaseUtils.getStreamComponent($stream.allComponents,$pullRequest.getRepository().getURL()).name+"' branch '"
+    +ReleaseUtils.getStreamComponent($stream.allComponents,$pullRequest.getRepository().getURL()).codebase.name+"'") );
+end

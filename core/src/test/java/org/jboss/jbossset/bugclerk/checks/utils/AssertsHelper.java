@@ -35,7 +35,7 @@ public final class AssertsHelper {
         for ( Candidate candidate : candidates) {
             if ( candidate.getBug().getTrackerId().get().equals(bugId)) {
                 List<Violation> violations = candidate.getViolations();
-                assertThat(violations.size(), is(nbViolationExpected));
+                assertThat(violations.toString(),violations.size(), is(nbViolationExpected));
                 for (Violation v : violations) {
                     assertThat(v.getCheckName(), is(checkname));
                     status = true;
