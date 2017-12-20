@@ -34,12 +34,14 @@ import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRunner {
 
     @Test
+    @Ignore("https://github.com/jboss-set/bug-clerk/issues/94")
     public void fixVersionAndSprintNotMatchingBetweenSiblings() {
         final String checkName = super.checkName;
         final String siblingId = "JBEAP-111";
@@ -82,7 +84,6 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         final String issueId = "14380";
         
         JiraIssue mock = MockUtils.mockJiraIssue(issueId, "A simple BZ issue...");
-        Mockito.when(mock.getSprintRelease()).thenReturn("");
         Mockito.when(mock.getDependsOn()).thenReturn(new ArrayList<URL>());
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, issueId,0);
@@ -95,7 +96,6 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
 
         Issue sibling = MockUtils.mockBzIssue(issueId,"Summary");
         JiraIssue mock = MockUtils.mockJiraIssue("JBEAP-666", "A simple BZ issue...");
-        Mockito.when(mock.getSprintRelease()).thenReturn("");        
         mock.setDependsOn(CollectionUtils.asListOf(sibling.getURL()));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
@@ -162,7 +162,6 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         final String issueId = "JBEAP-666";
         
         JiraIssue mock = MockUtils.mockJiraIssue(issueId, "summary");
-        Mockito.when(mock.getSprintRelease()).thenReturn("");
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock)), checkName), checkName, issueId,0);
