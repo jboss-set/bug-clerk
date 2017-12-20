@@ -32,6 +32,8 @@ import org.junit.runners.Suite;
         org.jboss.jbossset.bugclerk.checks.IssueOnPayloadButNotAssigned.class,
         org.jboss.jbossset.bugclerk.checks.HighPriorityIssueNotAssigned.class,
         org.jboss.jbossset.bugclerk.checks.ResolvedIssueWithFixVersionShouldHaveComponentUpgrade.class,
+        org.jboss.jbossset.bugclerk.checks.IssueComponentVersionVsPullRequestBranch.class,
+        org.jboss.jbossset.bugclerk.checks.BZMatchStreamForBlockers.class,
         org.jboss.jbossset.bugclerk.ReportEngineTest.class,
         // FIXME: Fails within Eclipse: org.jboss.jbossset.bugclerk.BuildReportToUpdateTracker.class,
         org.jboss.jbossset.bugclerk.comments.CommentPatternMatcherTest.class,
