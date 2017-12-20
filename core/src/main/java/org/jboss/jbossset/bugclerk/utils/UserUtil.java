@@ -30,7 +30,7 @@ public final class UserUtil {
      * @return true if the email has been defined to a not empty {@link String}.
      */
     public static boolean userHasEmail(User user) {
-        return (user != null && user.getEmail() != null && user.getEmail().isPresent() && !"".equals(user.getEmail().get()));
+        return (user.getEmail() != null && user.getEmail().isPresent() && !"".equals(user.getEmail().get()));
     }
 
     /**
@@ -39,10 +39,10 @@ public final class UserUtil {
      * @return true if user's name has been set
      */
     public static boolean userHasName(User user) {
-        return (user != null && isStringEmpty(user.getName()));
+        return (isStringEmpty(user.getName()));
     }
 
     private static boolean isStringEmpty(Optional<String> subject) {
-        return (subject != null && subject.isPresent() && ! subject.get().equals(""));
+        return (subject.isPresent() && ! subject.get().equals(""));
     }
 }
