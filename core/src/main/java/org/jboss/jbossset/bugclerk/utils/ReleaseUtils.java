@@ -42,7 +42,6 @@ public class ReleaseUtils {
     }
 
     public static String streamReleaseName(final String release) {
-        System.err.println("X1X");
         // 7.2.0.GA --> 7.z.0
         // 7.1.z.GA --> 7.1.0
         // 7.0.9.GA --> 7.0.z
@@ -60,14 +59,11 @@ public class ReleaseUtils {
         if (m.find()) {
             return release.substring(m.start(), m.end()) + "z";
         }
-        System.err.println("XXXXX");
         return null;
     }
 
     public static String streamReleaseName(final String prefix, final List<Release> releases) {
-        final String s = _streamReleaseName(prefix, releases);
-        System.err.println(s);
-        return s;
+        return _streamReleaseName(prefix, releases);
     }
 
     public static String _streamReleaseName(String prefix, List<Release> releases) {
