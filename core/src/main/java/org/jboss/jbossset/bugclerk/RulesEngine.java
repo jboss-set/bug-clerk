@@ -40,6 +40,14 @@ public class RulesEngine {
     private final KieSession ksession;
     static final String KIE_SESSION = "BzCheck";
 
+    public RulesEngine(Map<String, Object> externalGlobals) {
+        ksession = createKSession(KIE_SESSION);
+        Map<String, Object> globals = buildGlobalsMaps();
+        if (! externalGlobals.isEmpty() )
+            globals.putAll(externalGlobals);
+        globals.entrySet().forEach(e -> ksession.getGlobals().set(e.getKey(), e.getValue()));
+    }
+
     public RulesEngine(Map<String, Object> externalGlobals,AphroditeClient client) {
         ksession = createKSession(KIE_SESSION);
         Map<String, Object> globals = extractRulesGlobalsFrom(client);
@@ -92,10 +100,15 @@ public class RulesEngine {
         return (Collection<Candidate>) ksession.getObjects(new ClassObjectFilter(Candidate.class));
     }
 
-    protected static Map<String, Object> extractRulesGlobalsFrom(AphroditeClient client) {
+    protected static Map<String, Object> buildGlobalsMaps() {
         Map<String, Object> aphroditeRelatedGlobalsMap = new HashMap<String, Object>(2);
         aphroditeRelatedGlobalsMap.put("issuesIndexedByURL", new HashMap<URL,Issue>());
         aphroditeRelatedGlobalsMap.put("payloadTrackerIndexedByURL", new HashMap<URL,Issue>());
+        return aphroditeRelatedGlobalsMap;
+    }
+
+    protected static Map<String, Object> extractRulesGlobalsFrom(AphroditeClient client) {
+        Map<String, Object> aphroditeRelatedGlobalsMap = buildGlobalsMaps();
         if ( client != null ) aphroditeRelatedGlobalsMap.put("aphrodite", client);
         return aphroditeRelatedGlobalsMap;
     }
