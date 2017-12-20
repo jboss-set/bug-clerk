@@ -60,7 +60,7 @@ public class PRAgainstProperBranch extends AbstractCheckRunner {
     public void initRuleEngine() {
         AphroditeClient client = Mockito.mock(AphroditeClient.class);
         Mockito.when(client.getAllStreams()).thenReturn(MockUtils.mockStreamsWithStreamWithOneComponent("jboss-eap-7.0.z", "aesh","https://github.com/aeshell/aesh.git", "0.66.+","0.66.12", "0.66.12.redhat-1", "org.jboss.aesh"));
-        Mockito.when(client.getPullRequest(anyString())).thenAnswer(new Answer<PullRequest>() {
+        Mockito.when(client.getPullRequestAsString(anyString())).thenAnswer(new Answer<PullRequest>() {
 
             @Override
             public PullRequest answer(InvocationOnMock invocation) throws Throwable {

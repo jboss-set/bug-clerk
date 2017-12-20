@@ -96,7 +96,7 @@ public class AphroditeClient {
         return allStreams;
     }
 
-    public PullRequest getPullRequest(String pullRequestUrl) {
+    public PullRequest getPullRequestAsString(String pullRequestUrl) {
         return getPullRequest(URLUtils.createURLFromString(pullRequestUrl));
     }
 

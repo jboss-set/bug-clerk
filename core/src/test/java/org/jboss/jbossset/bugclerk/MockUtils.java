@@ -245,7 +245,7 @@ public final class MockUtils {
     }
 
     public static void mockPullRequestReturn(final AphroditeClient client, final PullRequest... requests) {
-        Mockito.when(client.getPullRequest(Mockito.any())).then(new Answer<PullRequest>() {
+        Mockito.when(client.getPullRequestAsString(Mockito.anyString())).then(new Answer<PullRequest>() {
 
             @Override
             public PullRequest answer(InvocationOnMock invocation) throws Throwable {
