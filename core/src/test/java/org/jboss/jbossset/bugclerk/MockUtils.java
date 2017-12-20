@@ -95,8 +95,16 @@ public final class MockUtils {
     }
 
     public static JiraIssue mockJiraIssue(String bugId, String summary) {
-        JiraIssue issue = (JiraIssue) createMockStub(TrackerType.JIRA);
-        return populateMock(bugId, buildJiraUrlFromId(bugId), summary, issue);
+        return mockJiraIssue(bugId, buildJiraUrlFromId(bugId), summary);
+    }
+    
+    public static JiraIssue mockJiraIssue(String bugId, URL bugURL, String summary) {
+       JiraIssue mock = (JiraIssue) populateMock(bugId, bugURL, summary, createMockStub(TrackerType.JIRA));
+        List<Release> releases = mockReleases("6.4.0","");
+        Mockito.when(mock.getReleases()).thenReturn(releases);
+        Mockito.when(mock.getSprintRelease()).thenReturn("");
+        Mockito.when(mock.getStreamStatus()).thenReturn(new HashMap<>());
+        return mock;
     }
 
     private static Issue mockTrackerType(Issue issue, TrackerType type) {

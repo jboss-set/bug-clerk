@@ -53,7 +53,7 @@ public class BZMissingUpstream extends AbstractCheckRunner {
         final String bzId = "147586";
         final String upstreamJiraIssueId = "https://" + RulesHelper.JIRA_TRACKER_HOSTNAME + "/JBEAP-666";
 
-        Issue jiraUpstreamIssue = MockUtils.mockBzIssue(upstreamJiraIssueId, "upstream issue");
+        Issue jiraUpstreamIssue = MockUtils.mockJiraIssue(upstreamJiraIssueId, "upstream issue");
         Mockito.when(jiraUpstreamIssue.getURL()).thenReturn(URLUtils.createURLFromString(upstreamJiraIssueId));
         Mockito.when(jiraUpstreamIssue.getTrackerType()).thenReturn(TrackerType.JIRA);
 
