@@ -92,8 +92,9 @@ public final class RulesHelper {
     }
 
     public static boolean doesSiblingsFixVersionsContainsParentsOne(Issue issue, Issue sibling) {
-        for ( Release parentRelease : issue.getReleases() )
+        for ( Release parentRelease : issue.getReleases() ) {
             if ( sibling.getReleases().contains(parentRelease) ) return true;
+        }
         return false;
     }
 
