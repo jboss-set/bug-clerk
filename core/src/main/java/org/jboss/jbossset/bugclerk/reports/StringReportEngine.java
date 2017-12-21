@@ -27,8 +27,10 @@ import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jboss.jbossset.bugclerk.Candidate;
+import org.jboss.jbossset.bugclerk.Severity;
 import org.jboss.jbossset.bugclerk.Violation;
 
 public class StringReportEngine implements ReportEngine<String> {
@@ -44,12 +46,16 @@ public class StringReportEngine implements ReportEngine<String> {
     }
 
     private static StringBuffer reportViolations(List<Violation> violations) {
-        if ( violations.isEmpty() )
-            return new StringBuffer();
-        else
-            return violations
-                .stream()
-                .map(v -> formatViolation(v)).reduce((s1, s2) -> s1.append(s2)).get();
+        return ( violations.isEmpty() ? new StringBuffer() : formatViolations(filterTrivialViolations(violations)) );
+    }
+
+    private static StringBuffer formatViolations(List<Violation> violations) {
+        return violations.isEmpty() ? new StringBuffer() : violations.stream().map(v -> formatViolation(v)).reduce((s1, s2) -> s1.append(s2)).get();
+    }
+
+    private static List<Violation> filterTrivialViolations(List<Violation> violations) {
+        return violations
+                .stream().filter(v -> ! v.getLevel().equals(Severity.TRIVIAL)).collect(Collectors.toList());
     }
 
     private static StringBuffer formatViolation(Violation v) {
