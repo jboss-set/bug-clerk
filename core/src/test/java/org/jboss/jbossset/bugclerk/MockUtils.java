@@ -105,7 +105,7 @@ public final class MockUtils {
     public static JiraIssue mockJiraIssue(String bugId, String summary) {
         return mockJiraIssue(bugId, buildJiraUrlFromId(bugId), summary);
     }
-    
+
     public static JiraIssue mockJiraIssue(String bugId, URL bugURL, String summary) {
        JiraIssue mock = (JiraIssue) populateMock(bugId, bugURL, summary, createMockStub(TrackerType.JIRA));
         List<Release> releases = mockReleases("6.4.0","");
@@ -163,12 +163,27 @@ public final class MockUtils {
     }
 
     public static Violation mockViolation(final String bugId, final String checkname) {
-        Violation mock = Mockito.mock(Violation.class);
-        Mockito.when(mock.getCheckName()).thenReturn(checkname);
-        Mockito.when(mock.getMessage()).thenReturn("Message for " + checkname + ".");
+        Violation mock = beginMockingViolation(bugId, checkname);
         Mockito.when(mock.getLevel()).thenReturn(Severity.MINOR);
         return mock;
     }
+
+
+    private static Violation beginMockingViolation(String bugId, String checkname) {
+        Violation mock = Mockito.mock(Violation.class);
+        Mockito.when(mock.getCheckName()).thenReturn(checkname);
+        Mockito.when(mock.getMessage()).thenReturn("Message for " + checkname + ".");
+        return mock;
+    }
+
+	public static Violation mockViolationWithSeverity(String bugId, String checkname,
+			Severity severity) {
+        Violation mock = beginMockingViolation(bugId, checkname);
+        Mockito.when(mock.getLevel()).thenReturn(severity);
+		return mock;
+	}
+
+
 
     public static List<Violation> mockViolationsListWithOneItem(final String bugId, final String checkname) {
         List<Violation> violations = new ArrayList<Violation>(1);
@@ -269,7 +284,7 @@ public final class MockUtils {
         Mockito.when(mockComponent.getRepositoryURL()).thenReturn(new URI(url));
         return mockComponent;
     }
-    
+
     public static Stream mockStream(final String name, final String[] componentNames, final String[] cbs, final String[] urls) throws URISyntaxException {
         final Stream mock = Mockito.mock(Stream.class);
         Mockito.when(mock.getName()).thenReturn(name);
@@ -319,5 +334,4 @@ public final class MockUtils {
         Mockito.when(repo.getCodebases()).thenReturn(codebases);
         Mockito.when(pullRequest.getRepository()).thenReturn(repo);
     }
-
 }
