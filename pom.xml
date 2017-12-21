@@ -11,7 +11,7 @@
 
   <groupId>org.jboss.jbossset</groupId>
   <artifactId>bugclerk</artifactId>
-  <version>1.0.1.Final-SNAPSHOT</version>
+  <version>1.0.1.Final</version>
   <packaging>pom</packaging>
   <name>Bug Clerk</name>
   <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
@@ -41,7 +41,7 @@
     <connection>scm:git:github.com/jboss-set/bug-clerk</connection>
     <developerConnection>scm:git:git@github.com:jboss-set/bug-clerk</developerConnection>
     <url>https://github.com/jboss-set/bug-clerk</url>
-    <tag>HEAD</tag>
+    <tag>bugclerk-1.0.1.Final</tag>
   </scm>
 
   <dependencies>
@@ -144,7 +144,7 @@
                </goals>
                <configuration>
                    <rules>
-                       <dependencyConvergence/>
+                       <dependencyConvergence />
                        <requireMavenVersion>
                            <version>3.3.9</version>
                        </requireMavenVersion>
