@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.jboss.jbossset</groupId>
     <artifactId>bugclerk</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
     <!--relativePath /-->
   </parent>
 
   <groupId>org.jboss.jbossset</groupId>
   <artifactId>bugclerk-core</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
   <description>Bugclerk - Core</description>
 
