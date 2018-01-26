@@ -105,7 +105,7 @@ public final class MockUtils {
     public static JiraIssue mockJiraIssue(String bugId, String summary) {
         return mockJiraIssue(bugId, buildJiraUrlFromId(bugId), summary);
     }
-    
+
     public static JiraIssue mockJiraIssue(String bugId, URL bugURL, String summary) {
        JiraIssue mock = (JiraIssue) populateMock(bugId, bugURL, summary, createMockStub(TrackerType.JIRA));
         List<Release> releases = mockReleases("6.4.0","");
@@ -245,7 +245,7 @@ public final class MockUtils {
     }
 
     public static void mockPullRequestReturn(final AphroditeClient client, final PullRequest... requests) {
-        Mockito.when(client.getPullRequest(Mockito.any())).then(new Answer<PullRequest>() {
+        Mockito.when(client.getPullRequest((String)Mockito.any())).then(new Answer<PullRequest>() {
 
             @Override
             public PullRequest answer(InvocationOnMock invocation) throws Throwable {
@@ -269,7 +269,7 @@ public final class MockUtils {
         Mockito.when(mockComponent.getRepositoryURL()).thenReturn(new URI(url));
         return mockComponent;
     }
-    
+
     public static Stream mockStream(final String name, final String[] componentNames, final String[] cbs, final String[] urls) throws URISyntaxException {
         final Stream mock = Mockito.mock(Stream.class);
         Mockito.when(mock.getName()).thenReturn(name);
