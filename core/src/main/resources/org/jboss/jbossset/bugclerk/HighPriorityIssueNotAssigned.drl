@@ -38,5 +38,5 @@ rule "HighPriorityIssueNotAssigned"
   when
     $candidate : Candidate(! bug.assignee.isPresent, bug.creationTime.get before[14d] new Date(), priority : bug.priority.toString, bug.priority.isHigherThan(IssuePriority.MAJOR), filtered == false);
   then
-    $candidate.addViolationOnce( new Violation("HighPriorityIssueNotAssigned", "This issue is still unassigned, for over two weeks,  while having a high priority" + priority, Severity.MAJOR) );
+    $candidate.addViolationOnce( new Violation("HighPriorityIssueNotAssigned", "This issue is still unassigned, for over two weeks,  while having a high priority " + priority, Severity.MAJOR) );
 end
