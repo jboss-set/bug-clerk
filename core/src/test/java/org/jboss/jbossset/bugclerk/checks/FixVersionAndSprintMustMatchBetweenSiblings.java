@@ -41,7 +41,6 @@ import org.mockito.Mockito;
 public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRunner {
 
     @Test
-    @Ignore("https://github.com/jboss-set/bug-clerk/issues/94")
     public void fixVersionAndSprintNotMatchingBetweenSiblings() {
         final String checkName = super.checkName;
         final String siblingId = "JBEAP-111";
@@ -53,14 +52,15 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         
         JiraIssue sibling = MockUtils.mockJiraIssue(siblingId,"Summary");
         Mockito.when(sibling.getSprintRelease()).thenReturn(sprintId);
-        sibling.setReleases(CollectionUtils.asListOf(sevenOhTwo));        
+        Mockito.when(sibling.getReleases()).thenReturn(CollectionUtils.asListOf(sevenOhTwo));
     
         JiraIssue parentIssue = MockUtils.mockJiraIssue(parentId, "A simple BZ issue...");
         Mockito.when(parentIssue.getSprintRelease()).thenReturn(sprintId);
-        parentIssue.setReleases(CollectionUtils.asListOf(sevenOhOne));
+        Mockito.when(parentIssue.getReleases()).thenReturn(CollectionUtils.asListOf(sevenOhOne));
         List<URL> urls = CollectionUtils.asListOf(sibling.getURL());
         Mockito.when(parentIssue.getDependsOn()).thenReturn(urls);
-        sibling.setBlocks(CollectionUtils.asListOf(parentIssue.getURL()));
+        urls = CollectionUtils.asListOf(parentIssue.getURL());
+        Mockito.when(sibling.getBlocks()).thenReturn(urls);
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(parentIssue), new Candidate(sibling)), checkName), checkName, parentId,1);
@@ -96,7 +96,8 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
 
         Issue sibling = MockUtils.mockBzIssue(issueId,"Summary");
         JiraIssue mock = MockUtils.mockJiraIssue("JBEAP-666", "A simple BZ issue...");
-        mock.setDependsOn(CollectionUtils.asListOf(sibling.getURL()));
+        List<URL> urls = CollectionUtils.asListOf(sibling.getURL()); 
+        Mockito.when(mock.getDependsOn()).thenReturn(urls);
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock), new Candidate(sibling)), checkName), checkName, issueId,0);
@@ -114,12 +115,12 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         
         JiraIssue sibling = MockUtils.mockJiraIssue(issueId,"Summary");
         Mockito.when(sibling.getSprintRelease()).thenReturn("a Sprint version");
-        sibling.setReleases(releases);
+        Mockito.when(sibling.getReleases()).thenReturn(releases);
         
     
         JiraIssue mock = MockUtils.mockJiraIssue("JBEAP-666", "A simple BZ issue...");
         Mockito.when(mock.getSprintRelease()).thenReturn("a different sprint version");
-        mock.setReleases(CollectionUtils.asListOf(sevenOhOne));
+        Mockito.when(mock.getReleases()).thenReturn(CollectionUtils.asListOf(sevenOhOne));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock), new Candidate(sibling)), checkName), checkName, issueId,0);
@@ -143,12 +144,12 @@ public class FixVersionAndSprintMustMatchBetweenSiblings extends AbstractCheckRu
         
         JiraIssue sibling = MockUtils.mockJiraIssue(issueId,"Summary");
         Mockito.when(sibling.getSprintRelease()).thenReturn(commonSprintVersion);
-        sibling.setReleases(releases);
+        Mockito.when(sibling.getReleases()).thenReturn(releases);
         
     
         JiraIssue mock = MockUtils.mockJiraIssue("JBEAP-666", "A simple BZ issue...");
         Mockito.when(mock.getSprintRelease()).thenReturn(commonSprintVersion);
-        mock.setReleases(CollectionUtils.asListOf(new Release(commonReleaseVersion)));
+        Mockito.when(mock.getReleases()).thenReturn(CollectionUtils.asListOf(new Release(commonReleaseVersion)));
 
         assertResultsIsAsExpected(engine.runCheckOnBugs(
                 CollectionUtils.asSetOf(new Candidate(mock), new Candidate(sibling)), checkName), checkName, issueId,0);
