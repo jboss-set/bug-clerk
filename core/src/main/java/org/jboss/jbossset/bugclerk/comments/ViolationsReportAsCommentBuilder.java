@@ -25,13 +25,10 @@ package org.jboss.jbossset.bugclerk.comments;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.formatCheckname;
 import static org.jboss.jbossset.bugclerk.utils.StringUtils.twoEOLs;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -44,17 +41,8 @@ import org.jboss.set.aphrodite.domain.Issue;
 
 public class ViolationsReportAsCommentBuilder {
 
-    private static final String NOW = new SimpleDateFormat("yyyy/MM/dd - HH:mm", Locale.getDefault()).format(Calendar
-            .getInstance().getTime());
-
-    private static final String BUGCLERK_ISSUES_TRACKER = "https://github.com/jboss-set/bug-clerk/issues";
-
-    private static final String COMMENT_MESSSAGE_HEADER = BugClerk.class.getSimpleName() + " (automated tool) noticed on "
-            + NOW + " the following" + " discrepencies in this entry:" + twoEOLs();
-
-    private static final String COMMENT_MESSAGE_FOOTER = "If the issues reported are erronous "
-            + "or if you wish to ask for enhancement or new checks for " + BugClerk.class.getSimpleName()
-            + " please, fill an issue on BugClerk issue tracker: " + BUGCLERK_ISSUES_TRACKER;
+    private static final String COMMENT_MESSAGE_FOOTER = BugClerk.class.getSimpleName()
+            + " (automated tool) lives at this address: https://github.com/jboss-set/bug-clerk";
 
     public Map<Issue, Comment> reportViolationToBugTracker(Collection<Candidate> candidates) {
         Map<Issue, Comment> commentsToAddToIssues = new HashMap<Issue, Comment>();
@@ -77,7 +65,7 @@ public class ViolationsReportAsCommentBuilder {
 
     private Comment buildReportComment(List<Violation> newViolationToReport) {
         if (!newViolationToReport.isEmpty())
-            return new Comment(messageBody(newViolationToReport, new StringBuffer(COMMENT_MESSSAGE_HEADER)).append(
+            return new Comment(messageBody(newViolationToReport, new StringBuffer()).append(
                     COMMENT_MESSAGE_FOOTER).toString(), true);
         return null;
     }
