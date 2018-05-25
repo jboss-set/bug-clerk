@@ -36,6 +36,7 @@ import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.jbossset.bugclerk.checks.utils.CollectionUtils;
 import org.jboss.set.aphrodite.domain.Codebase;
 import org.jboss.set.aphrodite.domain.PullRequest;
+import org.jboss.set.aphrodite.domain.Repository;
 import org.jboss.set.aphrodite.issue.trackers.jira.JiraIssue;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,6 +77,9 @@ public class PRAgainstProperBranch extends AbstractCheckRunner {
         Mockito.when(mock.getCodebase()).thenReturn(codebase);
         try {
             Mockito.when(mock.getURL()).thenReturn(new URL("https://chingchong.com/test"));
+            Repository repositoryMock = Mockito.mock(Repository.class);
+            Mockito.when(repositoryMock.getURL()).thenReturn(new URL("https://chingchong.com/test"));
+            Mockito.when(mock.getRepository()).thenReturn(repositoryMock);
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
