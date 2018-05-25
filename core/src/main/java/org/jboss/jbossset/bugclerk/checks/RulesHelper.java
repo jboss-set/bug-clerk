@@ -4,9 +4,11 @@ import static org.jboss.set.aphrodite.domain.IssueType.UPGRADE;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jboss.jbossset.bugclerk.aphrodite.AphroditeClient;
 import org.jboss.set.aphrodite.domain.Comment;
@@ -14,6 +16,7 @@ import org.jboss.set.aphrodite.domain.FlagStatus;
 import org.jboss.set.aphrodite.domain.Issue;
 import org.jboss.set.aphrodite.domain.IssueStatus;
 import org.jboss.set.aphrodite.domain.IssueType;
+import org.jboss.set.aphrodite.domain.PullRequest;
 import org.jboss.set.aphrodite.domain.Release;
 import org.jboss.set.aphrodite.domain.Stream;
 import org.jboss.set.aphrodite.domain.StreamComponent;
@@ -137,4 +140,29 @@ public final class RulesHelper {
     public static boolean isComponentUpgrade(Issue issue) {
         return issue.getType().equals(IssueType.UPGRADE);
     }
+
+    public static boolean arePullRequestsAgainstSameTarget(JiraIssue issue, AphroditeClient aphrodite) {
+        final List<URL> pullRequestURLs = issue.getPullRequests();
+        final Set<URL> repoURLs = new HashSet<>();
+        final Set<String> codeBases = new HashSet<>();
+        if (pullRequestURLs != null)
+            for (URL prURL : pullRequestURLs) {
+                // URL->string, because of tests
+                final PullRequest pr = aphrodite.getPullRequestAsString(prURL.toString());
+                if (pr == null) {
+                    // just to pass tests.
+                    continue;
+                }
+
+                repoURLs.add(pr.getRepository().getURL());
+                codeBases.add(pr.getCodebase().getName());
+
+            }
+        if (codeBases.size() > 1 || repoURLs.size() > 1) {
+            return false;
+        }
+
+        return true;
+    }
+
 }
