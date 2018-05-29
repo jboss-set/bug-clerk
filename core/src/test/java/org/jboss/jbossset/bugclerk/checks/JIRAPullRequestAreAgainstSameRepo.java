@@ -124,7 +124,7 @@ public class JIRAPullRequestAreAgainstSameRepo extends AbstractCheckRunner {
                         CollectionUtils.asListOf(RULE)),
                 checkName,"issueWithGoodPRs", 0);
     }
-    
+
     @Test
     public void testBadLinks() {
         assertResultsIsAsExpected(
@@ -132,7 +132,7 @@ public class JIRAPullRequestAreAgainstSameRepo extends AbstractCheckRunner {
                         CollectionUtils.asListOf(RULE)),
                 checkName,"issueWithPRToWrongRepo_1", 1);
     }
-    
+
     @Test
     public void testBadLinks2() {
         assertResultsIsAsExpected(

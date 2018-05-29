@@ -146,23 +146,18 @@ public final class RulesHelper {
         final Set<URL> repoURLs = new HashSet<>();
         final Set<String> codeBases = new HashSet<>();
         if (pullRequestURLs != null)
-            for (URL prURL : pullRequestURLs) {
-                // URL->string, because of tests
-                final PullRequest pr = aphrodite.getPullRequestAsString(prURL.toString());
-                if (pr == null) {
-                    // just to pass tests.
-                    continue;
-                }
-
-                repoURLs.add(pr.getRepository().getURL());
-                codeBases.add(pr.getCodebase().getName());
-
-            }
-        if (codeBases.size() > 1 || repoURLs.size() > 1) {
-            return false;
-        }
-
-        return true;
+            populateReposAndCodeBases(repoURLs, codeBases, pullRequestURLs, aphrodite);
+        return (codeBases.size() > 1 || repoURLs.size() > 1);
     }
 
+    private static void populateReposAndCodeBases(Set<URL> repoURLs, Set<String> codeBases, List<URL> pullRequestURLs, AphroditeClient aphrodite) {
+        for (URL prURL : pullRequestURLs) {
+            // URL->string, because of tests
+            final PullRequest pr = aphrodite.getPullRequestAsString(prURL.toString());
+            // also only to pass tests
+            if (pr == null)  continue;
+            repoURLs.add(pr.getRepository().getURL());
+            codeBases.add(pr.getCodebase().getName());
+        }
+    }
 }
