@@ -43,6 +43,7 @@
           <exclude>load-bugs.sh</exclude>
           <exclude>update-rules-on-readme.sh</exclude>
           <exclude>generate-changelog.sh</exclude>
+          <exclude>update-version.sh</exclude>
         </excludes>
       </resource>
     </resources>
