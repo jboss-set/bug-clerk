@@ -69,7 +69,7 @@ public class IssueStateModifiedAfterPrMerged extends AbstractCheckRunner {
 
         if (pullRequestState != null) {
             // mock aphrodite returning single PR with given state
-            PullRequest pullRequest = new PullRequest("test", null, null, null, pullRequestState);
+            PullRequest pullRequest = new PullRequest("test", null, null, null, pullRequestState, null, null, false, false, null,null);
             Mockito.when(aphroditeClient.getPullRequests(Mockito.anyListOf(URL.class)))
                     .thenReturn(Collections.singletonList(pullRequest));
             Mockito.when(issue.getPullRequests()).thenReturn(Collections.singletonList(new URL("http://test.com")));

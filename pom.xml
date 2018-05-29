@@ -32,7 +32,7 @@
 
     <version.drools>7.4.1.Final</version.drools>
     <version.org.drools>${version.drools}</version.org.drools>
-    <version.org.jboss.set.aphrodite>aphrodite-0.7.0.Final</version.org.jboss.set.aphrodite>
+    <version.org.jboss.set.aphrodite>0.7.4.Final</version.org.jboss.set.aphrodite>
     <version.org.kie>${version.drools}</version.org.kie>
     <version.enforcer.plugin>3.0.0-M1</version.enforcer.plugin>
   </properties>
