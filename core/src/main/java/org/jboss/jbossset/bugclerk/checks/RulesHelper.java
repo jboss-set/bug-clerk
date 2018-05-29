@@ -147,7 +147,7 @@ public final class RulesHelper {
         final Set<String> codeBases = new HashSet<>();
         if (pullRequestURLs != null)
             populateReposAndCodeBases(repoURLs, codeBases, pullRequestURLs, aphrodite);
-        return (codeBases.size() > 1 || repoURLs.size() > 1);
+        return ! (codeBases.size() > 1 || repoURLs.size() > 1);
     }
 
     private static void populateReposAndCodeBases(Set<URL> repoURLs, Set<String> codeBases, List<URL> pullRequestURLs, AphroditeClient aphrodite) {
