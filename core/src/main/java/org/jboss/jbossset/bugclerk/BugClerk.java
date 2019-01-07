@@ -50,7 +50,7 @@ public class BugClerk {
         this.configuration = configuration;
     }
 
-    protected Collection<Candidate> processEntriesAndReportViolations(List<Candidate> candidates) {
+    public Collection<Candidate> processEntriesAndReportViolations(List<Candidate> candidates) {
         return processEntriesAndReportViolations(candidates, configuration.getChecknames());
     }
 
