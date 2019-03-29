@@ -15,7 +15,10 @@ public class PullRequestUtils {
     public static Collection<PullRequest> fetchPullRequests(final AphroditeClient client, List<URL> urls) {
         final List<PullRequest> pullRequests = new ArrayList<>();
         for (URL url : urls) {
-            pullRequests.add(client.getPullRequestAsString(url.toString()));
+            PullRequest pr = client.getPullRequestAsString(url.toString());
+            if (pr != null) {
+                pullRequests.add(pr);
+            }
         }
         return pullRequests;
     }
