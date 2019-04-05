@@ -11,7 +11,7 @@
 
   <groupId>org.jboss.jbossset</groupId>
   <artifactId>bugclerk</artifactId>
-  <version>1.0.5.Final</version>
+  <version>1.0.6.Final-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Bug Clerk</name>
   <description>A inspection tool for bug/task entry, to check the quality of it and ensures it complies to defines rules and processes</description>
@@ -39,7 +39,7 @@
     <connection>scm:git:github.com/jboss-set/bug-clerk</connection>
     <developerConnection>scm:git:git@github.com:jboss-set/bug-clerk</developerConnection>
     <url>https://github.com/jboss-set/bug-clerk</url>
-    <tag>bugclerk-1.0.5.Final</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencies>
