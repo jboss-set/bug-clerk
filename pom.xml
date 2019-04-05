@@ -31,7 +31,7 @@
     <org.wildfly.checkstyle-config.version>1.0.4.Final</org.wildfly.checkstyle-config.version>
 
     <version.org.drools>7.15.0.Final</version.org.drools>
-    <version.org.jboss.set.aphrodite>0.7.4.Final</version.org.jboss.set.aphrodite>
+    <version.org.jboss.set.aphrodite>0.7.6.Final</version.org.jboss.set.aphrodite>
     <version.enforcer.plugin>3.0.0-M1</version.enforcer.plugin>
   </properties>
 
