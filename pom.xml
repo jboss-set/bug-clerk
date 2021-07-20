@@ -32,8 +32,8 @@
 
     <version.org.drools>7.15.0.Final</version.org.drools>
     <version.org.jboss.set.aphrodite>0.7.14.Final</version.org.jboss.set.aphrodite>
-        <version.enforcer.plugin>3.0.0-M1</version.enforcer.plugin>
-      </properties>
+    <version.enforcer.plugin>3.0.0-M1</version.enforcer.plugin>
+  </properties>
 
   <scm>
     <connection>scm:git:github.com/jboss-set/bug-clerk</connection>
