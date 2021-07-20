@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.jboss.jbossset</groupId>
     <artifactId>bugclerk</artifactId>
-    <version>1.0.6.Final-SNAPSHOT</version>
+    <version>1.0.6.Final</version>
     <!--relativePath /-->
   </parent>
 
   <groupId>org.jboss.jbossset</groupId>
   <artifactId>bugclerk-dist</artifactId>
-  <version>1.0.6.Final-SNAPSHOT</version>
+  <version>1.0.6.Final</version>
   <packaging>jar</packaging>
   <name>Bug Clerk - Dist</name>
 
@@ -19,7 +19,7 @@
    <dependency>
      <groupId>org.jboss.jbossset</groupId>
      <artifactId>bugclerk-core</artifactId>
-     <version>1.0.6.Final-SNAPSHOT</version>
+     <version>1.0.6.Final</version>
    </dependency>
 
     <!-- Others deps -->
